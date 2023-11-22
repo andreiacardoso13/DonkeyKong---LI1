@@ -10,6 +10,11 @@ module Tarefa1 where
 
 import LI12324
 
+hitbox :: Personagem -> Hitbox
+hitbox (Personagem (posiao = (x,y), tamanho = (c,l))) = (((x+(c/2)),(y+(c/2))),((x-(c/2)), y-((c/2))))
+
+
+
 colisoesParede :: Mapa -> Personagem -> Bool
 colisoesParede = undefined
 
