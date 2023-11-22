@@ -11,7 +11,7 @@ module Tarefa1 where
 import LI12324
 
 hitbox :: Personagem -> Hitbox
-hitbox (Personagem (posiao = (x,y), tamanho = (c,l))) = (((x+(c/2)),(y+(c/2))),((x-(c/2)), y-((c/2))))
+hitbox (Personagem {posicao = (x,y), tamanho = (c,l)}) = (((x+(c/2)),(y+(c/2))),((x-(c/2)), y-((c/2))))
 
 
 
