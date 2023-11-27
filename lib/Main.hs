@@ -11,13 +11,14 @@ main = do
 
 get_images :: IO [Picture]
 get_images = do
-               Escada              <- loadBMP "imagens/ladder.bmp"
-               Alcapao             <- loadBMP "imagens/alcapao.bmp"
-               Plataforma          <- loadBMP "imagens/plataforma.bmp"
-               Estrela             <- loadBMP "imagens/star.bmp"
-               Moeda               <- loadBMP "imagens/coin.bmp"
-               let images = [Escada, Alcapao, Plataforma, Estrela, Moeda]
+               escada              <- loadBMP "imagens/ladder.bmp"
+               alcapao             <- loadBMP "imagens/alcapao.bmp"
+               plataforma          <- loadBMP "imagens/plataforma.bmp"
+               estrela             <- loadBMP "imagens/star.bmp"
+               moeda               <- loadBMP "imagens/coin.bmp"
+               let images = [escada, alcapao, plataforma, estrela, moeda]
                return images
+
 
 main :: IO ()
 main = do 

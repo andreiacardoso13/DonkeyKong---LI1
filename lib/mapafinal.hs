@@ -1,6 +1,7 @@
 module Mapa where
 
 import LI12324
+import Main
 import Graphics.Gloss
 
 p::Bloco
