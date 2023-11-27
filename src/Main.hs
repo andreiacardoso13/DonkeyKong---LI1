@@ -11,12 +11,12 @@ main = do
 
 get_images :: IO [Picture]
 get_images = do
-               escada              <- loadBMP "imagens/ladder.bmp"
-               alcapao             <- loadBMP "imagens/alcapao.bmp"
-               plataforma          <- loadBMP "imagens/plataforma.bmp"
-               estrela             <- loadBMP "imagens/star.bmp"
-               moeda               <- loadBMP "imagens/coin.bmp"
-               let images = [escada, alcapao, plataforma, estrela, moeda]
+               Escada              <- loadBMP "imagens/ladder.bmp"
+               Alcapao             <- loadBMP "imagens/alcapao.bmp"
+               Plataforma          <- loadBMP "imagens/plataforma.bmp"
+               Estrela             <- loadBMP "imagens/star.bmp"
+               Moeda               <- loadBMP "imagens/coin.bmp"
+               let images = [Escada, Alcapao, Plataforma, Estrela, Moeda]
                return images
 
 main :: IO ()
@@ -29,3 +29,9 @@ main = do
               desenhaEstado                   -- desenha o estado do jogo
               reageEvento                     -- reage a um evento
               reageTempo                      -- reage ao passar do tempo
+
+janela :: Display
+janela = InWindow
+  "Mapa"     -- título de janela    
+  (500,500)  -- dimensão da janela
+  (10,10)    -- posição no ecrã
