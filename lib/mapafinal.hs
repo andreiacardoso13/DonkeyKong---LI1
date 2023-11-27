@@ -10,8 +10,6 @@ p = Plataforma
 v::Bloco
 v=Vazio
 
-Vazio = rectangleSolid 10 10
-
 e::Bloco
 e=Escada
 
