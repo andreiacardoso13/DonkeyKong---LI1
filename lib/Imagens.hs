@@ -1,4 +1,4 @@
-module Images where
+module Imagens where
 import Graphics.Gloss
 import Graphics.Gloss.Juicy
 
