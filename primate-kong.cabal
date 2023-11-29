@@ -62,7 +62,7 @@ library
         base ^>=4.16.4.0,
         random ^>=1.2.1.1,
         gloss ^>=1.13.2.2,
-        gloss-juicy
+        gloss-juicy ^>=0.2.3
 
     -- Directories containing source files.
     hs-source-dirs:   lib
@@ -85,7 +85,7 @@ executable primate-kong
         base ^>=4.16.4.0,
         random ^>=1.2.1.1,
         gloss ^>=1.13.2.2,
-        gloss-juicy,
+        gloss-juicy ^>=0.2.3,
         primate-kong
 
     -- Directories containing source files.
