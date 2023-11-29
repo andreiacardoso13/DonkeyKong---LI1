@@ -23,5 +23,5 @@ getImages = do
                Just estrela             <- loadJuicyJPG "imagens/star.png"
                Just moeda               <- loadJuicyJPG "imagens/coin.png"
                Just vazio               <- loadJuicyJPG "imagens/vazio.png"
-               let images = [escada, alcapao, plataforma, estrela, moeda]
+               let images = [escada, alcapao, plataforma, estrela, moeda, vazio]
                return images
