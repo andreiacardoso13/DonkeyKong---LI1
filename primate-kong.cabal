@@ -61,7 +61,8 @@ library
     build-depends:
         base ^>=4.16.4.0,
         random ^>=1.2.1.1,
-        gloss ^>=1.13.2.2
+        gloss ^>=1.13.2.2,
+        gloss-juicy
 
     -- Directories containing source files.
     hs-source-dirs:   lib
