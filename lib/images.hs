@@ -18,11 +18,11 @@ data Imagens = Imagens {
 
 getImages :: IO [Picture]
 getImages = do
-               escada              <- loadJuicyJPG "imagens/ladder.bmp"
-               alcapao             <- loadJuicyJPG "imagens/alcapao.bmp"
-               plataforma          <- loadJuicyJPG "imagens/plataforma.bmp"
-               estrela             <- loadJuicyJPG "imagens/star.bmp"
-               moeda               <- loadJuicyJPG "imagens/coin.bmp"
-               vazio               <- loadJuicyJPG "imagens/Vazio.bmp"
+               escada              <- loadJuicyJPG "imagens/ladder.png"
+               alcapao             <- loadJuicyJPG "imagens/alcapao.png"
+               plataforma          <- loadJuicyJPG "imagens/plataforma.png"
+               estrela             <- loadJuicyJPG "imagens/star.png"
+               moeda               <- loadJuicyJPG "imagens/coin.png"
+               vazio               <- loadJuicyJPG "imagens/vazio.png"
                let images = [escada, alcapao, plataforma, estrela, moeda]
                return images
