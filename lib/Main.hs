@@ -2,8 +2,8 @@ module Main where
 
 import Graphics.Gloss
 import Graphics.Gloss.Interface.Pure.Game
-import Graphics.Gloss.Internals.Data.Picture
 import LI12324
+import Images
 
 {- main :: IO ()
 main = do
@@ -14,21 +14,9 @@ data Estado = Estado {posicao :: (Float,Float)
                      , vel :: (Float,Float)
                      }
 
-get_images :: IO [Picture]
-get_images = do
-               escada              <- loadBMP "imagens/ladder.bmp"
-               alcapao             <- loadBMP "imagens/alcapao.bmp"
-               plataforma          <- loadBMP "imagens/plataforma.bmp"
-               estrela             <- loadBMP "imagens/star.bmp"
-               moeda               <- loadBMP "imagens/coin.bmp"
-               vazio               <- loadBMP "imagens/Vazio.bmp"
-               let images = [escada, alcapao, plataforma, estrela, moeda]
-               return images
-
-
 main :: IO ()
 main = do 
-        imagens <- get_images
+        imagens <- getImages
         play  janela                          -- janela onde irá decorrer o jogo
               bg                              -- cor do fundo da janela
               fr                              -- frame rate
