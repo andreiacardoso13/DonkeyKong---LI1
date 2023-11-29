@@ -85,6 +85,7 @@ executable primate-kong
         base ^>=4.16.4.0,
         random ^>=1.2.1.1,
         gloss ^>=1.13.2.2,
+        gloss-juicy,
         primate-kong
 
     -- Directories containing source files.
