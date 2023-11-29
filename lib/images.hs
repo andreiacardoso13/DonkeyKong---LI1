@@ -1,5 +1,4 @@
 module Images where
-
 import Graphics.Gloss
 import Graphics.Gloss.Juicy
 
@@ -18,11 +17,11 @@ data Imagens = Imagens {
 
 getImages :: IO [Picture]
 getImages = do
-               escada              <- loadJuicyJPG "imagens/ladder.png"
-               alcapao             <- loadJuicyJPG "imagens/alcapao.png"
-               plataforma          <- loadJuicyJPG "imagens/plataforma.png"
-               estrela             <- loadJuicyJPG "imagens/star.png"
-               moeda               <- loadJuicyJPG "imagens/coin.png"
-               vazio               <- loadJuicyJPG "imagens/vazio.png"
+               Just escada              <- loadJuicyJPG "imagens/ladder.png"
+               Just alcapao             <- loadJuicyJPG "imagens/alcapao.png"
+               Just plataforma          <- loadJuicyJPG "imagens/plataforma.png"
+               Just estrela             <- loadJuicyJPG "imagens/star.png"
+               Just moeda               <- loadJuicyJPG "imagens/coin.png"
+               Just vazio               <- loadJuicyJPG "imagens/vazio.png"
                let images = [escada, alcapao, plataforma, estrela, moeda]
                return images
