@@ -13,8 +13,19 @@ import LI12324
 hitbox :: Personagem -> Hitbox
 hitbox (Personagem {posicao = (x,y), tamanho = (c,l)}) = ((x-(c/2),y-(l/2)),(x+(c/2), y+(l/2)))
 
+
+mapaLimites :: Mapa -> Personagem -> Bool
+mapaLimites (Mapa _ _ blocos) p@(Personagem {posicao = (x, y), tamanho = (c, l)}) =
+  let (left, bottom) = fst (hitbox p)
+      (right, top) = snd (hitbox p)
+      mapaLargura = length (head blocos)
+      mapaAltura = length blocos
+  in left <= 0 || right >= fromIntegral mapaLargura || bottom <= 0 || top >= fromIntegral mapaAltura 
+  -- "fromIntegral" faz os valores mapaLargura e mapaAltura serem doubles como os valores das coords
+
+
 colisoesParede :: Mapa -> Personagem -> Bool
-colisoesParede (Mapa (_,_) _ _) p = undefined 
+colisoesParede (Mapa {}) p = undefined 
 -- true if the 1st htbx coord is on the left border or the 2nd htbx coord is on the right border 
 
 colisoesPersonagens :: Personagem -> Personagem -> Bool
