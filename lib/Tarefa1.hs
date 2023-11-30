@@ -15,21 +15,22 @@ hitbox (Personagem {posicao = (x,y), tamanho = (c,l)}) = ((x-(c/2),y-(l/2)),(x+(
 
 
 mapaLimites :: Mapa -> Personagem -> Bool
-mapaLimites (Mapa _ _ blocos) p@(Personagem {posicao = (x, y), tamanho = (c, l)}) =
-  let (left, bottom) = fst (hitbox p)
-      (right, top) = snd (hitbox p)
-      mapaLargura = length (head blocos)
-      mapaAltura = length blocos
-  in left <= 0 || right >= fromIntegral mapaLargura || bottom <= 0 || top >= fromIntegral mapaAltura 
+mapaLimites (Mapa _ _ blocos) p = eLim <= 0 || dLim >= fromIntegral mapaLargura || bLim <= 0 || tLim >= fromIntegral mapaAltura
+  where (eLim, bLim) = fst (hitbox p)
+        (dLim, tLim) = snd (hitbox p)
+        mapaLargura = length (head blocos)
+        mapaAltura = length blocos
   -- "fromIntegral" faz os valores mapaLargura e mapaAltura serem doubles como os valores das coords
 
+mapaChao :: Mapa -> Personagem -> Bool
+mapaChao (Mapa _ _ blocos) p = undefined
 
 colisoesParede :: Mapa -> Personagem -> Bool
 colisoesParede (Mapa {}) p = undefined 
 -- true if the 1st htbx coord is on the left border or the 2nd htbx coord is on the right border 
 
 colisoesPersonagens :: Personagem -> Personagem -> Bool
-colisoesPersonagens p1@(Personagem {posicao = (x1,y1), tamanho = (c1,l1)}) p2@(Personagem {posicao = (x2,y2), tamanho = (c2,l2)}) = compHtbx hb1 hb2 || compHtbx hb2 hb1
+colisoesPersonagens p1 p2 = compHtbx hb1 hb2 || compHtbx hb2 hb1
     where hb1 = hitbox p1
           hb2 = hitbox p2
           compHtbx hb1 hb2 = fst(fst hb1) >= fst(fst hb2) && fst(fst hb1) <= fst(snd hb2) && snd(fst hb1) >= snd(fst hb2) && snd(fst hb1) <= snd(snd hb2)
