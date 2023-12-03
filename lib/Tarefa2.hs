@@ -21,6 +21,12 @@ valida1Aux [] = True
 valida1Aux (h:t) | h == Plataforma = valida1Aux t
                  | otherwise = False
 
+valida3 :: Jogo -> Bool
+valida3 (Jogo {inimigos = [], jogador = Personagem {posicao = (x2,y2)}}) = True
+valida3 (Jogo {inimigos = ((Personagem {posicao = (x1,y1)}): t ), jogador = Personagem {posicao = (x2,y2)}}) 
+      | x1 == x2 && y1 == y2 = False
+      | otherwise = valida3 (Jogo {inimigos = t , jogador = Personagem {posicao = (x2,y2)}}) 
+
 valida4 :: Jogo -> Bool -- ainda não testada // verifica se o jogo tem pelo menos 2 inimigos
 valida4 (Jogo {inimigos = l }) = length l >= 2 
 
