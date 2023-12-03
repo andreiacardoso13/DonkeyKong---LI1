@@ -22,7 +22,7 @@ valida1Aux (h:t) | h == Plataforma = valida1Aux t
                  | otherwise = False
 
 {-|
-Recebe um jogo e verifica se todos os inimigos do tipo Fantasma têm 1 vida
+Recebe um jogo e verifica se a posição do jogador colide com a posição de algum outro personagem
 
 =Exemplos
 >>> valida3 (Jogo {inimigos = [(Personagem {posicao = (1,2)}), Personagem {posicao = (1,2)}], jogador = Personagem {posicao = (1,3)}}) = True
