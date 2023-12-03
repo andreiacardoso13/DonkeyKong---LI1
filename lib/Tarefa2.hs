@@ -21,6 +21,8 @@ valida1Aux [] = True
 valida1Aux (h:t) | h == Plataforma = valida1Aux t
                  | otherwise = False
 
+valida4 :: Jogo -> Bool -- ainda não testada
+valida4 (Jogo {inimigos = l }) = length l >= 2 
 
 {-
 data Mapa =
