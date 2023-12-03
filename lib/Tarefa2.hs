@@ -21,7 +21,6 @@ valida1Aux [] = True
 valida1Aux (h:t) | h == Plataforma = valida1Aux t
                  | otherwise = False
 
-<<<<<<< HEAD
 {-|
 Recebe um jogo e verifica se todos os inimigos do tipo Fantasma têm 1 vida
 
@@ -32,8 +31,6 @@ Recebe um jogo e verifica se todos os inimigos do tipo Fantasma têm 1 vida
 >>> valida3 (Jogo {inimigos = [(Personagem {posicao = (2,4)}), Personagem {posicao = (5,1)}], jogador = Personagem {posicao = (3,2)}}) = True
 -}
 
-=======
->>>>>>> 0fa0181ac102a1a339b950b7b606778bda4acee5
 valida3 :: Jogo -> Bool
 valida3 (Jogo {inimigos = [], jogador = Personagem {posicao = (x2,y2)}}) = True
 valida3 (Jogo {inimigos = ((Personagem {posicao = (x1,y1)}): t ), jogador = Personagem {posicao = (x2,y2)}}) 
