@@ -22,6 +22,22 @@ valida1Aux (h:t) | h == Plataforma = valida1Aux t
                  | otherwise = False
 
 {-|
+Verifica se todos os inimigos têm a propriedade ressalta a True, enquanto que o jogador a tem a False.
+
+=Exemplos
+>>> valida2 (Jogo {inimigos = [(Personagem {ressalta = True}), Personagem {ressalta = False}], jogador = Personagem {ressalta = False}}) = False
+>>> valida2 (Jogo {inimigos = [(Personagem {ressalta = False}), Personagem {ressalta = True}], jogador = Personagem {ressalta = False}}) = False
+>>> valida2 (Jogo {inimigos = [(Personagem {ressalta = True}), Personagem {ressalta = True}], jogador = Personagem {ressalta = True}}) = False
+>>> valida2 (Jogo {inimigos = [(Personagem {ressalta = True}), Personagem {ressalta = True}], jogador = Personagem {ressalta = False}}) = True
+-}
+
+valida2 :: Jogo -> Bool
+valida2 (Jogo {inimigos = [], jogador = (Personagem {ressalta = y})}) = True
+valida2 (Jogo {inimigos = ((Personagem {ressalta = x}): t ), jogador = (Personagem {ressalta = y})}) 
+      | x == True && y == False = valida2 (Jogo {inimigos = t, jogador = (Personagem {ressalta = y})}) 
+      | otherwise = False
+
+{-|
 Recebe um jogo e verifica se a posição do jogador colide com a posição de algum outro personagem
 
 =Exemplos
