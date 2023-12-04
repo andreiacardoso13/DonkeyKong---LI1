@@ -53,6 +53,16 @@ valida3 (Jogo {inimigos = ((Personagem {posicao = (x1,y1)}): t ), jogador = Pers
       | x1 == x2 && y1 == y2 = False
       | otherwise = valida3 (Jogo {inimigos = t , jogador = Personagem {posicao = (x2,y2)}}) 
 
+{-|
+Recebe um jogo e verifica se o jogo tem pelo menos 2 inimigos
+
+=Exemplos
+>>> valida4 (Jogo {inimigos = [(Personagem {tipo = Fantasma, vida = 5}), Personagem {posicao = (1,2), vida = 1}, Personagem {ressalta = True}]}) = True
+>>> valida4 (Jogo {inimigos = [(Personagem {posicao = (1,2), vida = 1}, Personagem {ressalta = True}]}) = True
+>>> valida4 (Jogo {inimigos = [(Personagem {ressalta = True}]}) = False
+>>> valida4 (Jogo {inimigos = []}) = False
+-}
+
 valida4 :: Jogo -> Bool -- ainda não testada // verifica se o jogo tem pelo menos 2 inimigos
 valida4 (Jogo {inimigos = l }) = length l >= 2 
 
