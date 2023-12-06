@@ -10,6 +10,14 @@ module Tarefa1 where
 
 import LI12324
 
+{-| Define o menor retângulo que contém uma personagem ou objeto.
+
+= Exemplos
+
+>>> hitbox (Personagem {posicao = (2.5,1), tamanho = (1,1)}) = ((2.0,0.5),(3.0,1.5))
+>>> hitbox (Personagem {posicao = (1,5.5), tamanho = (2,3)}) = ((0.0,4.0),(2.0,7.0))
+-}
+
 hitbox :: Personagem -> Hitbox
 hitbox (Personagem {posicao = (x,y), tamanho = (c,l)}) = ((x-(c/2),y-(l/2)),(x+(c/2), y+(l/2)))
 
@@ -22,18 +30,18 @@ mapaLimites (Mapa _ _ blocos) p = eLim <= 0 || dLim >= fromIntegral mapaLargura 
         mapaAltura = length blocos
   -- "fromIntegral" faz os valores mapaLargura e mapaAltura serem doubles como os valores das coords
 
-mapaChao :: Mapa -> Personagem -> Bool
-mapaChao (Mapa _ _ blocos) p@(Personagem {posicao = (x,y)}) = blc == Plataforma && snd(fst(hitbox p)) == snd(snd(hitbox blc))
-      where blc = procuraBlocoInf blocos (x,y)
+{- mapaChao :: Mapa -> Personagem -> Bool
+mapaChao (Mapa _ _ blocos) p@(Personagem {posicao = (x,y)}) = blc == Plataforma && snd (fst (hitbox p)) == snd (snd (hitbox blc))
+      where blc = procuraBlocoInf blocos (x,y) -}
 -- hitbox is only defined for characters, not blocks!! 
 
 procuraBlocoInf :: [[Bloco]] -> Posicao -> Bloco
 procuraBlocoInf ((h:t):ls) (x,y) | y > 0 = procuraBlocoInf ls (x,y-1)
-                              | x > 0 = procuraBlocoInf [t] (x-1,y)
-                              | otherwise = h
+                                 | x > 0 = procuraBlocoInf [t] (x-1,y)
+                                 | otherwise = h
 
 colisoesParede :: Mapa -> Personagem -> Bool
-colisoesParede m@(Mapa _ _ blocos) p@(Personagem {posicao = (x,y)}) = mapaLimites m p || mapaChao m p
+colisoesParede m@(Mapa _ _ blocos) p@(Personagem {posicao = (x,y)}) = mapaLimites m p -- || mapaChao m p
 -- true if the 1st htbx coord is on the left border or the 2nd htbx coord is on the right border 
 
 colisoesPersonagens :: Personagem -> Personagem -> Bool
