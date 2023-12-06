@@ -12,7 +12,14 @@ import LI12324
 import Tarefa1
 
 valida :: Jogo -> Bool
-valida = undefined
+valida jogo = valida1 jogo &&
+              valida2 jogo &&
+              valida3 jogo &&
+              valida4 jogo &&
+              valida5 jogo &&
+              valida6 jogo &&
+              valida7 jogo &&
+              valida8 jogo
 
 valida1 :: Jogo -> Bool -- verifica se o mapa tem chão
 valida1 (Jogo {mapa = Mapa _ _ (h:t)}) = valida1Aux (last t)
@@ -166,39 +173,16 @@ Recebe um jogo e verifica se o tamanho de alçapáo é igual ou superior ao do p
 valida7 :: Jogo -> Bool
 valida7 (Jogo {jogador = Personagem {tamanho = (x,y) }}) | x <= 1 = True
                                                          | otherwise = False
-
 {-
 
-data Jogo =
-  Jogo
-    { mapa          :: Mapa -- ^ mapa do jogo
-    , inimigos      :: [Personagem] -- ^ lista de inimigos no mapa
-    , colecionaveis :: [(Colecionavel, Posicao)] -- ^ lista de colecionaveis espalhados pelo mapa
-    , jogador       :: Personagem -- ^ o jogador
-    }
-  deriving (Eq, Read, Show)
+valida8 (Jogo {mapa = Mapa ((1,2), Norte) (1,2) [[Vazio,Vazio,Vazio],[Plataforma,Alcapao,Plataforma],[Vazio,Vazio,Vazio]], jogador = Personagem {posicao = (0,1)}})
+valida8' (Jogo {mapa = Mapa ((1,2), Norte) (1,2) [[Vazio,Vazio,Vazio],[Plataforma,Alcapao,Plataforma],[Vazio,Vazio,Vazio]]})
 
-
-data Personagem =
-  Personagem
-    { velocidade :: Velocidade
-    , tipo       :: Entidade
-    , posicao    :: Posicao
-    , direcao    :: Direcao
-    , tamanho    :: (Double, Double)
-    , emEscada   :: Bool -- ^ se está numa escada
-    , ressalta   :: Bool
-    , vida       :: Int -- ^ não negativo
-    , pontos     :: Int
-    , aplicaDano :: (Bool, Double) -- ^ se está armado e por quanto tempo ainda
-    }
-  deriving (Eq, Read, Show)
-
-
-
-
-
-
-
-
+valida8 utiliza a posicao do jogador presente em Personagem, valida8' utiliza a posicao do jogador presente em mapa
 -}
+
+valida8 :: Jogo -> Bool
+valida8 (Jogo {mapa = Mapa _ _ matriz, jogador = Personagem {posicao = (x,y)}}) = procuraBlocoInf matriz (x,y) == Vazio
+
+valida8' :: Jogo -> Bool
+valida8' (Jogo {mapa = Mapa ((x,y),_) _ matriz}) = procuraBlocoInf matriz (x,y) == Vazio
