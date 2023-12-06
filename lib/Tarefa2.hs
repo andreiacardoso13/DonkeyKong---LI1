@@ -107,61 +107,20 @@ transposta l = (map head l) : transposta (map tail l)
 
 validaPlataforma :: [[Bloco]] -> Bool
 validaPlataforma [] = True
-validaPlataforma (h:t) | funcao2 h == True = validaPlataforma t
+validaPlataforma (h:t) | validaLinhaPlat h == True = validaPlataforma t
                        | otherwise = False    
 
-funcao2 :: [Bloco] -> Bool
-funcao2 [] = True
-funcao2 [h] = True
-funcao2 (h1:h2:t) | h1 == Plataforma && h2 == Escada = funcao2 (funcao3 t)
-                  | h1 == Escada && h2 == Plataforma = funcao2 (h2:t)
+validaLinhaPlat :: [Bloco] -> Bool
+validaLinhaPlat [] = True
+validaLinhaPlat [h] = True
+validaLinhaPlat (h1:h2:t) | h1 == Plataforma && h2 == Escada = validaLinhaPlat (removeEscada t)
+                  | h1 == Escada && h2 == Plataforma = validaLinhaPlat (h2:t)
                   | length (h1:h2:t) == 2 && h1 == Escada && h2 == Escada = False
-                  | h1 == Escada && h2 == Escada = funcao2 (h2:t)
+                  | h1 == Escada && h2 == Escada = validaLinhaPlat (h2:t)
                   | h1 == Escada && h2 /= Plataforma = False
-                  | otherwise = funcao2 (h2:t)
+                  | otherwise = validaLinhaPlat (h2:t)
 
-funcao3 :: [Bloco] -> [Bloco]
-funcao3 [] = []
-funcao3 (h:t) | h == Escada = funcao3 t
-              | otherwise = (h:t)
-
-
-{-
-plataforma :: [Bloco] -> [Bloco] -> [Bloco] -> Bool
-plataforma (h1:h2:t) | h1 == Plataforma && h2 == Escada = plataforma2 
-
-plataforma2 :: [Bloco] -> [Bloco] -> [Bloco] -> Bool
-plataforma2 (h:t) 
-
-
-
-linhaparacoluna :: [[Bloco]] -> [Bloco] 
-linhaparacoluna [] = []
-linhaparacoluna (h:t) = head h : linhaparacoluna t
-
-valida6Plataforma' :: [Bloco] -> Bool
-valida6Plataforma' (h:hs:t) | h == Plataforma && hs == Escada = valida6Plataformaaa t
-                            | hs == Escada && h == Escada = valida6PlataformaAux t
-                            | otherwise = True
-
-
-valida6PlataformaAux :: [Bloco] -> Bool
-valida6PlataformaAux [] = False
-valida6PlataformaAux (h:t) | h == Plataforma = True
-                           | otherwise = valida6PlataformaAux t
-
-
-valida6Plataforma :: [Bloco] -> [Bloco] -> [Bloco] -> Bool
-valida6Plataforma [] [] [] = True
-valida6Plataforma (h1:t1) (h2:t2) (h3:t3) | h1 /= Plataforma && h2 == Escada && h3 == Plataforma = valida6Plataforma t1 t2 t3
-                                          | h1 == Plataforma && h2 == Escada && h3 /= Plataforma = valida6Plataforma t1 t2 t3
-                                          | h1 /= Plataforma && h2 == Escada && h3 /= Plataforma = False
-                                          | otherwise = True
-
-
-Escadas n˜ao podem come¸car/terminar em al¸cap˜oes, e pelo menos uma
-das suas extremidades tem que ser do tipo Plataforma.
-
-valida6 (Jogo {mapa = Mapa ((1,2),Norte) (1,2) [[Escada,Alcapao,Vazio,Plataforma],[Escada,Escada,Vazio,Vazio]]})
-
--}
+removeEscada :: [Bloco] -> [Bloco]
+removeEscada [] = []
+removeEscada (h:t) | h == Escada = removeEscada t
+                   | otherwise = (h:t)
