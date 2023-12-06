@@ -9,6 +9,7 @@ Módulo para a realização da Tarefa 2 de LI1 em 2023/24.
 module Tarefa2 where
 
 import LI12324
+import Tarefa1
 
 valida :: Jogo -> Bool
 valida = undefined
@@ -150,3 +151,54 @@ removeEscada :: [Bloco] -> [Bloco]
 removeEscada [] = []
 removeEscada (h:t) | h == Escada = removeEscada t
                    | otherwise = (h:t)
+
+
+{-|
+
+Recebe um jogo e verifica se o tamanho de alçapáo é igual ou superior ao do personagem
+
+=Exemplos
+>>> valida7 (Jogo {jogador = Personagem {tamanho = (1.1,2)}}) = False
+>>> valida7 (Jogo {jogador = Personagem {tamanho = (1,2)}}) = True
+>>> valida7 (Jogo {jogador = Personagem {tamanho = (0.9,2)}}) = True
+-}
+
+valida7 :: Jogo -> Bool
+valida7 (Jogo {jogador = Personagem {tamanho = (x,y) }}) | x <= 1 = True
+                                                         | otherwise = False
+
+{-
+
+data Jogo =
+  Jogo
+    { mapa          :: Mapa -- ^ mapa do jogo
+    , inimigos      :: [Personagem] -- ^ lista de inimigos no mapa
+    , colecionaveis :: [(Colecionavel, Posicao)] -- ^ lista de colecionaveis espalhados pelo mapa
+    , jogador       :: Personagem -- ^ o jogador
+    }
+  deriving (Eq, Read, Show)
+
+
+data Personagem =
+  Personagem
+    { velocidade :: Velocidade
+    , tipo       :: Entidade
+    , posicao    :: Posicao
+    , direcao    :: Direcao
+    , tamanho    :: (Double, Double)
+    , emEscada   :: Bool -- ^ se está numa escada
+    , ressalta   :: Bool
+    , vida       :: Int -- ^ não negativo
+    , pontos     :: Int
+    , aplicaDano :: (Bool, Double) -- ^ se está armado e por quanto tempo ainda
+    }
+  deriving (Eq, Read, Show)
+
+
+
+
+
+
+
+
+-}
