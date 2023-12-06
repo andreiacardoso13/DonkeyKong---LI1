@@ -21,6 +21,10 @@ import LI12324
 hitbox :: Personagem -> Hitbox
 hitbox (Personagem {posicao = (x,y), tamanho = (c,l)}) = ((x-(c/2),y-(l/2)),(x+(c/2), y+(l/2)))
 
+{-| Testa se uma personagem se encontra em colisão com os limites do mapa.
+
+= Exemplos 
+-}
 
 mapaLimites :: Mapa -> Personagem -> Bool
 mapaLimites (Mapa _ _ blocos) p = eLim <= 0 || dLim >= fromIntegral mapaLargura || bLim <= 0 || tLim >= fromIntegral mapaAltura
