@@ -83,6 +83,32 @@ valida5 (Jogo {inimigos = ((Personagem {tipo = y, vida = x}): t )}) |y == Fantas
                                                                                        else False
                                                                     |otherwise = valida5 (Jogo {inimigos = t })
 
+
+{-|
+
+Recebe um jogo e verifica se as escadas são validas
+(uma escada não pode começar/terminar em alçapões e pelo menos
+uma das suas extremidades tem que ser do tipo Plataforma)
+
+=Exemplos
+>>> valida6 (Jogo {mapa = Mapa ((1,2),Norte) (1,2) [[Plataforma,Escada,Vazio,Escada],
+                                                    [Escada,Escada,Escada,Plataforma],
+                                                    [Vazio,Escada,Plataforma,Vazio],
+                                                    [Alcapao,Plataforma,Vazio,Plataforma]]}) = True
+>>> valida6 (Jogo {mapa = Mapa ((1,2),Norte) (1,2) [[Plataforma,Alcapao,Vazio,Escada],
+                                                    [Escada,Escada,Escada,Plataforma],
+                                                    [Vazio,Escada,Plataforma,Vazio],
+                                                    [Alcapao,Plataforma,Vazio,Plataforma]]}) = False
+>>> valida6 (Jogo {mapa = Mapa ((1,2),Norte) (1,2) [[Plataforma,Escada,Vazio,Escada],
+                                                    [Escada,Escada,Escada,Plataforma],
+                                                    [Vazio,Escada,Plataforma,Vazio],
+                                                    [Alcapao,Escada,Vazio,Plataforma]]}) = False
+>>> valida6 (Jogo {mapa = Mapa ((1,2),Norte) (1,2) [[Plataforma,Plataforma,Vazio,Escada],
+                                                    [Escada,Escada,Escada,Plataforma],
+                                                    [Vazio,Escada,Plataforma,Vazio],
+                                                    [Alcapao,Alcapao,Vazio,Plataforma]]}) = False
+-}
+
 valida6 :: Jogo -> Bool
 valida6 (Jogo {mapa = Mapa _ _ (h:t)}) = validaAlcapao (h:t) == True && validaPlataforma (transposta (h:t)) == True 
 
