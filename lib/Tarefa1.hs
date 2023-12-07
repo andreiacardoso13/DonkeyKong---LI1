@@ -12,7 +12,7 @@ import LI12324
 import Mapa
 import Data.Fixed
 
--- Personagem {velocidade = _, tipo = _, posicao = (x,y), direcao = _, tamanho = (c,l), emEscada = _, ressalta = _, vida = _, pontos = _, aplicaDano = _}
+-- Personagem {velocidade = _, tipo = _, posicao = (x,y), direcao = _, tamanho = (l,a), emEscada = _, ressalta = _, vida = _, pontos = _, aplicaDano = _}
 -- Personagem {velocidade = (2,2), tipo = Fantasma, posicao = (2.5,1), direcao = Este, tamanho = (1,1), emEscada = False, ressalta = True, vida = 1, pontos = 0, aplicaDano = (False,0)}
 
 {-| Define o menor retângulo que contém uma personagem ou objeto.
@@ -24,7 +24,7 @@ import Data.Fixed
 -}
 
 hitbox :: Personagem -> Hitbox
-hitbox (Personagem {velocidade = _, tipo = _, posicao = (x,y), direcao = _, tamanho = (c,l), emEscada = _, ressalta = _, vida = _, pontos = _, aplicaDano = _}) = ((x-(c/2),y-(l/2)),(x+(c/2), y+(l/2)))
+hitbox (Personagem {posicao = (x,y), tamanho = (l,a)}) = ((x-(l/2),y-(a/2)),(x+(l/2), y+(a/2)))
 
 {-| Testa se uma personagem se encontra em colisão com os limites do mapa.
 
@@ -35,7 +35,7 @@ hitbox (Personagem {velocidade = _, tipo = _, posicao = (x,y), direcao = _, tama
 -}
 
 mapaLimites :: Mapa -> Personagem -> Bool
-mapaLimites (Mapa _ _ blocos) p@(Personagem {velocidade = v, tipo = ent, posicao = (x,y), direcao = dir, tamanho = (c,l), emEscada = esc, ressalta = res, vida = vi, pontos = pts, aplicaDano = apdn}) = eLim <= 0 || dLim >= fromIntegral mapaLargura || bLim <= 0 || tLim >= fromIntegral mapaAltura
+mapaLimites (Mapa _ _ blocos) p = eLim <= 0 || dLim >= fromIntegral mapaLargura || bLim <= 0 || tLim >= fromIntegral mapaAltura
   where (eLim, bLim) = fst (hitbox p)
         (dLim, tLim) = snd (hitbox p)
         mapaLargura = length (head blocos)
@@ -70,7 +70,7 @@ procuraBlocoInf ((h:t):ls) (x,y) | y > 0 = procuraBlocoInf ls (x,y-1)
                                  | otherwise = h
 
 colisoesParede :: Mapa -> Personagem -> Bool
-colisoesParede m@(Mapa _ _ blocos) p@(Personagem {posicao = (x,y)}) = mapaLimites m p || mapaChao m p
+colisoesParede m p = mapaLimites m p || mapaChao m p
 
 {-| Testa se duas personagens se encontram em colisão.
 
