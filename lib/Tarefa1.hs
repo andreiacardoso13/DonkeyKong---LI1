@@ -46,14 +46,29 @@ mapaChao (Mapa _ _ blocos) p@(Personagem {posicao = (x,y)}) = blc == Plataforma 
       where blc = procuraBlocoInf blocos (x,y) -}
 -- hitbox is only defined for characters, not blocks!! 
 
+{-| Indica o tipo de Bloco situado abaixo do Bloco onde a personagem se encontra.
+
+= Exemplos
+
+>>> procuraBlocoInf [[Vazio,Plataforma,Vazio],[Vazio,Escada,Vazio],[Plataforma,Plataforma,Plataforma]] (1.5,1.5) = Plataforma
+>>> procuraBlocoInf [[Vazio,Plataforma,Vazio],[Vazio,Escada,Vazio],[Plataforma,Plataforma,Plataforma]] (2.5,0.5) = Vazio
+-}
+
 procuraBlocoInf :: [[Bloco]] -> Posicao -> Bloco
 procuraBlocoInf ((h:t):ls) (x,y) | y > 0 = procuraBlocoInf ls (x,y-1)
-                                 | x > 0 = procuraBlocoInf [t] (x-1,y)
+                                 | x > 1 = procuraBlocoInf [t] (x-1,y)
                                  | otherwise = h
 
 colisoesParede :: Mapa -> Personagem -> Bool
 colisoesParede m@(Mapa _ _ blocos) p@(Personagem {posicao = (x,y)}) = mapaLimites m p -- || mapaChao m p
--- true if the 1st htbx coord is on the left border or the 2nd htbx coord is on the right border 
+
+{-| Testa se duas personagens se encontram em colisão.
+
+= Exemplos
+
+>>> colisoesPersonagens (Personagem {velocidade = (0,0), tipo = Fantasma, posicao = (1.5,1.5), direcao = Sul, tamanho = (1,1), emEscada = True, ressalta = True, vida = 1, pontos = 0, aplicaDano = (False,0)}) (Personagem {velocidade = (0,0), tipo = Jogador, posicao = (2.5,1.5), direcao = Oeste, tamanho = (1,1), emEscada = False, ressalta = False, vida = 3, pontos = 0, aplicaDano = (False,0)}) = True
+>>> colisoesPersonagens (Personagem {velocidade = (0,0), tipo = Fantasma, posicao = (1,1.5), direcao = Sul, tamanho = (1,1), emEscada = True, ressalta = True, vida = 1, pontos = 0, aplicaDano = (False,0)}) (Personagem {velocidade = (0,0), tipo = Jogador, posicao = (2.5,1.5), direcao = Oeste, tamanho = (1,1), emEscada = False, ressalta = False, vida = 3, pontos = 0, aplicaDano = (False,0)}) = False
+-}
 
 colisoesPersonagens :: Personagem -> Personagem -> Bool
 colisoesPersonagens p1 p2 = compHtbx hb1 hb2 || compHtbx hb2 hb1
