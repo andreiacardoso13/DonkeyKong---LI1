@@ -10,6 +10,7 @@ module Tarefa1 where
 
 import LI12324
 import Mapa
+import Data.Fixed
 
 -- Personagem {velocidade = _, tipo = _, posicao = (x,y), direcao = _, tamanho = (c,l), emEscada = _, ressalta = _, vida = _, pontos = _, aplicaDano = _}
 -- Personagem {velocidade = (2,2), tipo = Fantasma, posicao = (2.5,1), direcao = Este, tamanho = (1,1), emEscada = False, ressalta = True, vida = 1, pontos = 0, aplicaDano = (False,0)}
@@ -41,9 +42,18 @@ mapaLimites (Mapa _ _ blocos) p@(Personagem {velocidade = v, tipo = ent, posicao
         mapaAltura = length blocos
   -- "fromIntegral" faz os valores mapaLargura e mapaAltura serem doubles como os valores das coords
 
-{- mapaChao :: Mapa -> Personagem -> Bool
-mapaChao (Mapa _ _ blocos) p@(Personagem {posicao = (x,y)}) = blc == Plataforma && snd (fst (hitbox p)) == snd (snd (hitbox blc))
-      where blc = procuraBlocoInf blocos (x,y) -}
+{-| Testa se uma personagem se encontra em colisão com (em cima de) algum bloco de plataforma.
+
+= Exemplos
+
+>>> mapaChao (Mapa ((0,0), Este) (0,0) [[Vazio,Plataforma,Vazio],[Vazio,Escada,Vazio],[Plataforma,Plataforma,Plataforma]]) (Personagem {velocidade = (0,0), tipo = Jogador, posicao = (1.5,1.5), direcao = Norte, tamanho = (1,1), emEscada = True, ressalta = False, vida = 3, pontos = 0, aplicaDano = (False, 0)}) = True
+>>> mapaChao (Mapa ((0,0), Este) (0,0) [[Vazio,Plataforma,Vazio],[Vazio,Escada,Vazio],[Plataforma,Plataforma,Plataforma]]) (Personagem {velocidade = (0,0), tipo = Fantasma, posicao = (1.5,1.5), direcao = Este, tamanho = (0.5,0.5), emEscada = True, ressalta = True, vida = 1, pontos = 0, aplicaDano = (False, 0)}) = False
+-}
+
+mapaChao :: Mapa -> Personagem -> Bool
+mapaChao (Mapa _ _ blocos) p@(Personagem {posicao = (x,y)}) = blc == Plataforma && mod' a 1 == 0
+      where blc = procuraBlocoInf blocos (x,y)
+            a = snd(fst(hitbox p))
 -- hitbox is only defined for characters, not blocks!! 
 
 {-| Indica o tipo de Bloco situado abaixo do Bloco onde a personagem se encontra.
@@ -60,7 +70,7 @@ procuraBlocoInf ((h:t):ls) (x,y) | y > 0 = procuraBlocoInf ls (x,y-1)
                                  | otherwise = h
 
 colisoesParede :: Mapa -> Personagem -> Bool
-colisoesParede m@(Mapa _ _ blocos) p@(Personagem {posicao = (x,y)}) = mapaLimites m p -- || mapaChao m p
+colisoesParede m@(Mapa _ _ blocos) p@(Personagem {posicao = (x,y)}) = mapaLimites m p || mapaChao m p
 
 {-| Testa se duas personagens se encontram em colisão.
 
