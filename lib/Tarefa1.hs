@@ -11,27 +11,30 @@ module Tarefa1 where
 import LI12324
 import Mapa
 
+-- Personagem {velocidade = _, tipo = _, posicao = (x,y), direcao = _, tamanho = (c,l), emEscada = _, ressalta = _, vida = _, pontos = _, aplicaDano = _}
+-- Personagem {velocidade = (2,2), tipo = Fantasma, posicao = (2.5,1), direcao = Este, tamanho = (1,1), emEscada = False, ressalta = True, vida = 1, pontos = 0, aplicaDano = (False,0)}
+
 {-| Define o menor retângulo que contém uma personagem ou objeto.
 
 = Exemplos
 
->>> hitbox (Personagem {posicao = (2.5,1), tamanho = (1,1)}) = ((2.0,0.5),(3.0,1.5))
->>> hitbox (Personagem {posicao = (1,5.5), tamanho = (2,3)}) = ((0.0,4.0),(2.0,7.0))
+>>> hitbox (Personagem {velocidade = (2,2), tipo = Fantasma, posicao = (2.5,1), direcao = Este, tamanho = (1,1), emEscada = False, ressalta = True, vida = 1, pontos = 0, aplicaDano = (False,0)}) = ((2.0,0.5),(3.0,1.5))
+>>> hitbox (Personagem {velocidade = (0,0), tipo = MacacoMalvado, posicao = (1,5.5), direcao = Sul, tamanho = (2,3), emEscada = False, ressalta = False, vida = 1, pontos = 0, aplicaDano = (False,0)}) = ((0.0,4.0),(2.0,7.0))
 -}
 
 hitbox :: Personagem -> Hitbox
-hitbox (Personagem {posicao = (x,y), tamanho = (c,l)}) = ((x-(c/2),y-(l/2)),(x+(c/2), y+(l/2)))
+hitbox (Personagem {velocidade = _, tipo = _, posicao = (x,y), direcao = _, tamanho = (c,l), emEscada = _, ressalta = _, vida = _, pontos = _, aplicaDano = _}) = ((x-(c/2),y-(l/2)),(x+(c/2), y+(l/2)))
 
 {-| Testa se uma personagem se encontra em colisão com os limites do mapa.
 
 = Exemplos
 
->>> mapaLimites mapaPrincipal (Personagem {posicao = (0,0), tamanho = (1,1)}) = True
->>> mapaLimites mapaPrincipal (Personagem {posicao = (4,3), tamanho = (1,1)}) = False
+>>> mapaLimites mapaPrincipal (Personagem {velocidade = (-2,0), tipo = Fantasma, posicao = (0,0), direcao = Oeste, tamanho = (1,1), emEscada = False, ressalta = True, vida = 1, pontos = 0, aplicaDano = (False,0)}) = True
+>>> mapaLimites mapaPrincipal (Personagem {velocidade = (2,0), tipo = Fantasma, posicao = (4,3), direcao = Este, tamanho = (1,1), emEscada = False, ressalta = True, vida = 1, pontos = 0, aplicaDano = (False,0)}) = False
 -}
 
 mapaLimites :: Mapa -> Personagem -> Bool
-mapaLimites (Mapa _ _ blocos) p = eLim <= 0 || dLim >= fromIntegral mapaLargura || bLim <= 0 || tLim >= fromIntegral mapaAltura
+mapaLimites (Mapa _ _ blocos) p@(Personagem {velocidade = v, tipo = ent, posicao = (x,y), direcao = dir, tamanho = (c,l), emEscada = esc, ressalta = res, vida = vi, pontos = pts, aplicaDano = apdn}) = eLim <= 0 || dLim >= fromIntegral mapaLargura || bLim <= 0 || tLim >= fromIntegral mapaAltura
   where (eLim, bLim) = fst (hitbox p)
         (dLim, tLim) = snd (hitbox p)
         mapaLargura = length (head blocos)
