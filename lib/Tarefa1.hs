@@ -9,6 +9,7 @@ Módulo para a realização da Tarefa 1 de LI1 em 2023/24.
 module Tarefa1 where
 
 import LI12324
+import Mapa
 
 {-| Define o menor retângulo que contém uma personagem ou objeto.
 
@@ -23,7 +24,10 @@ hitbox (Personagem {posicao = (x,y), tamanho = (c,l)}) = ((x-(c/2),y-(l/2)),(x+(
 
 {-| Testa se uma personagem se encontra em colisão com os limites do mapa.
 
-= Exemplos 
+= Exemplos
+
+>>> mapaLimites mapaPrincipal (Personagem {posicao = (0,0), tamanho = (1,1)}) = True
+>>> mapaLimites mapaPrincipal (Personagem {posicao = (4,3), tamanho = (1,1)}) = False
 -}
 
 mapaLimites :: Mapa -> Personagem -> Bool
