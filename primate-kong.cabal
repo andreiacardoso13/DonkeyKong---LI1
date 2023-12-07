@@ -50,6 +50,8 @@ library
         Tarefa2
         Tarefa3
         Tarefa4
+        Imagens
+        Mapa
 
     -- Modules included in this library but not exported.
     -- other-modules:
