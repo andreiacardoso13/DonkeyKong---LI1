@@ -28,11 +28,16 @@ mapaInicial = Mapa ((0,0), Este) (0,0) [[Vazio     ,Vazio     ,Vazio     ,Vazio 
 mapaPrincipal :: Mapa 
 mapaPrincipal = Mapa ((0.5,5.5), Oeste) (0.5,2.5)
                  [[Plataforma, Plataforma, Plataforma, Plataforma, Plataforma, Plataforma, Plataforma, Plataforma, Plataforma, Plataforma]
-                 ,[Vazio, Vazio, Vazio, Vazio, Vazio, Vazio, Vazio, Vazio, Vazio, Vazio]
-                 ,[Vazio, Vazio, Vazio, Vazio, Vazio, Vazio, Vazio, Vazio, Vazio, Vazio]
-                 ,[Plataforma, Plataforma, Vazio, Vazio, Vazio, Vazio, Plataforma, Plataforma, Plataforma, Plataforma]
-                 ,[Vazio, Vazio, Vazio, Vazio, Vazio, Vazio, Vazio, Vazio, Escada, Vazio]
-                 ,[Vazio, Vazio, Vazio, Vazio, Vazio, Vazio, Vazio, Vazio, Escada, Vazio]
+                 ,[Vazio     , Vazio     , Vazio     , Vazio     , Vazio     , Vazio     , Vazio     , Vazio     , Vazio     , Vazio     ]
+                 ,[Vazio     , Vazio     , Vazio     , Vazio     , Vazio     , Vazio     , Vazio     , Vazio     , Vazio     , Vazio     ]
+                 ,[Plataforma, Plataforma, Vazio     , Vazio     , Vazio     , Vazio     , Plataforma, Plataforma, Plataforma, Plataforma]
+                 ,[Vazio     , Vazio     , Vazio     , Vazio     , Vazio     , Vazio     , Vazio     , Vazio     , Escada    , Vazio     ]
+                 ,[Vazio     , Vazio     , Vazio     , Vazio     , Vazio     , Vazio     , Vazio     , Vazio     , Escada    , Vazio     ]
                  ,[Plataforma, Plataforma, Plataforma, Plataforma, Plataforma, Plataforma, Plataforma, Plataforma, Plataforma, Plataforma]
                  ]
+
+m1 :: Mapa
+m1 = Mapa ((0,0), Este) (0,0) [[Vazio     , Plataforma, Vazio     ],
+                               [Vazio     , Escada    , Vazio     ],
+                               [Plataforma, Plataforma, Plataforma]]
 
