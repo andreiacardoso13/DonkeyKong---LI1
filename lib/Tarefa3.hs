@@ -29,7 +29,56 @@ sendo esta no meu tamanho do menor retângulo que contém um personagem
 hitboxDano :: Personagem -> Hitbox
 hitboxDano (Personagem {posicao = (x,y), tamanho = (l,a), direcao = dir}) | dir == Oeste = ((x-(3*l/2),y-(a/2)),(x - (l/2), y + (a/2)))
                                                                           | dir == Este = ((x + (l/2),y-(a/2)),(x + (3*l/2),y + (a/2)))
+{-|
+Se a hitbox de dano do jogador colidir com um inimigo retira uma vida ao mesmo
 
+=Exemplos
+>>>ataqueJogador [Personagem {velocidade = (1,2)
+                             ,tipo = Fantasma
+                             ,posicao = (7,7)
+                             ,direcao = Este
+                             ,tamanho = (2,2)
+                             ,emEscada = False
+                             ,ressalta = True
+                             ,vida = 1,pontos = 0
+                             ,aplicaDano = (False,0)}
+                 ,Personagem {velocidade = (1,2)
+                             ,tipo = Fantasma
+                             ,posicao = (1,1)
+                             ,direcao = Este
+                             ,tamanho = (2,2)
+                             ,emEscada = False
+                             ,ressalta = True
+                             ,vida = 1,pontos = 0
+                             ,aplicaDano = (False,0)
+                             }
+                 ] 
+                 (Personagem {posicao = (0.5,1)
+                             ,direcao = Este
+                             ,tamanho = (1,2)
+                             ,aplicaDano = (True,5)})
+                 =
+                [Personagem {velocidade = (1.0,2.0)
+                            ,tipo = Fantasma
+                            ,posicao = (1.0,1.0)
+                            ,direcao = Este
+                            ,tamanho = (2.0,2.0)
+                            ,emEscada = False
+                            ,ressalta = True
+                            ,vida = 0
+                            ,pontos = 0
+                            ,aplicaDano = (False,0.0)}
+                ,Personagem {velocidade = (1.0,2.0)
+                            ,tipo = Fantasma
+                            ,posicao = (1.0,1.0)
+                            ,direcao = Este
+                            ,tamanho = (2.0,2.0)
+                            ,emEscada = False
+                            ,ressalta = True
+                            ,vida = 0
+                            ,pontos = 0
+                            ,aplicaDano = (False,0.0)}]
+-}
 
 ataqueJogador :: [Personagem] -> Personagem -> [Personagem]
 ataqueJogador [] _ = []
