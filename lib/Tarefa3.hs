@@ -80,7 +80,7 @@ Se a hitbox de dano do jogador colidir com um inimigo retira uma vida ao mesmo
                             ,aplicaDano = (False,0.0)}]
 -}
 
-ataqueJogador :: [Personagem] -> Personagem -> [Personagem]
+ataqueJogador :: [Personagem] -> Personagem -> [Personagem] -- terá de ser usada numa futura função que recebe um jogo e verifica se a aplicaDano do Jogador tá ativa
 ataqueJogador [] _ = []
 ataqueJogador ((Personagem {velocidade = vI
                            ,tipo = entI
@@ -174,15 +174,65 @@ colisaoHitbox ((x1,y1),(x2,y2)) ((x3,y3),(x4,y4)) | x1 >= x3 && x1 <= x4 && y2 >
                                                   | otherwise = False
 
 
-
-
-
-{-
-Um inimigo perde 1 (uma) vida se estiver dentro da hitbox de dano de
-um jogador armado. Por jogador armado entende-se um jogador cuja
-componente aplicaDano esteja activa e com tempo restante. Note
-que a hitbox de dano n˜ao ´e a mesma hitbox do jogador, mas antes uma
-hitbox com as dimens˜oes do jogador posicionada exactamente `a frente
-do jogador, cf. 
-
--}
+ataqueInimigo :: [Personagem] -> Personagem -> Personagem -- ainda nao testada
+ataqueInimigo [] p = p
+ataqueInimigo ((Personagem {posicao = (xInimigo,yInimigo)
+                           ,direcao = dirI
+                           ,tamanho = (lInimigo,aInimigo)
+                           }
+               ) :t) 
+              (Personagem {velocidade = vJ
+                          ,tipo = entJ
+                          ,posicao = (xJOgador,yJogador)
+                          ,direcao = dirJ
+                          ,tamanho = (lJogador,aJogador)
+                          ,emEscada = escJ
+                          ,ressalta = resJ
+                          ,vida = vidJ
+                          ,pontos = pJ
+                         ,aplicaDano = (aplicaJ, tempo)
+                          }
+              )
+    | colisaoHitbox (hitbox (Personagem {posicao = (xInimigo,yInimigo)
+                                        ,direcao = dirI
+                                        ,tamanho = (lInimigo,aInimigo)
+                                        }
+                            )
+                    )
+                    (hitbox (Personagem {velocidade = vJ
+                                            ,tipo = entJ
+                                            ,posicao = (xJOgador,yJogador)
+                                            ,direcao = dirJ
+                                            ,tamanho = (lJogador,aJogador)
+                                            ,emEscada = escJ
+                                            ,ressalta = resJ
+                                            ,vida = vidJ
+                                            ,pontos = pJ
+                                            ,aplicaDano = (aplicaJ, tempo)
+                                            }
+                                )
+                    )
+                    = (Personagem {velocidade = vJ
+                                  ,tipo = entJ
+                                  ,posicao = (xJOgador,yJogador)
+                                  ,direcao = dirJ
+                                  ,tamanho = (lJogador,aJogador)
+                                  ,emEscada = escJ
+                                  ,ressalta = resJ
+                                  ,vida = vidJ - 1 
+                                  ,pontos = pJ
+                                  ,aplicaDano = (aplicaJ, tempo)
+                                   }
+                      )
+    | otherwise = ataqueInimigo t (Personagem {velocidade = vJ
+                                              ,tipo = entJ
+                                              ,posicao = (xJOgador,yJogador)
+                                              ,direcao = dirJ
+                                              ,tamanho = (lJogador,aJogador)
+                                              ,emEscada = escJ
+                                              ,ressalta = resJ
+                                              ,vida = vidJ
+                                              ,pontos = pJ
+                                              ,aplicaDano = (aplicaJ, tempo)
+                                              }
+                                   )
