@@ -336,7 +336,7 @@ Recebe um jogo e verifica se o tamanho de alçapáo é igual ou superior ao do p
 
 validaLarguraAlcapao :: Jogo -> Bool
 validaLarguraAlcapao (Jogo {jogador = Personagem {tamanho = (x,y) }}) | x <= 1 = True
-                                                         | otherwise = False
+                                                                      | otherwise = False
 
 {-|
 
