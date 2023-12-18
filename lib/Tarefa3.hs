@@ -144,78 +144,8 @@ Se a hitbox de dano do jogador colidir com um inimigo retira uma vida ao inimigo
 
 ataqueJogador :: [Personagem] -> Personagem -> [Personagem] -- terá de ser usada numa futura função que recebe um jogo e verifica se a aplicaDano do Jogador tá ativa
 ataqueJogador [] _ = []
-ataqueJogador ((Personagem {velocidade = vI
-                           ,tipo = entI
-                           ,posicao = (xInimigo,yInimigo)
-                           ,direcao = dirI
-                           ,tamanho = (lInimigo,aInimigo)
-                           ,emEscada = escI
-                           ,ressalta = resI
-                           ,vida = vidI
-                           ,pontos = pI
-                           ,aplicaDano = aplicaI
-                           }
-               ) :t) 
-              (Personagem {posicao = (xJogador, yJogador)
-                          ,direcao = dirJ
-                          ,tamanho = (lJogador, aJogador)
-                          ,aplicaDano = (aplicaJ, tempo)
-                          }
-              )
-    | colisaoHitbox (hitbox (Personagem {velocidade = vI
-                                        ,tipo = entI
-                                        ,posicao = (xInimigo,yInimigo)
-                                        ,direcao = dirI
-                                        ,tamanho = (lInimigo,aInimigo)
-                                        ,emEscada = escI
-                                        ,ressalta = resI
-                                        ,vida = vidI
-                                        ,pontos = pI
-                                        ,aplicaDano = aplicaI
-                                         }
-                            )
-                    )
-                    (hitboxDano (Personagem {posicao = (xJogador, yJogador)
-                                            ,direcao = dirJ
-                                            ,tamanho = (lJogador, aJogador)
-                                            ,aplicaDano = (aplicaJ, tempo)
-                                            }
-                                )
-                    )
-                    = (Personagem {velocidade = vI
-                                  ,tipo = entI
-                                  ,posicao = (xInimigo,yInimigo)
-                                  ,direcao = dirI
-                                  ,tamanho = (lInimigo,aInimigo)
-                                  ,emEscada = escI
-                                  ,ressalta = resI
-                                  ,vida = vidI - 1
-                                  ,pontos = pI
-                                  ,aplicaDano = aplicaI
-                                   }
-                      ) : ataqueJogador t (Personagem {posicao = (xJogador, yJogador)
-                                                      ,direcao = dirJ
-                                                      ,tamanho = (lJogador, aJogador)
-                                                      ,aplicaDano = (aplicaJ, tempo)
-                                                      }
-                                          )
-    | otherwise = (Personagem {velocidade = vI
-                              ,tipo = entI
-                              ,posicao = (xInimigo,yInimigo)
-                              ,direcao = dirI
-                              ,tamanho = (lInimigo,aInimigo)
-                              ,emEscada = escI
-                              ,ressalta = resI
-                              ,vida = vidI
-                              ,pontos = pI
-                              ,aplicaDano = aplicaI
-                              }
-                   ) : ataqueJogador t (Personagem {posicao = (xJogador, yJogador)
-                                                   ,direcao = dirJ
-                                                   ,tamanho = (lJogador, aJogador)
-                                                   ,aplicaDano = (aplicaJ, tempo)
-                                                   }
-                                       )
+ataqueJogador (inim :t) jog | colisaoHitbox (hitbox inim) (hitboxDano jog) = (inim {vida = vida inim - 1}) : ataqueJogador t jog
+                            | otherwise = inim : ataqueJogador t jog
         
 
 {-|
