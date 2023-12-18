@@ -29,6 +29,67 @@ sendo esta no meu tamanho do menor retângulo que contém um personagem
 hitboxDano :: Personagem -> Hitbox
 hitboxDano (Personagem {posicao = (x,y), tamanho = (l,a), direcao = dir}) | dir == Oeste = ((x-(3*l/2),y-(a/2)),(x - (l/2), y + (a/2)))
                                                                           | dir == Este = ((x + (l/2),y-(a/2)),(x + (3*l/2),y + (a/2)))
+
+movimenta1 :: Jogo -> Jogo
+movimenta1 (Jogo {mapa = m 
+                 ,inimigos = listaInimigos
+                 ,colecionaveis = listaColecionaveis
+                 ,jogador = Personagem {velocidade = v
+                                       ,tipo = ent
+                                       ,posicao = p
+                                       ,direcao = dir
+                                       ,tamanho = tam
+                                       ,emEscada = emEsc
+                                       ,ressalta = res
+                                       ,vida = vid
+                                       ,pontos = pon
+                                       ,aplicaDano = (aplica,t)
+                                       }
+                 }
+            ) 
+        | aplica == True && t > 0 = Jogo {mapa = m 
+                                         ,inimigos = ataqueJogador listaInimigos (Personagem {velocidade = v
+                                                                                             ,tipo = ent
+                                                                                             ,posicao = p
+                                                                                             ,direcao = dir
+                                                                                             ,tamanho = tam
+                                                                                             ,emEscada = emEsc
+                                                                                             ,ressalta = res
+                                                                                             ,vida = vid
+                                                                                             ,pontos = pon
+                                                                                             ,aplicaDano = (aplica,t)
+                                                                                             }
+                                                                                  )
+                                         ,colecionaveis = listaColecionaveis
+                                         ,jogador = Personagem {velocidade = v
+                                                               ,tipo = ent
+                                                               ,posicao = p
+                                                               ,direcao = dir
+                                                               ,tamanho = tam
+                                                               ,emEscada = emEsc
+                                                               ,ressalta = res
+                                                               ,vida = vid
+                                                               ,pontos = pon
+                                                               ,aplicaDano = (aplica,t)
+                                                                }
+                                          }
+        | otherwise = (Jogo {mapa = m 
+                            ,inimigos = listaInimigos 
+                            ,colecionaveis = listaColecionaveis
+                            ,jogador = Personagem {velocidade = v
+                                                  ,tipo = ent
+                                                  ,posicao = p
+                                                  ,direcao = dir
+                                                  ,tamanho = tam
+                                                  ,emEscada = emEsc
+                                                  ,ressalta = res
+                                                  ,vida = vid
+                                                  ,pontos = pon
+                                                  ,aplicaDano = (aplica,t)
+                                                  }
+                            }
+                      )
+         
 {-|
 Se a hitbox de dano do jogador colidir com um inimigo retira uma vida ao inimigo
 
