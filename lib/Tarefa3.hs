@@ -30,7 +30,7 @@ hitboxDano :: Personagem -> Hitbox
 hitboxDano (Personagem {posicao = (x,y), tamanho = (l,a), direcao = dir}) | dir == Oeste = ((x-(3*l/2),y-(a/2)),(x - (l/2), y + (a/2)))
                                                                           | dir == Este = ((x + (l/2),y-(a/2)),(x + (3*l/2),y + (a/2)))
 {-|
-Se a hitbox de dano do jogador colidir com um inimigo retira uma vida ao mesmo
+Se a hitbox de dano do jogador colidir com um inimigo retira uma vida ao inimigo
 
 =Exemplos
 >>>ataqueJogador [Personagem {velocidade = (1,2)
@@ -40,7 +40,8 @@ Se a hitbox de dano do jogador colidir com um inimigo retira uma vida ao mesmo
                              ,tamanho = (2,2)
                              ,emEscada = False
                              ,ressalta = True
-                             ,vida = 1,pontos = 0
+                             ,vida = 1
+                             ,pontos = 0
                              ,aplicaDano = (False,0)}
                  ,Personagem {velocidade = (1,2)
                              ,tipo = Fantasma
@@ -158,7 +159,7 @@ ataqueJogador ((Personagem {velocidade = vI
 
 {-|
 
-Varifica se duas hitbox estão em colisão
+Verifica se duas hitbox estão em colisão
 
 =Exemplos
 >>>colisaoHitbox ((1,4),(3,1)) ((2,5),(4,3)) = True
@@ -174,10 +175,45 @@ colisaoHitbox ((x1,y1),(x2,y2)) ((x3,y3),(x4,y4)) | x1 >= x3 && x1 <= x4 && y2 >
                                                   | otherwise = False
 
 
+{-
+Se o jogador colidir com um inimigo retira uma vida ao jogador
+
+=Exemplos
+>>> ataqueInimigo [Personagem {posicao = (1,1)
+                              ,tamanho = (2,2)
+                              }
+                  ,Personagem {posicao = (4,5)
+                              ,tamanho = (2,2)
+                              }
+                   ] 
+                   (Personagem {velocidade = (1,2)
+                               ,tipo = Jogador
+                               ,posicao = (1,1)
+                               ,direcao = Este
+                               ,tamanho = (2,2)
+                               ,emEscada = False
+                               ,ressalta = True
+                               ,vida = 1
+                               ,pontos= 0
+                               ,aplicaDano = (False,0)
+                               }
+                    )
+                    = 
+                    Personagem {velocidade = (1.0,2.0)
+                               ,tipo = Jogador
+                               ,posicao = (1.0,1.0)
+                               ,direcao = Este
+                               ,tamanho = (2.0,2.0)
+                               ,emEscada = False
+                               ,ressalta = True
+                               ,vida = 0
+                               ,pontos = 0
+                               ,aplicaDano = (False,0.0)
+                               }
+-}
 ataqueInimigo :: [Personagem] -> Personagem -> Personagem -- ainda nao testada
 ataqueInimigo [] p = p
 ataqueInimigo ((Personagem {posicao = (xInimigo,yInimigo)
-                           ,direcao = dirI
                            ,tamanho = (lInimigo,aInimigo)
                            }
                ) :t) 
@@ -194,7 +230,6 @@ ataqueInimigo ((Personagem {posicao = (xInimigo,yInimigo)
                           }
               )
     | colisaoHitbox (hitbox (Personagem {posicao = (xInimigo,yInimigo)
-                                        ,direcao = dirI
                                         ,tamanho = (lInimigo,aInimigo)
                                         }
                             )
