@@ -29,66 +29,30 @@ sendo esta no meu tamanho do menor retângulo que contém um personagem
 hitboxDano :: Personagem -> Hitbox
 hitboxDano (Personagem {posicao = (x,y), tamanho = (l,a), direcao = dir}) | dir == Oeste = ((x-(3*l/2),y-(a/2)),(x - (l/2), y + (a/2)))
                                                                           | dir == Este = ((x + (l/2),y-(a/2)),(x + (3*l/2),y + (a/2)))
+{-|
 
+(Jogo {mapa = Mapa ((2,0),Norte) (1,2) [[Escada,Alcapao,Vazio],[Escada,Vazio,Plataforma],[Plataforma,Plataforma,Plataforma]],inimigos = [Personagem {velocidade = (1,2),tipo = Fantasma,posicao = (1,1),direcao = Oeste, tamanho = (2,2),ressalta = True ,vida = 1,emEscada = False, pontos = 0,aplicaDano = (False,0)},Personagem {tipo = Fantasma,posicao = (0,0),ressalta = True,vida = 1, velocidade = (1,2), direcao = Oeste, tamanho = (2,2), emEscada = False, pontos = 0, aplicaDano = (False,0)}],colecionaveis = [(Martelo, (1,1)),(Moeda, (2,0))],jogador = Personagem {velocidade = (1,2),posicao = (2,0),tamanho = (1,2),ressalta = False, tipo = Jogador, emEscada = False, direcao = Oeste, vida = 3, pontos = 0, aplicaDano = (True,5)}})
+
+
+
+-}
 movimenta1 :: Jogo -> Jogo
-movimenta1 (Jogo {mapa = m 
-                 ,inimigos = listaInimigos
-                 ,colecionaveis = listaColecionaveis
-                 ,jogador = Personagem {velocidade = v
-                                       ,tipo = ent
-                                       ,posicao = p
-                                       ,direcao = dir
-                                       ,tamanho = tam
-                                       ,emEscada = emEsc
-                                       ,ressalta = res
-                                       ,vida = vid
-                                       ,pontos = pon
-                                       ,aplicaDano = (aplica,t)
-                                       }
-                 }
-            ) 
-        | aplica == True && t > 0 = Jogo {mapa = m 
-                                         ,inimigos = ataqueJogador listaInimigos (Personagem {velocidade = v
-                                                                                             ,tipo = ent
-                                                                                             ,posicao = p
-                                                                                             ,direcao = dir
-                                                                                             ,tamanho = tam
-                                                                                             ,emEscada = emEsc
-                                                                                             ,ressalta = res
-                                                                                             ,vida = vid
-                                                                                             ,pontos = pon
-                                                                                             ,aplicaDano = (aplica,t)
-                                                                                             }
-                                                                                  )
-                                         ,colecionaveis = listaColecionaveis
-                                         ,jogador = Personagem {velocidade = v
-                                                               ,tipo = ent
-                                                               ,posicao = p
-                                                               ,direcao = dir
-                                                               ,tamanho = tam
-                                                               ,emEscada = emEsc
-                                                               ,ressalta = res
-                                                               ,vida = vid
-                                                               ,pontos = pon
-                                                               ,aplicaDano = (aplica,t)
-                                                                }
-                                          }
+movimenta1 (Jogo {mapa = m ,inimigos = listaInimigos,colecionaveis = listaColecionaveis,jogador = jog}) 
+        | fst (aplicaDano jog) == True && snd (aplicaDano jog) > 0 = Jogo {mapa = m 
+                                                                          ,inimigos = ataqueJogador listaInimigos jog
+                                                                          ,colecionaveis = listaColecionaveis
+                                                                          ,jogador = jog
+                                                                          }
         | otherwise = (Jogo {mapa = m 
                             ,inimigos = listaInimigos 
                             ,colecionaveis = listaColecionaveis
-                            ,jogador = Personagem {velocidade = v
-                                                  ,tipo = ent
-                                                  ,posicao = p
-                                                  ,direcao = dir
-                                                  ,tamanho = tam
-                                                  ,emEscada = emEsc
-                                                  ,ressalta = res
-                                                  ,vida = vid
-                                                  ,pontos = pon
-                                                  ,aplicaDano = (aplica,t)
-                                                  }
+                            ,jogador = jog
                             }
                       )
+
+
+
+
          
 {-|
 Se a hitbox de dano do jogador colidir com um inimigo retira uma vida ao inimigo
@@ -206,3 +170,13 @@ ataqueInimigo :: [Personagem] -> Personagem -> Personagem
 ataqueInimigo [] p = p
 ataqueInimigo (inim : t) jog | colisoesPersonagens inim jog = (jog {vida = vida jog -1})
                              | otherwise = ataqueInimigo t jog
+
+
+
+
+
+
+
+
+
+
