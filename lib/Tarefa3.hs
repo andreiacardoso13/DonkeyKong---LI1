@@ -30,6 +30,31 @@ hitboxDano :: Personagem -> Hitbox
 hitboxDano (Personagem {posicao = (x,y), tamanho = (l,a), direcao = dir}) | dir == Oeste = ((x-(3*l/2),y-(a/2)),(x - (l/2), y + (a/2)))
                                                                           | dir == Este = ((x + (l/2),y-(a/2)),(x + (3*l/2),y + (a/2)))
 {-|
+
+(Jogo {mapa = Mapa ((2,0),Norte) (1,2) [[Escada,Alcapao,Vazio],[Escada,Vazio,Plataforma],[Plataforma,Plataforma,Plataforma]],inimigos = [Personagem {velocidade = (1,2),tipo = Fantasma,posicao = (1,1),direcao = Oeste, tamanho = (2,2),ressalta = True ,vida = 1,emEscada = False, pontos = 0,aplicaDano = (False,0)},Personagem {tipo = Fantasma,posicao = (0,0),ressalta = True,vida = 1, velocidade = (1,2), direcao = Oeste, tamanho = (2,2), emEscada = False, pontos = 0, aplicaDano = (False,0)}],colecionaveis = [(Martelo, (1,1)),(Moeda, (2,0))],jogador = Personagem {velocidade = (1,2),posicao = (2,0),tamanho = (1,2),ressalta = False, tipo = Jogador, emEscada = False, direcao = Oeste, vida = 3, pontos = 0, aplicaDano = (True,5)}})
+
+
+
+-}
+movimenta1 :: Jogo -> Jogo
+movimenta1 (Jogo {mapa = m ,inimigos = listaInimigos,colecionaveis = listaColecionaveis,jogador = jog}) 
+        | fst (aplicaDano jog) == True && snd (aplicaDano jog) > 0 = Jogo {mapa = m 
+                                                                          ,inimigos = ataqueJogador listaInimigos jog
+                                                                          ,colecionaveis = listaColecionaveis
+                                                                          ,jogador = jog
+                                                                          }
+        | otherwise = (Jogo {mapa = m 
+                            ,inimigos = listaInimigos 
+                            ,colecionaveis = listaColecionaveis
+                            ,jogador = jog
+                            }
+                      )
+
+
+
+
+         
+{-|
 Se a hitbox de dano do jogador colidir com um inimigo retira uma vida ao inimigo
 
 =Exemplos
@@ -83,78 +108,8 @@ Se a hitbox de dano do jogador colidir com um inimigo retira uma vida ao inimigo
 
 ataqueJogador :: [Personagem] -> Personagem -> [Personagem] -- terá de ser usada numa futura função que recebe um jogo e verifica se a aplicaDano do Jogador tá ativa
 ataqueJogador [] _ = []
-ataqueJogador ((Personagem {velocidade = vI
-                           ,tipo = entI
-                           ,posicao = (xInimigo,yInimigo)
-                           ,direcao = dirI
-                           ,tamanho = (lInimigo,aInimigo)
-                           ,emEscada = escI
-                           ,ressalta = resI
-                           ,vida = vidI
-                           ,pontos = pI
-                           ,aplicaDano = aplicaI
-                           }
-               ) :t) 
-              (Personagem {posicao = (xJogador, yJogador)
-                          ,direcao = dirJ
-                          ,tamanho = (lJogador, aJogador)
-                          ,aplicaDano = (aplicaJ, tempo)
-                          }
-              )
-    | colisaoHitbox (hitbox (Personagem {velocidade = vI
-                                        ,tipo = entI
-                                        ,posicao = (xInimigo,yInimigo)
-                                        ,direcao = dirI
-                                        ,tamanho = (lInimigo,aInimigo)
-                                        ,emEscada = escI
-                                        ,ressalta = resI
-                                        ,vida = vidI
-                                        ,pontos = pI
-                                        ,aplicaDano = aplicaI
-                                         }
-                            )
-                    )
-                    (hitboxDano (Personagem {posicao = (xJogador, yJogador)
-                                            ,direcao = dirJ
-                                            ,tamanho = (lJogador, aJogador)
-                                            ,aplicaDano = (aplicaJ, tempo)
-                                            }
-                                )
-                    )
-                    = (Personagem {velocidade = vI
-                                  ,tipo = entI
-                                  ,posicao = (xInimigo,yInimigo)
-                                  ,direcao = dirI
-                                  ,tamanho = (lInimigo,aInimigo)
-                                  ,emEscada = escI
-                                  ,ressalta = resI
-                                  ,vida = vidI - 1
-                                  ,pontos = pI
-                                  ,aplicaDano = aplicaI
-                                   }
-                      ) : ataqueJogador t (Personagem {posicao = (xJogador, yJogador)
-                                                      ,direcao = dirJ
-                                                      ,tamanho = (lJogador, aJogador)
-                                                      ,aplicaDano = (aplicaJ, tempo)
-                                                      }
-                                          )
-    | otherwise = (Personagem {velocidade = vI
-                              ,tipo = entI
-                              ,posicao = (xInimigo,yInimigo)
-                              ,direcao = dirI
-                              ,tamanho = (lInimigo,aInimigo)
-                              ,emEscada = escI
-                              ,ressalta = resI
-                              ,vida = vidI
-                              ,pontos = pI
-                              ,aplicaDano = aplicaI
-                              }
-                   ) : ataqueJogador t (Personagem {posicao = (xJogador, yJogador)
-                                                   ,direcao = dirJ
-                                                   ,tamanho = (lJogador, aJogador)
-                                                   ,aplicaDano = (aplicaJ, tempo)
-                                                   }
-                                       )
+ataqueJogador (inim :t) jog | colisaoHitbox (hitbox inim) (hitboxDano jog) = (inim {vida = vida inim - 1}) : ataqueJogador t jog
+                            | otherwise = inim : ataqueJogador t jog
         
 
 {-|
@@ -175,7 +130,7 @@ colisaoHitbox ((x1,y1),(x2,y2)) ((x3,y3),(x4,y4)) | x1 >= x3 && x1 <= x4 && y2 >
                                                   | otherwise = False
 
 
-{-
+{-|
 Se o jogador colidir com um inimigo retira uma vida ao jogador
 
 =Exemplos
@@ -211,63 +166,17 @@ Se o jogador colidir com um inimigo retira uma vida ao jogador
                                ,aplicaDano = (False,0.0)
                                }
 -}
-ataqueInimigo :: [Personagem] -> Personagem -> Personagem -- ainda nao testada
+ataqueInimigo :: [Personagem] -> Personagem -> Personagem 
 ataqueInimigo [] p = p
-ataqueInimigo ((Personagem {posicao = (xInimigo,yInimigo)
-                           ,tamanho = (lInimigo,aInimigo)
-                           }
-               ) :t) 
-              (Personagem {velocidade = vJ
-                          ,tipo = entJ
-                          ,posicao = (xJOgador,yJogador)
-                          ,direcao = dirJ
-                          ,tamanho = (lJogador,aJogador)
-                          ,emEscada = escJ
-                          ,ressalta = resJ
-                          ,vida = vidJ
-                          ,pontos = pJ
-                         ,aplicaDano = (aplicaJ, tempo)
-                          }
-              )
-    | colisaoHitbox (hitbox (Personagem {posicao = (xInimigo,yInimigo)
-                                        ,tamanho = (lInimigo,aInimigo)
-                                        }
-                            )
-                    )
-                    (hitbox (Personagem {velocidade = vJ
-                                            ,tipo = entJ
-                                            ,posicao = (xJOgador,yJogador)
-                                            ,direcao = dirJ
-                                            ,tamanho = (lJogador,aJogador)
-                                            ,emEscada = escJ
-                                            ,ressalta = resJ
-                                            ,vida = vidJ
-                                            ,pontos = pJ
-                                            ,aplicaDano = (aplicaJ, tempo)
-                                            }
-                                )
-                    )
-                    = (Personagem {velocidade = vJ
-                                  ,tipo = entJ
-                                  ,posicao = (xJOgador,yJogador)
-                                  ,direcao = dirJ
-                                  ,tamanho = (lJogador,aJogador)
-                                  ,emEscada = escJ
-                                  ,ressalta = resJ
-                                  ,vida = vidJ - 1 
-                                  ,pontos = pJ
-                                  ,aplicaDano = (aplicaJ, tempo)
-                                   }
-                      )
-    | otherwise = ataqueInimigo t (Personagem {velocidade = vJ
-                                              ,tipo = entJ
-                                              ,posicao = (xJOgador,yJogador)
-                                              ,direcao = dirJ
-                                              ,tamanho = (lJogador,aJogador)
-                                              ,emEscada = escJ
-                                              ,ressalta = resJ
-                                              ,vida = vidJ
-                                              ,pontos = pJ
-                                              ,aplicaDano = (aplicaJ, tempo)
-                                              }
-                                   )
+ataqueInimigo (inim : t) jog | colisoesPersonagens inim jog = (jog {vida = vida jog -1})
+                             | otherwise = ataqueInimigo t jog
+
+
+
+
+
+
+
+
+
+
