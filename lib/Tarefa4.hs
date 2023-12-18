@@ -25,24 +25,25 @@ atualizaJogador m p = undefined
 
 movePersonagem :: Personagem -> Acao -> Personagem
 movePersonagem p a = case a of
-                        Subir -> usaEscada p a
-                        Descer -> usaEscada p a
-                        AndarDireita -> moveDireita p a
-                        AndarEsquerda -> moveEsquerda p a
-                        Saltar -> salta p a
-                        Parar -> para p a
+                        Subir -> usaEscada p Subir
+                        Descer -> usaEscada p Descer
+                        AndarDireita -> moveDireita p AndarDireita
+                        AndarEsquerda -> moveEsquerda p AndarEsquerda
+                        Saltar -> salta p Saltar
+                        Parar -> para p Parar
 
 usaEscada :: Personagem -> Acao -> Personagem
-usaEscada p a = undefined
+usaEscada p a | a == Subir =  (p {velocidade = (0,-10), direcao = Norte})
+              | a == Descer = (p {velocidade = (0, 10), direcao = Norte})
 
 moveDireita :: Personagem -> Acao -> Personagem
-moveDireita p a = undefined
+moveDireita p AndarDireita = (p {velocidade = (10,0), direcao = Este})
 
 moveEsquerda :: Personagem -> Acao -> Personagem
-moveEsquerda p a = undefined
+moveEsquerda p AndarEsquerda = (p {velocidade = (-10,0), direcao = Oeste})
 
 salta :: Personagem -> Acao -> Personagem
 salta p a = undefined
 
 para :: Personagem -> Acao -> Personagem
-para p a = undefined
+para p Parar = (p {velocidade = (0,0)})
