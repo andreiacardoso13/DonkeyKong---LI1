@@ -17,20 +17,20 @@ import LI12324
 atualiza :: [Maybe Acao] -> Maybe Acao -> Jogo -> Jogo
 atualiza = undefined
 
-atualizaInimigos :: Mapa -> Personagem -> Personagem
+atualizaInimigos :: Personagem -> Maybe Acao -> Personagem
 atualizaInimigos m p = undefined
 
-atualizaJogador :: Mapa -> Personagem -> Personagem
+atualizaJogador :: Personagem -> Maybe Acao -> Personagem
 atualizaJogador m p = undefined
 
-movePersonagem :: Personagem -> Acao -> Personagem
+movePersonagem :: Personagem -> Maybe Acao -> Personagem
 movePersonagem p a = case a of
-                        Subir -> usaEscada p Subir
-                        Descer -> usaEscada p Descer
-                        AndarDireita -> moveDireita p AndarDireita
-                        AndarEsquerda -> moveEsquerda p AndarEsquerda
-                        Saltar -> salta p Saltar
-                        Parar -> para p Parar
+                        Just Subir -> usaEscada p Subir
+                        Just Descer -> usaEscada p Descer
+                        Just AndarDireita -> moveDireita p AndarDireita
+                        Just AndarEsquerda -> moveEsquerda p AndarEsquerda
+                        Just Saltar -> salta p Saltar
+                        Just Parar -> para p Parar
 
 usaEscada :: Personagem -> Acao -> Personagem
 usaEscada p a | a == Subir =  (p {velocidade = (0,-10), direcao = Norte})
