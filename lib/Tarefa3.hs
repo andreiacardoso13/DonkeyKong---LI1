@@ -78,7 +78,7 @@ Se a hitbox de dano do jogador colidir com um inimigo retira uma vida ao inimigo
                 ,Personagem {velocidade = (1.0,2.0),tipo = Fantasma,posicao = (1.0,1.0),direcao = Este,tamanho = (2.0,2.0),emEscada = False,ressalta = True,vida = 0,pontos = 0,aplicaDano = (False,0.0)}]
 -}
 
-ataqueJogador :: [Personagem] -> Personagem -> [Personagem] -- terá de ser usada numa futura função que recebe um jogo e verifica se a aplicaDano do Jogador tá ativa
+ataqueJogador :: [Personagem] -> Personagem -> [Personagem]
 ataqueJogador [] _ = []
 ataqueJogador (inim :t) jog | colisaoHitbox (hitbox inim) (hitboxDano jog) = (inim {vida = vida inim - 1}) : ataqueJogador t jog
                             | otherwise = inim : ataqueJogador t jog
@@ -174,15 +174,15 @@ colisaoHitbox ((x1,y1),(x2,y2)) ((x3,y3),(x4,y4)) | x1 >= x3 && x1 <= x4 && y2 >
 Se o jogador colidir com um inimigo retira uma vida ao jogador
 
 =Exemplos
->>> ataqueInimigo [Personagem {posicao = (1,1),tamanho = (2,2)}
-                  ,Personagem {posicao = (4,5),tamanho = (2,2)}] 
+>>> ataqueInimigo [Personagem {posicao = (1,1),tamanho = (2,2),vida = 1}] 
                   (Personagem {velocidade = (1,2),tipo = Jogador,posicao = (1,1),direcao = Este,tamanho = (2,2),emEscada = False,ressalta = True,vida = 1,pontos= 0,aplicaDano = (False,0)})
                    = 
                    Personagem {velocidade = (1.0,2.0),tipo = Jogador,posicao = (1.0,1.0),direcao = Este,tamanho = (2.0,2.0),emEscada = False,ressalta = True,vida = 0,pontos = 0,aplicaDano = (False,0.0)}
 -}
+
 ataqueInimigo :: [Personagem] -> Personagem -> Personagem 
 ataqueInimigo [] p = p
-ataqueInimigo (inim : t) jog | colisoesPersonagens inim jog = (jog {vida = vida jog -1})
+ataqueInimigo (inim : t) jog | colisoesPersonagens inim jog && (vida inim > 0 )= (jog {vida = vida jog -1})
                              | otherwise = ataqueInimigo t jog
 
 
@@ -192,11 +192,9 @@ NOTAS
 
 Fazer função que atualiza direção automaticamente consoante a velocidade
 
-
+adicionar pontos ao jogador quando este mata o fantasma
 
 -}
-
-
 
 
 
