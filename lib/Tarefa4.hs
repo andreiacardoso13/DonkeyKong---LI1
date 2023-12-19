@@ -15,13 +15,11 @@ import Tarefa3
 import LI12324
 
 atualiza :: [Maybe Acao] -> Maybe Acao -> Jogo -> Jogo
-atualiza = undefined
+atualiza (ai:ais) aj j@(Jogo {inimigos = (i:is), jogador = jgd}) = (j {inimigos = atualizaInimigos (i:is) (ai:ais), jogador = movePersonagem jgd aj})
 
-atualizaInimigos :: Personagem -> Maybe Acao -> Personagem
-atualizaInimigos m p = undefined
-
-atualizaJogador :: Personagem -> Maybe Acao -> Personagem
-atualizaJogador m p = undefined
+atualizaInimigos :: [Personagem] -> [Maybe Acao] -> [Personagem]
+atualizaInimigos [] [] = []
+atualizaInimigos (i:is) (ai:ais) =  movePersonagem i ai : atualizaInimigos is ais
 
 movePersonagem :: Personagem -> Maybe Acao -> Personagem
 movePersonagem p a = case a of
@@ -31,6 +29,7 @@ movePersonagem p a = case a of
                         Just AndarEsquerda -> moveEsquerda p AndarEsquerda
                         Just Saltar -> salta p Saltar
                         Just Parar -> para p Parar
+                        Nothing -> p
 
 usaEscada :: Personagem -> Acao -> Personagem
 usaEscada p a | a == Subir =  (p {velocidade = (0,-10), direcao = Norte})
