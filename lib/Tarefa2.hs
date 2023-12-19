@@ -19,21 +19,12 @@ Recebe um jogo e verifica se este cumpre todas as condições necessárias para 
 >>>valida (Jogo {mapa = Mapa ((2,0),Norte) (1,2) [[Escada    ,Alcapao   ,Vazio],
                                                   [Escada    ,Vazio     ,Plataforma],
                                                   [Plataforma,Plataforma,Plataforma]]
-                 ,inimigos = [Personagem {tipo = Fantasma
-                                         ,posicao = (1,1)
-                                         ,ressalta = True
-                                         ,vida = 1}
-                              ,Personagem {tipo = Fantasma
-                                           ,posicao = (0,0)
-                                           ,ressalta = True
-                                           ,vida = 1}
-                              ]
-                  ,colecionaveis = [(Martelo, (1,1))
-                                    ,(Moeda, (2,0))
-                                   ]
-                  ,jogador = Personagem {posicao = (2,0)
-                                         ,tamanho = (1,2)
-                                         ,ressalta = False}})
+                ,inimigos = [Personagem {tipo = Fantasma,posicao = (1,1),ressalta = True,vida = 1}
+                            ,Personagem {tipo = Fantasma,posicao = (0,0),ressalta = True,vida = 1}]
+                ,colecionaveis = [(Martelo, (1,1)),(Moeda, (2,0))]
+                ,jogador = Personagem {posicao = (2,0),tamanho = (1,2),ressalta = False}})
+                =
+                True
 -}
 
 valida :: Jogo -> Bool
@@ -111,20 +102,16 @@ validaRessalta (Jogo {inimigos = ((Personagem {ressalta = x}): t ), jogador = (P
 Recebe um jogo e verifica se a posição do jogador colide com a posição de algum outro personagem
 
 =Exemplos
->>> validaPosicaoColisao (Jogo {inimigos = [(Personagem {posicao = (1,2)})
-                                            ,Personagem {posicao = (1,2)}]
-                                ,jogador = Personagem {posicao = (1,3)}}) 
+>>> validaPosicaoColisao (Jogo {inimigos = [(Personagem {posicao = (1,2)}),Personagem {posicao = (1,2)}]
+                               ,jogador = Personagem {posicao = (1,3)}}) 
                                 = True
->>> validaPosicaoColisao (Jogo {inimigos = [(Personagem {posicao = (1,3)})
-                                            ,Personagem {posicao = (1,2)}]
+>>> validaPosicaoColisao (Jogo {inimigos = [(Personagem {posicao = (1,3)}),Personagem {posicao = (1,2)}]
                                ,jogador = Personagem {posicao = (1,3)}}) 
                                = False
->>> validaPosicaoColisao (Jogo {inimigos = [(Personagem {posicao = (1,2)})
-                                            ,Personagem {posicao = (1,3)}]
+>>> validaPosicaoColisao (Jogo {inimigos = [(Personagem {posicao = (1,2)}),Personagem {posicao = (1,3)}]
                                ,jogador = Personagem {posicao = (1,3)}}) 
                                = False
->>> validaPosicaoColisao (Jogo {inimigos = [(Personagem {posicao = (2,4)})
-                                            ,Personagem {posicao = (5,1)}]
+>>> validaPosicaoColisao (Jogo {inimigos = [(Personagem {posicao = (2,4)}),Personagem {posicao = (5,1)}]
                                ,jogador = Personagem {posicao = (3,2)}}) 
                                = True
 -}
@@ -139,13 +126,8 @@ validaPosicaoColisao (Jogo {inimigos = ((Personagem {posicao = (x1,y1)}): t ), j
 Recebe um jogo e verifica se o jogo tem pelo menos 2 inimigos
 
 =Exemplos
->>> validaNumInimigos (Jogo {inimigos = [(Personagem {tipo = Fantasma, vida = 5})
-                                         ,Personagem {posicao = (1,2), vida = 1}
-                                         ,Personagem {ressalta = True}]}) 
-                                         = True
->>> validaNumInimigos (Jogo {inimigos = [(Personagem {posicao = (1,2), vida = 1}
-                                         ,Personagem {ressalta = True}]}) 
-                                         = True
+>>> validaNumInimigos (Jogo {inimigos = [(Personagem {tipo = Fantasma, vida = 5}),Personagem {posicao = (1,2), vida = 1},Personagem {ressalta = True}]}) = True
+>>> validaNumInimigos (Jogo {inimigos = [(Personagem {posicao = (1,2), vida = 1},Personagem {ressalta = True}]}) = True
 >>> validaNumInimigos (Jogo {inimigos = [(Personagem {ressalta = True}]}) = False
 >>> validaNumInimigos (Jogo {inimigos = []}) = False
 -}
@@ -158,18 +140,10 @@ validaNumInimigos (Jogo {inimigos = l }) = length l >= 2
 Recebe um jogo e verifica se todos os inimigos do tipo Fantasma têm 1 vida
 
 =Exemplos
->>> validaVidaFantasma (Jogo {inimigos = [(Personagem {tipo = Fantasma, vida = 5})
-                                           ,Personagem {tipo = Fantasma, vida = 1}]}) 
-                                           = False
->>> validaVidaFantasma (Jogo {inimigos = [(Personagem {tipo = Fantasma, vida = 1})
-                                          ,Personagem {tipo = Fantasma, vida = 1}]}) 
-                                          = True
->>> validaVidaFantasma (Jogo {inimigos = [(Personagem {tipo = MacacoMalvado, vida = 5})
-                                          ,Personagem {tipo = Fantasma, vida = 1}]}) 
-                                          = True
->>> validaVidaFantasma (Jogo {inimigos = [(Personagem {tipo = Fantasma, vida = 1})
-                                          ,Personagem {tipo = Fantasma, vida = 2}]}) 
-                                          = False
+>>> validaVidaFantasma (Jogo {inimigos = [(Personagem {tipo = Fantasma, vida = 5}),Personagem {tipo = Fantasma, vida = 1}]}) = False
+>>> validaVidaFantasma (Jogo {inimigos = [(Personagem {tipo = Fantasma, vida = 1}),Personagem {tipo = Fantasma, vida = 1}]}) = True
+>>> validaVidaFantasma (Jogo {inimigos = [(Personagem {tipo = MacacoMalvado, vida = 5}),Personagem {tipo = Fantasma, vida = 1}]}) = True
+>>> validaVidaFantasma (Jogo {inimigos = [(Personagem {tipo = Fantasma, vida = 1}),Personagem {tipo = Fantasma, vida = 2}]}) = False
 -}
 validaVidaFantasma :: Jogo -> Bool
 validaVidaFantasma (Jogo {inimigos = []}) = True
@@ -276,12 +250,8 @@ transposta l = (map head l) : transposta (map tail l)
 Recebe a transposta da matriz de blocos original e verifica se todas as escadas começam ou acabam numa Plataforma
 
 =Exemplos 
->>> validaPlataforma [[Escada    ,Escada,Plataforma],
-                      [Plataforma,Escada,Vazio]] 
-                      = True
->>> validaPlataforma [[Escada,Escada,Plataforma],
-                      [Escada,Escada,Vazio]] 
-                      = False
+>>> validaPlataforma [[Escada    ,Escada,Plataforma],[Plataforma,Escada,Vazio]] = True
+>>> validaPlataforma [[Escada,Escada,Plataforma],[Escada,Escada,Vazio]] = False
 -}
 validaPlataforma :: [[Bloco]] -> Bool
 validaPlataforma [] = True
@@ -343,32 +313,20 @@ validaLarguraAlcapao (Jogo {jogador = Personagem {tamanho = (x,y) }}) | x <= 1 =
 Recebe um jogo e verifica se existem personagens ou colecionáveis "dentro" de plataformas ou alçapões
 
 =Exemplos
->>>validaPosicaoMapa (Jogo {mapa = Mapa ((1,2),Norte) (1,2) [[Vazio     ,Vazio  ,Vazio],
-                                                             [Plataforma,Alcapao,Escada],
-                                                             [Vazio     ,Vazio  ,Plataforma]]
-                            ,inimigos = [Personagem {posicao = (0,0)}, 
-                                        Personagem {posicao = (2,0)}]
-                            ,colecionaveis = [(Martelo,(1,0)),(Moeda,(0,2))]}) 
+>>>validaPosicaoMapa (Jogo {mapa = Mapa ((1,2),Norte) (1,2) [[Vazio,Vazio,Vazio],[Plataforma,Alcapao,Escada],[Vazio,Vazio,Plataforma]]
+                           ,inimigos = [Personagem {posicao = (0,0)}, Personagem {posicao = (2,0)}]
+                           ,colecionaveis = [(Martelo,(1,0)),(Moeda,(0,2))]}) 
                             = True
->>>validaPosicaoMapa (Jogo {mapa = Mapa ((1,1),Norte) (1,2) [[Vazio     ,Vazio  ,Vazio],
-                                                             [Plataforma,Alcapao,Escada],
-                                                             [Vazio     ,Vazio  ,Plataforma]]
-                            ,inimigos = [Personagem {posicao = (0,0)}, 
-                                        Personagem {posicao = (2,0)}]
+>>>validaPosicaoMapa (Jogo {mapa = Mapa ((1,1),Norte) (1,2) [[Vazio,Vazio,Vazio],[Plataforma,Alcapao,Escada],[Vazio,Vazio,Plataforma]]
+                            ,inimigos = [Personagem {posicao = (0,0)}, Personagem {posicao = (2,0)}]
                             ,colecionaveis = [(Martelo,(1,0)),(Moeda,(0,2))]}) 
                             = False
->>>validaPosicaoMapa (Jogo {mapa = Mapa ((1,2),Norte) (1,2) [[Vazio     ,Vazio  ,Vazio],
-                                                             [Plataforma,Alcapao,Escada],
-                                                             [Vazio     ,Vazio  ,Plataforma]] 
-                            ,inimigos = [Personagem {posicao = (1,1)}, 
-                                        Personagem {posicao = (2,0)}]
+>>>validaPosicaoMapa (Jogo {mapa = Mapa ((1,2),Norte) (1,2) [[Vazio,Vazio,Vazio],[Plataforma,Alcapao,Escada],[Vazio,Vazio,Plataforma]] 
+                            ,inimigos = [Personagem {posicao = (1,1)},Personagem {posicao = (2,0)}]
                             ,colecionaveis = [(Martelo,(1,0)),(Moeda,(0,2))]}) 
                             = False
->>>validaPosicaoMapa (Jogo {mapa = Mapa ((1,2),Norte) (1,2) [[Vazio     ,Vazio  ,Vazio],
-                                                             [Plataforma,Alcapao,Escada],
-                                                             [Vazio     ,Vazio  ,Plataforma]]
-                            ,inimigos = [Personagem {posicao = (0,0)}, 
-                                        Personagem {posicao = (2,0)}] 
+>>>validaPosicaoMapa (Jogo {mapa = Mapa ((1,2),Norte) (1,2) [[Vazio,Vazio,Vazio],[Plataforma,Alcapao,Escada],[Vazio,Vazio,Plataforma]]
+                            ,inimigos = [Personagem {posicao = (0,0)}, Personagem {posicao = (2,0)}] 
                             ,colecionaveis = [(Martelo,(1,1)),(Moeda,(0,2))]}) 
                             = False
 -}
@@ -379,51 +337,29 @@ validaPosicaoMapa jogo' = validaPosicaoMapaJogador jogo' &&
                           validaPosicaoMapaColecionaveis jogo'
 
 {-|
-
 Recebe um Jogo e verifica se a posição do jogador é válida
 
 =Exemplos
->>> validaPosicaoMapaJogador (Jogo {mapa = Mapa ((1,2), Norte) (1,2) [[Vazio     ,Vazio  ,Vazio], 
-                                                                      [Plataforma,Alcapao,Escada],
-                                                                      [Vazio     ,Vazio  ,Plataforma]]}) 
-                                                                      = True
->>> validaPosicaoMapaJogador (Jogo {mapa = Mapa ((0,1), Norte) (1,2) [[Vazio     ,Vazio  ,Vazio], 
-                                                                      [Plataforma,Alcapao,Escada],
-                                                                      [Vazio     ,Vazio  ,Plataforma]]}) 
-                                                                      = False   
->>> validaPosicaoMapaJogador (Jogo {mapa = Mapa ((2,1), Norte) (1,2) [[Vazio     ,Vazio  ,Vazio], 
-                                                                      [Plataforma,Alcapao,Escada],
-                                                                      [Vazio     ,Vazio  ,Plataforma]]}) 
-                                                                      = True
-
-
+>>> validaPosicaoMapaJogador (Jogo {mapa = Mapa ((1,2), Norte) (1,2) [[Vazio,Vazio,Vazio],[Plataforma,Alcapao,Escada],[Vazio,Vazio,Plataforma]]}) = True
+>>> validaPosicaoMapaJogador (Jogo {mapa = Mapa ((0,1), Norte) (1,2) [[Vazio,Vazio,Vazio],[Plataforma,Alcapao,Escada],[Vazio,Vazio,Plataforma]]}) = False   
+>>> validaPosicaoMapaJogador (Jogo {mapa = Mapa ((2,1), Norte) (1,2) [[Vazio,Vazio,Vazio],[Plataforma,Alcapao,Escada],[Vazio,Vazio,Plataforma]]}) = True
 -}
 
 validaPosicaoMapaJogador :: Jogo -> Bool
 validaPosicaoMapaJogador (Jogo {mapa = Mapa ((x,y),_) _ matriz}) = procuraBloco matriz (x,y) == Vazio || procuraBloco matriz (x,y) == Escada
 
 {-
-
 Recebe um Jogo e verifica se a posição dos inimigos é válida
 
 =Exemplos
->>>validaPosicaoMapaInimigos (Jogo {mapa = Mapa ((2,0),Norte) (1,2) [[Vazio    ,Vazio  ,Escada],
-                                                                    [Plataforma,Alcapao,Vazio],
-                                                                    [Vazio     ,Vazio  ,Vazio]] 
-                                   ,inimigos = [Personagem {posicao = (2,0)}
-                                                ,Personagem {posicao = (0,0)}]}) 
+>>>validaPosicaoMapaInimigos (Jogo {mapa = Mapa ((2,0),Norte) (1,2) [[Vazio,Vazio,Escada],[Plataforma,Alcapao,Vazio],[Vazio,Vazio,Vazio]] 
+                                   ,inimigos = [Personagem {posicao = (2,0)},Personagem {posicao = (0,0)}]}) 
                                    = True
->>>validaPosicaoMapaInimigos (Jogo {mapa = Mapa ((2,0),Norte) (1,2) [[Vazio    ,Vazio  ,Escada],
-                                                                    [Plataforma,Alcapao,Vazio],
-                                                                    [Vazio     ,Vazio  ,Vazio]]
-                                    ,inimigos = [Personagem {posicao = (0,1)}
-                                                ,Personagem {posicao = (2,0)}]}) 
+>>>validaPosicaoMapaInimigos (Jogo {mapa = Mapa ((2,0),Norte) (1,2) [[Vazio,Vazio,Escada],[Plataforma,Alcapao,Vazio],[Vazio,Vazio,Vazio]]
+                                   ,inimigos = [Personagem {posicao = (0,1)},Personagem {posicao = (2,0)}]}) 
                                     = False
->>>validaPosicaoMapaInimigos (Jogo {mapa = Mapa ((2,0),Norte) (1,2) [[Vazio     ,Vazio  ,Escada],
-                                                                     [Plataforma,Alcapao,Vazio],
-                                                                     [Vazio     ,Vazio  ,Vazio]]
-                                    ,inimigos = [Personagem {posicao = (2,0)}
-                                                ,Personagem {posicao = (1,1)}]}) 
+>>>validaPosicaoMapaInimigos (Jogo {mapa = Mapa ((2,0),Norte) (1,2) [[Vazio,Vazio,Escada],[Plataforma,Alcapao,Vazio],[Vazio,Vazio,Vazio]]
+                                    ,inimigos = [Personagem {posicao = (2,0)},Personagem {posicao = (1,1)}]}) 
                                     = False 
 -}
 
@@ -442,23 +378,16 @@ validaPosicaoMapaInimigos (Jogo {mapa = Mapa ((xJogador,yJogador), dir) (a,b) ma
 Recebe um Jogo e verifica se a posição dos colecionáveis é válida
 
 =Exemplos
->>>validaPosicaoMapaColecionaveis (Jogo {mapa = Mapa ((2,0),Norte) (1,2) [[Vazio    ,Vazio  ,Escada],
-                                                                         [Plataforma,Alcapao,Vazio],
-                                                                         [Vazio     ,Vazio  ,Vazio]]
+>>>validaPosicaoMapaColecionaveis (Jogo {mapa = Mapa ((2,0),Norte) (1,2) [[Vazio,Vazio,Escada],[Plataforma,Alcapao,Vazio],[Vazio,Vazio,Vazio]]
                                         ,colecionaveis = [(Martelo,(1,0)), (Moeda,(2,0))]}) 
                                         = True
->>>validaPosicaoMapaColecionaveis (Jogo {mapa = Mapa ((2,0),Norte) (1,2) [[Vazio     ,Vazio  ,Escada],
-                                                                          [Plataforma,Alcapao,Vazio],
-                                                                          [Vazio     ,Vazio  ,Vazio]]
+>>>validaPosicaoMapaColecionaveis (Jogo {mapa = Mapa ((2,0),Norte) (1,2) [[Vazio,Vazio,Escada],[Plataforma,Alcapao,Vazio],[Vazio,Vazio,Vazio]]
                                          ,colecionaveis = [(Martelo,(1,1)), (Moeda,(0,0))]}) 
                                          = False
->>>validaPosicaoMapaColecionaveis (Jogo {mapa = Mapa ((2,0),Norte) (1,2) [[Vazio     ,Vazio  ,Escada],
-                                                                          [Plataforma,Alcapao,Vazio],
-                                                                          [Vazio     ,Vazio  ,Vazio]]
+>>>validaPosicaoMapaColecionaveis (Jogo {mapa = Mapa ((2,0),Norte) (1,2) [[Vazio,Vazio,Escada],[Plataforma,Alcapao,Vazio],[Vazio,Vazio,Vazio]]
                                          ,colecionaveis = [(Martelo,(2,0)), (Moeda,(0,1))]}) 
                                         = False
 -}
-
 
 validaPosicaoMapaColecionaveis :: Jogo -> Bool
 validaPosicaoMapaColecionaveis (Jogo {mapa = Mapa _ _ matriz,colecionaveis = []}) = True
@@ -469,20 +398,14 @@ validaPosicaoMapaColecionaveis (Jogo {mapa = Mapa ((xJogador,yJogador), dir) (a,
                                                 ,colecionaveis = (tColecionavel)})
       | otherwise = False
 
-
 {-| Indica o tipo de Bloco situado numa dada posição
 
 = Exemplos
 
->>> procuraBloco [[Vazio     ,Plataforma,Vazio],
-                  [Vazio     ,Escada    ,Vazio],
-                  [Plataforma,Plataforma,Plataforma]] (1,1) 
-                  = Escada
->>> procuraBloco [[Vazio,Plataforma,Vazio],
-                  [Vazio,Escada,Vazio],
-                  [Plataforma,Plataforma,Plataforma]] (0,0) 
-                  = Vazio
+>>> procuraBloco [[Vazio,Plataforma,Vazio],[Vazio,Escada,Vazio],[Plataforma,Plataforma,Plataforma]] (1,1) = Escada
+>>> procuraBloco [[Vazio,Plataforma,Vazio],[Vazio,Escada,Vazio],[Plataforma,Plataforma,Plataforma]] (0,0) = Vazio
 -}
+
 procuraBloco :: [[Bloco]] -> Posicao -> Bloco
 procuraBloco ((h:t):ls) (x,y) | y > 0 = procuraBloco ls (x,y-1)
                               | x > 0 = procuraBloco [t] (x-1,y)
