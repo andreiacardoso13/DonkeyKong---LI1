@@ -18,19 +18,6 @@ movimenta = undefined
 
 {-|
 
-Define a área onde um personagem consegue causar dano,
-sendo esta no meu tamanho do menor retângulo que contém um personagem
-
-=Exemplos
->>> hitboxDano (Personagem {posicao = (1,1), tamanho = (1,1), direcao = Este}) = ((1.5 , 0.5) , (2.5 , 1.5))
->>> hitboxDano (Personagem {posicao = (1,1), tamanho = (1,1), direcao = Oeste}) = ((-0.5 , 0.5) , (0.5 , 1.5))
--}
-
-hitboxDano :: Personagem -> Hitbox
-hitboxDano (Personagem {posicao = (x,y), tamanho = (l,a), direcao = dir}) | dir == Oeste = ((x-(3*l/2),y-(a/2)),(x - (l/2), y + (a/2)))
-                                                                          | dir == Este = ((x + (l/2),y-(a/2)),(x + (3*l/2),y + (a/2)))
-{-|
-
 Se o jogador tiver a componente aplicaDano activa e com tempo restante e a 
 hitbox de dano do jogador colidir com um inimigo retira uma vida ao inimigo
 
@@ -63,6 +50,20 @@ movimenta1 (Jogo {mapa = m ,inimigos = listaInimigos,colecionaveis = listaColeci
                             ,jogador = jog
                             }
                       )
+{-|
+
+Define a área onde um personagem consegue causar dano,
+sendo esta no meu tamanho do menor retângulo que contém um personagem
+
+=Exemplos
+>>> hitboxDano (Personagem {posicao = (1,1), tamanho = (1,1), direcao = Este}) = ((1.5 , 0.5) , (2.5 , 1.5))
+>>> hitboxDano (Personagem {posicao = (1,1), tamanho = (1,1), direcao = Oeste}) = ((-0.5 , 0.5) , (0.5 , 1.5))
+-}
+
+hitboxDano :: Personagem -> Hitbox
+hitboxDano (Personagem {posicao = (x,y), tamanho = (l,a), direcao = dir}) | dir == Oeste = ((x-(3*l/2),y-(a/2)),(x - (l/2), y + (a/2)))
+                                                                          | dir == Este = ((x + (l/2),y-(a/2)),(x + (3*l/2),y + (a/2)))
+
 
 
 {-|
@@ -83,6 +84,74 @@ ataqueJogador (inim :t) jog | colisaoHitbox (hitbox inim) (hitboxDano jog) = (in
                             | otherwise = inim : ataqueJogador t jog
         
 
+{-|
+
+Se os persongens estiverem em cima dum bloco "Vazio"
+altera a sua velocidade para ser igual à gravidade
+
+=Exemplos
+>>>movimenta3 (Jogo {mapa = Mapa ((2.5,1),Oeste) (2.5,1) [[Vazio,Vazio], [Vazio,Plataforma], [Vazio,Vazio], [Plataforma,Plataforma]],inimigos = [Personagem {velocidade = (1,0),tipo = Fantasma,posicao = (1.5,0.5),direcao = Este, tamanho = (1,1),emEscada = False,ressalta = True,vida = 1, pontos = 0, aplicaDano = (False,0)}],colecionaveis = [(Martelo, (1,1)),(Moeda, (2,0))],jogador = Personagem {velocidade = (1,0),tipo = Jogador,posicao = (0.5,0.5),direcao = Este, tamanho = (1,1),emEscada = False,ressalta = False, vida = 3, pontos = 0, aplicaDano = (True,5)}})
+              =Jogo {mapa = Mapa ((2.5,1.0),Oeste) (2.5,1.0) [[Vazio,Vazio],[Vazio,Plataforma],[Vazio,Vazio],[Plataforma,Plataforma]], inimigos = [Personagem {velocidade = (1.0,0.0), tipo = Fantasma, posicao = (1.5,0.5), direcao = Este, tamanho = (1.0,1.0), emEscada = False, ressalta = True, vida = 1, pontos = 0, aplicaDano = (False,0.0)}], colecionaveis = [(Martelo,(1.0,1.0)),(Moeda,(2.0,0.0))], jogador = Personagem {velocidade = (0.0,10.0), tipo = Jogador, posicao = (0.5,0.5), direcao = Este, tamanho = (1.0,1.0), emEscada = False, ressalta = False, vida = 3, pontos = 0, aplicaDano = (True,5.0)}}
+
+-}
+
+movimenta3 :: Jogo -> Jogo
+movimenta3 (Jogo {mapa = (Mapa posI posF matriz) 
+                 ,inimigos = listaInimigos
+                 ,colecionaveis = listaColecionaveis
+                 ,jogador = jog}) = (Jogo {mapa = (Mapa posI posF matriz)
+                                          ,inimigos = movimenta3Inimigos matriz listaInimigos
+                                          ,colecionaveis = listaColecionaveis
+                                          ,jogador = movimenta3Jogador matriz jog})
+
+{-|
+Verifica onde estão os inimigos e se estiverem em cima do bloco 
+"Vazio" altera a sua velocidade para ser igual à gravidade
+
+=Exemplos
+>>> movimenta3Inimigos [[Vazio,Vazio],[Vazio,Plataforma],[Vazio,Vazio],[Plataforma,Plataforma]] [Personagem {velocidade = (0,2),tipo = Fantasma, posicao = (1.5,0.5),direcao = Este, tamanho = (1,1), emEscada = False, ressalta = True, vida = 1, pontos = 0, aplicaDano = (False,0)}]
+                      =[Personagem {velocidade = (0.0,2.0), tipo = Fantasma, posicao = (1.5,0.5), direcao = Este, tamanho = (1.0,1.0), emEscada = False, ressalta = True, vida = 1, pontos = 0, aplicaDano = (False,0.0)}]
+>>> movimenta3Inimigos [[Vazio,Vazio],[Vazio,Plataforma],[Vazio,Vazio],[Plataforma,Plataforma]] [Personagem {velocidade = (0,2),tipo = Fantasma, posicao = (0.5,0.5),direcao = Este, tamanho = (1,1), emEscada = False, ressalta = True, vida = 1, pontos = 0, aplicaDano = (False,0)}]
+                      =[Personagem {velocidade = (0.0,10.0), tipo = Fantasma, posicao = (0.5,0.5), direcao = Este, tamanho = (1.0,1.0), emEscada = False, ressalta = True, vida = 1, pontos = 0, aplicaDano = (False,0.0)}]
+-}
+
+movimenta3Inimigos :: [[Bloco]] -> [Personagem] -> [Personagem]
+movimenta3Inimigos m [] = []
+movimenta3Inimigos m (inim : t) | procuraBlocoInf m (posicao inim) == Vazio = inim {velocidade = gravidade} : movimenta3Inimigos m t
+                                | otherwise = inim : movimenta3Inimigos m t
+
+{-|
+Verifica onde estão o jogador e se estiver em cima do bloco 
+"Vazio" altera a sua velocidade para ser igual à gravidade
+
+=Exemplos
+>>> movimenta3Jogador [[Vazio,Vazio],[Vazio,Plataforma],[Vazio,Vazio],[Plataforma,Plataforma]] (Personagem {velocidade = (2,0),tipo = Jogador, posicao = (0.5,0.5),direcao = Este, tamanho = (1,1), emEscada = False, ressalta = True, vida = 1, pontos = 0, aplicaDano = (False,0)})
+                     = Personagem {velocidade = (0.0,10.0), tipo = Jogador, posicao = (0.5,0.5), direcao = Este, tamanho = (1.0,1.0), emEscada = False, ressalta = True, vida = 1, pontos = 0, aplicaDano = (False,0.0)}
+-}
+
+movimenta3Jogador :: [[Bloco]] -> Personagem -> Personagem
+movimenta3Jogador m jog | procuraBlocoInf m (posicao jog) == Vazio = jog {velocidade = gravidade}
+
+{-|
+Se o jogador colidir com o inimigo retira uma vida ao jogador
+
+=Exemplos
+>>>movimenta4 (Jogo {mapa = Mapa ((2.5,1),Oeste) (2.5,1) [[Escada,Alcapao,Vazio],[Escada,Vazio,Plataforma],[Plataforma,Plataforma,Plataforma]]
+                    ,inimigos = [Personagem {velocidade = (1,2),tipo = Fantasma,posicao = (1,1),direcao = Oeste, tamanho = (2,2),emEscada = False,ressalta = True,vida = 1, pontos = 0, aplicaDano = (False,0)}]
+                    ,colecionaveis = [(Martelo, (1,1)),(Moeda, (2,0))]
+                    ,jogador = Personagem {velocidade = (1,2),tipo = Jogador,posicao = (2,2),direcao = Oeste, tamanho = (2,2),emEscada = False,ressalta = False, vida = 3, pontos = 0, aplicaDano = (True,5)}})
+              =Jogo {mapa = Mapa ((2.5,1.0),Oeste) (2.5,1.0) [[Escada,Alcapao,Vazio],[Escada,Vazio,Plataforma],[Plataforma,Plataforma,Plataforma]], inimigos = [Personagem {velocidade = (1.0,2.0), tipo = Fantasma, posicao = (1.0,1.0), direcao = Oeste, tamanho = (2.0,2.0), emEscada = False, ressalta = True, vida = 1, pontos = 0, aplicaDano = (False,0.0)}], colecionaveis = [(Martelo,(1.0,1.0)),(Moeda,(2.0,0.0))], jogador = Personagem {velocidade = (1.0,2.0), tipo = Jogador, posicao = (2.0,2.0), direcao = Oeste, tamanho = (2.0,2.0), emEscada = False, ressalta = False, vida = 2, pontos = 0, aplicaDano = (True,5.0)}}
+-}
+
+
+movimenta4 :: Jogo -> Jogo
+movimenta4 (Jogo {mapa = m 
+                 ,inimigos = listaInimigos
+                 ,colecionaveis = listaColecionaveis
+                 ,jogador = jog}) = (Jogo {mapa = m 
+                                          ,inimigos = listaInimigos
+                                          ,colecionaveis = listaColecionaveis
+                                          ,jogador = ataqueInimigo listaInimigos jog})
 {-|
 
 Verifica se duas hitbox estão em colisão
@@ -117,27 +186,11 @@ ataqueInimigo (inim : t) jog | colisoesPersonagens inim jog = (jog {vida = vida 
                              | otherwise = ataqueInimigo t jog
 
 
-{-|
 
+{-
+NOTAS 
 
-Se o jogador colidir com o inimigo retira uma vida ao jogador
-
-=Exemplos
->>>movimenta4 (Jogo {mapa = Mapa ((2.5,1),Oeste) (2.5,1) [[Escada,Alcapao,Vazio],[Escada,Vazio,Plataforma],[Plataforma,Plataforma,Plataforma]]
-                    ,inimigos = [Personagem {velocidade = (1,2),tipo = Fantasma,posicao = (1,1),direcao = Oeste, tamanho = (2,2),emEscada = False,ressalta = True,vida = 1, pontos = 0, aplicaDano = (False,0)}]
-                    ,colecionaveis = [(Martelo, (1,1)),(Moeda, (2,0))]
-                    ,jogador = Personagem {velocidade = (1,2),tipo = Jogador,posicao = (2,2),direcao = Oeste, tamanho = (2,2),emEscada = False,ressalta = False, vida = 3, pontos = 0, aplicaDano = (True,5)}})
-              =Jogo {mapa = Mapa ((2.5,1.0),Oeste) (2.5,1.0) [[Escada,Alcapao,Vazio],[Escada,Vazio,Plataforma],[Plataforma,Plataforma,Plataforma]], inimigos = [Personagem {velocidade = (1.0,2.0), tipo = Fantasma, posicao = (1.0,1.0), direcao = Oeste, tamanho = (2.0,2.0), emEscada = False, ressalta = True, vida = 1, pontos = 0, aplicaDano = (False,0.0)}], colecionaveis = [(Martelo,(1.0,1.0)),(Moeda,(2.0,0.0))], jogador = Personagem {velocidade = (1.0,2.0), tipo = Jogador, posicao = (2.0,2.0), direcao = Oeste, tamanho = (2.0,2.0), emEscada = False, ressalta = False, vida = 2, pontos = 0, aplicaDano = (True,5.0)}}
-
-
-
-
-
-
-
-
-
-
+Fazer função que atualiza direção automaticamente consoante a velocidade
 
 
 
@@ -145,13 +198,10 @@ Se o jogador colidir com o inimigo retira uma vida ao jogador
 
 
 
-movimenta4 :: Jogo -> Jogo
-movimenta4 (Jogo {mapa = m 
-                 ,inimigos = listaInimigos
-                 ,colecionaveis = listaColecionaveis
-                 ,jogador = jog}) = (Jogo {mapa = m 
-                                          ,inimigos = listaInimigos
-                                          ,colecionaveis = listaColecionaveis
-                                          ,jogador = ataqueInimigo listaInimigos jog})
-        
---movimenta1 (Jogo {mapa = Mapa ((2.5,1),Oeste) (2.5,1) [[Escada,Alcapao,Vazio],[Escada,Vazio,Plataforma],[Plataforma,Plataforma,Plataforma]],inimigos = [Personagem {velocidade = (1,2),tipo = Fantasma,posicao = (1,1),direcao = Oeste, tamanho = (2,2),emEscada = False,ressalta = True,vida = 1, pontos = 0, aplicaDano = (False,0)}],colecionaveis = [(Martelo, (1,1)),(Moeda, (2,0))],jogador = Personagem {velocidade = (1,2),tipo = Jogador,posicao = (2,2),direcao = Oeste, tamanho = (2,2),emEscada = False,ressalta = False, vida = 3, pontos = 0, aplicaDano = (True,5)}})
+
+
+
+
+
+
+            
