@@ -14,12 +14,36 @@ import Tarefa2
 import Tarefa3
 import LI12324
 
+{-| Recebe as ações a aplicar aos inimigos, a ação a aplicar ao jogador, e um jogo, devolvendo o jogo atualizado.
+
+= Exemplos
+
+>>>
+>>>
+-}
+
 atualiza :: [Maybe Acao] -> Maybe Acao -> Jogo -> Jogo
 atualiza (ai:ais) aj j@(Jogo {inimigos = (i:is), jogador = jgd}) = (j {inimigos = atualizaInimigos (i:is) (ai:ais), jogador = movePersonagem jgd aj})
+
+{-| Recebe a lista dos inimigos de um jogo e a lista das ações a aplicar-lhes, devolvendo a lista de inimigos com as respetivas direções e velocidades atualizadas.
+
+= Exemplos
+
+>>>
+>>>
+-}
 
 atualizaInimigos :: [Personagem] -> [Maybe Acao] -> [Personagem]
 atualizaInimigos [] [] = []
 atualizaInimigos (i:is) (ai:ais) =  movePersonagem i ai : atualizaInimigos is ais
+
+{-| Recebe as ações a aplicar aos inimigos, a ação a aplicar ao jogador, e um jogo, devolvendo o jogo atualizado.
+
+= Exemplos
+
+>>>
+>>>
+-}
 
 movePersonagem :: Personagem -> Maybe Acao -> Personagem
 movePersonagem p a = case a of
@@ -30,6 +54,14 @@ movePersonagem p a = case a of
                         Just Saltar -> salta p Saltar
                         Just Parar -> para p Parar
                         Nothing -> p
+
+{-| Atualiza a velocidade e direção de uma personagem ao aplicar a ação 'Subir' ou 'Descer'. 
+
+= Exemplos
+
+>>>
+>>>
+-}
 
 usaEscada :: Personagem -> Acao -> Personagem
 usaEscada p a | a == Subir =  (p {velocidade = (0,-10), direcao = Norte})
