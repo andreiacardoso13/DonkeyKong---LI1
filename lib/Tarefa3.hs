@@ -64,8 +64,6 @@ hitboxDano :: Personagem -> Hitbox
 hitboxDano (Personagem {posicao = (x,y), tamanho = (l,a), direcao = dir}) | dir == Oeste = ((x-(3*l/2),y-(a/2)),(x - (l/2), y + (a/2)))
                                                                           | dir == Este = ((x + (l/2),y-(a/2)),(x + (3*l/2),y + (a/2)))
 
-
-
 {-|
 Se a hitbox de dano do jogador colidir com um inimigo retira uma vida ao inimigo
 
@@ -185,7 +183,21 @@ ataqueInimigo [] p = p
 ataqueInimigo (inim : t) jog | colisoesPersonagens inim jog && (vida inim > 0 )= (jog {vida = vida jog -1})
                              | otherwise = ataqueInimigo t jog
 
+--nao acabada, falta por os efeitos que 
 
+movimenta5 :: Jogo -> Jogo 
+movimenta5 (Jogo {mapa = m ,inimigos = listaInimigos,colecionaveis = listaColecionaveis,jogador = jog}) = Jogo {mapa = m 
+                                                                                                               ,inimigos = listaInimigos
+                                                                                                               ,colecionaveis = movimenta51 listaColecionaveis jog
+                                                                                                               ,jogador = jog}
+
+movimenta51 :: [(Colecionavel, Posicao)] -> Personagem -> [(Colecionavel, Posicao)]
+movimenta51 [] jog = []
+movimenta51 (h:t) jog | colisaoHitbox (hitboxColecionavel (snd h)) (hitbox jog) = movimenta51 t jog
+                      | otherwise = h : movimenta51 t jog
+
+hitboxColecionavel :: Posicao -> Hitbox -- para ser usado apenas com colecionaveis
+hitboxColecionavel (x,y) = ((x-0.5,y-0.5),(x+0.5, y+0.5))
 
 {-
 NOTAS 
@@ -194,12 +206,9 @@ Fazer função que atualiza direção automaticamente consoante a velocidade
 
 adicionar pontos ao jogador quando este mata o fantasma
 
+fazer o fantasma desaparecer quando sobre ataqueJogador
+
+o jogo acaba quando a vidad do jogador é igual a 0
+
+
 -}
-
-
-
-
-
-
-
-            
