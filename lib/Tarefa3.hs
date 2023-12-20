@@ -204,22 +204,60 @@ movimenta61 :: [[Bloco]] -> Personagem -> [[Bloco]]
 movimenta61 matriz jog | procuraBlocoInf matriz jog == Alcapao = undefined
                        | otherwise = matriz
 -}
-{-
-pisaAlcapao :: [[Bloco]] -> Personagem -> Bool
-pisaAlcapao (h:t) jog | mod (snd (snd(hitbox jog))) 1 == 0 = if (snd (posicao jog)) > 1 
-                                                               then pisaAlcapao t jog
-                                                               else undefined
-                      | otherwise = False
--}
-pisaAlcapao' :: [Bloco] -> Posicao -> Bool -- depois de já ter a linha da matriz onde o personagem está a pisar
-pisaAlcapao' [] _ = False
-pisaAlcapao' (h:t) (x,y) | x >= 0 && x <= 1 && h == Alcapao = True
-                         | otherwise = pisaAlcapao' t (x-1,y)
 
-alteraBlocoParaVazio :: [Bloco] -> Posicao -> [Bloco] --vai ser chamada quando o personagem estiver a pisar o alcapao
+
+
+
+{-|
+Verifica se o Bloco que o personagem está a pisar é um Alcapao
+
+=Exemplos
+>>>pisaAlcapao [[Vazio,Vazio,Vazio],[Vazio,Vazio,Vazio],[Plataforma,Alcapao,Plataforma]] (Personagem {velocidade = (1,0),tipo = Jogador, posicao = (2.1,1),direcao = Este, tamanho = (1,2),emEscada= False,ressalta = False,vida=3,pontos=0,aplicaDano = (False,0)})
+              =False
+>>>pisaAlcapao [[Vazio,Vazio,Vazio],[Vazio,Vazio,Vazio],[Plataforma,Alcapao,Plataforma]] (Personagem {velocidade = (1,0),tipo = Jogador, posicao = (2,1),direcao = Este, tamanho = (1,2),emEscada= False,ressalta = False,vida=3,pontos=0,aplicaDano = (False,0)})
+              =True
+>>>pisaAlcapao [[Vazio,Vazio,Vazio],[Vazio,Vazio,Vazio],[Plataforma,Alcapao,Plataforma]] (Personagem {velocidade = (1,0),tipo = Jogador, posicao = (1.5,1),direcao = Este, tamanho = (1,2),emEscada= False,ressalta = False,vida=3,pontos=0,aplicaDano = (False,0)})
+              =True
+-}
+pisaAlcapao :: [[Bloco]] -> Personagem -> Bool
+pisaAlcapao [] _ = False
+pisaAlcapao (h:t) jog | eNatural (snd (snd(hitbox jog))) && (snd (posicao jog)) >= 0 = pisaAlcapao t (jog {posicao = (fst (posicao jog), snd (posicao jog) -1)})
+                      | eNatural (snd (snd(hitbox jog))) && (snd (posicao jog)) < 0 = estaEmAlcapao h (posicao jog)
+                      | otherwise = False
+{-|
+Verifica se o Bloco onde se localiza o x da posição recebida é um Alcapão
+
+=Exemplos
+>>>estaEmAlcapao [Vazio,Alcapao,Plataforma] (0.5,5) = False
+>>>estaEmAlcapao [Vazio,Alcapao,Plataforma] (1,5) = True
+>>>estaEmAlcapao [Vazio,Alcapao,Plataforma] (2,5) = True
+-}
+estaEmAlcapao :: [Bloco] -> Posicao -> Bool
+estaEmAlcapao [] _ = False
+estaEmAlcapao (h:t) (x,y) | x >= 0 && x <= 1 && h == Alcapao = True
+                         | otherwise = estaEmAlcapao t (x-1,y)
+{-|
+Altera o Bloco onde se localiza o x da posição recebida para Vazio
+
+=Exemplos
+>>> alteraBlocoParaVazio [Plataforma,Plataforma,Alcapao] (0.5,6) = [Vazio,Plataforma,Alcapao]
+>>> alteraBlocoParaVazio [Plataforma,Plataforma,Alcapao] (2,6) = [Plataforma,Vazio,Alcapao]
+>>> alteraBlocoParaVazio [Plataforma,Plataforma,Alcapao] (1.5,6) = [Plataforma,Vazio,Alcapao]
+-}
+alteraBlocoParaVazio :: [Bloco] -> Posicao -> [Bloco] 
 alteraBlocoParaVazio (h:t) (x,y) | x >= 0 && x <= 1 = Vazio : t
                                  | otherwise = h : alteraBlocoParaVazio t (x-1,y)
+{-|
+Verifica se um número é natural
 
+=Exemplos
+>>>eNatural 2.0 = True
+>>>eNatural 2.1 = False
+-}
+eNatural :: Double -> Bool
+eNatural a | a < 0 = False
+           | a == 0 = True
+           | otherwise = eNatural (a-1)
 {-
 NOTAS 
 
