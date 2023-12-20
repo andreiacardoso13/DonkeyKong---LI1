@@ -50,19 +50,6 @@ movimenta1 (Jogo {mapa = m ,inimigos = listaInimigos,colecionaveis = listaColeci
                             ,jogador = jog
                             }
                       )
-{-|
-
-Define a área onde um personagem consegue causar dano,
-sendo esta no meu tamanho do menor retângulo que contém um personagem
-
-=Exemplos
->>> hitboxDano (Personagem {posicao = (1,1), tamanho = (1,1), direcao = Este}) = ((1.5 , 0.5) , (2.5 , 1.5))
->>> hitboxDano (Personagem {posicao = (1,1), tamanho = (1,1), direcao = Oeste}) = ((-0.5 , 0.5) , (0.5 , 1.5))
--}
-
-hitboxDano :: Personagem -> Hitbox
-hitboxDano (Personagem {posicao = (x,y), tamanho = (l,a), direcao = dir}) | dir == Oeste = ((x-(3*l/2),y-(a/2)),(x - (l/2), y + (a/2)))
-                                                                          | dir == Este = ((x + (l/2),y-(a/2)),(x + (3*l/2),y + (a/2)))
 
 {-|
 Se a hitbox de dano do jogador colidir com um inimigo retira uma vida ao inimigo
@@ -150,23 +137,6 @@ movimenta4 (Jogo {mapa = m
                                           ,inimigos = listaInimigos
                                           ,colecionaveis = listaColecionaveis
                                           ,jogador = ataqueInimigo listaInimigos jog})
-{-|
-
-Verifica se duas hitbox estão em colisão
-
-=Exemplos
->>>colisaoHitbox ((1,4),(3,1)) ((2,5),(4,3)) = True
->>>colisaoHitbox ((1,4),(3,1)) ((2,2),(4,0)) = True
->>>colisaoHitbox ((1,4),(3,1)) ((0,2),(4,0)) = True
->>>colisaoHitbox ((1,4),(3,1)) ((4,2),(5,0)) =False
--}
-colisaoHitbox :: Hitbox -> Hitbox -> Bool
-colisaoHitbox ((x1,y1),(x2,y2)) ((x3,y3),(x4,y4)) | x1 >= x3 && x1 <= x4 && y2 >= y3 && y2 <= y4 = True -- ponto inferior esquerdo
-                                                  | x2 >= x3 && x2 <= x4 && y1 >= y3 && y1 <= y4 = True -- ponto superior direito
-                                                  | x1 >= x3 && x1 <= x4 && y1 >= y3 && y1 <= y4 = True -- ponto superior esquerdo
-                                                  | x2 >= x3 && x2 <= x4 && y2 >= y3 && y2 <= y4 = True -- ponto inferior direito
-                                                  | otherwise = False
-
 
 {-|
 Se o jogador colidir com um inimigo retira uma vida ao jogador
@@ -196,8 +166,7 @@ movimenta51 [] jog = []
 movimenta51 (h:t) jog | colisaoHitbox (hitboxColecionavel (snd h)) (hitbox jog) = movimenta51 t jog
                       | otherwise = h : movimenta51 t jog
 
-hitboxColecionavel :: Posicao -> Hitbox -- para ser usado apenas com colecionaveis
-hitboxColecionavel (x,y) = ((x-0.5,y-0.5),(x+0.5, y+0.5))
+
 
 {-
 NOTAS 

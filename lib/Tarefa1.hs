@@ -15,7 +15,7 @@ import Data.Fixed
 -- Personagem {velocidade = _, tipo = _, posicao = (x,y), direcao = _, tamanho = (l,a), emEscada = _, ressalta = _, vida = _, pontos = _, aplicaDano = _}
 -- Personagem {velocidade = (2,2), tipo = Fantasma, posicao = (2.5,1), direcao = Este, tamanho = (1,1), emEscada = False, ressalta = True, vida = 1, pontos = 0, aplicaDano = (False,0)}
 
-{-| Define o menor retângulo que contém uma personagem ou objeto.
+{-| Define o menor retângulo que contém uma personagem.
 
 = Exemplos
 
@@ -25,6 +25,46 @@ import Data.Fixed
 
 hitbox :: Personagem -> Hitbox
 hitbox (Personagem {posicao = (x,y), tamanho = (l,a)}) = ((x-(l/2),y-(a/2)),(x+(l/2), y+(a/2)))
+
+{-| Define o menor retânculo que contém um colecionável
+
+= Exemplos
+>>> hitboxColecionavel (0.5,0.5) = ((0.0,0.0),(1.0,1.0))
+>>> hitboxColecionavel (1,1) = ((0.5,0.5),(1.5,1.5)) 
+-}
+
+hitboxColecionavel :: Posicao -> Hitbox -- para ser usado apenas com colecionaveis
+hitboxColecionavel (x,y) = ((x-0.5,y-0.5),(x+0.5, y+0.5))
+
+{-|
+Define a área onde um personagem consegue causar dano,
+sendo esta do mesmo tamanho do menor retângulo que contém um personagem
+
+=Exemplos
+>>> hitboxDano (Personagem {posicao = (1,1), tamanho = (1,1), direcao = Este}) = ((1.5 , 0.5) , (2.5 , 1.5))
+>>> hitboxDano (Personagem {posicao = (1,1), tamanho = (1,1), direcao = Oeste}) = ((-0.5 , 0.5) , (0.5 , 1.5))
+-}
+
+hitboxDano :: Personagem -> Hitbox
+hitboxDano (Personagem {posicao = (x,y), tamanho = (l,a), direcao = dir}) | dir == Oeste = ((x-(3*l/2),y-(a/2)),(x - (l/2), y + (a/2)))
+                                                                          | dir == Este = ((x + (l/2),y-(a/2)),(x + (3*l/2),y + (a/2)))
+
+{-|
+Verifica se duas hitbox estão em colisão
+
+=Exemplos
+>>>colisaoHitbox ((1,4),(3,1)) ((2,5),(4,3)) = True
+>>>colisaoHitbox ((1,4),(3,1)) ((2,2),(4,0)) = True
+>>>colisaoHitbox ((1,4),(3,1)) ((0,2),(4,0)) = True
+>>>colisaoHitbox ((1,4),(3,1)) ((4,2),(5,0)) = False
+-}
+colisaoHitbox :: Hitbox -> Hitbox -> Bool
+colisaoHitbox ((x1,y1),(x2,y2)) ((x3,y3),(x4,y4)) | x1 >= x3 && x1 <= x4 && y2 >= y3 && y2 <= y4 = True -- ponto inferior esquerdo
+                                                  | x2 >= x3 && x2 <= x4 && y1 >= y3 && y1 <= y4 = True -- ponto superior direito
+                                                  | x1 >= x3 && x1 <= x4 && y1 >= y3 && y1 <= y4 = True -- ponto superior esquerdo
+                                                  | x2 >= x3 && x2 <= x4 && y2 >= y3 && y2 <= y4 = True -- ponto inferior direito
+                                                  | otherwise = False
+
 
 {-| Testa se uma personagem se encontra em colisão com os limites do mapa.
 
