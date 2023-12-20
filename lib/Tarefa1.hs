@@ -59,10 +59,10 @@ Verifica se duas hitbox estão em colisão
 >>>colisaoHitbox ((1,4),(3,1)) ((4,2),(5,0)) = False
 -}
 colisaoHitbox :: Hitbox -> Hitbox -> Bool
-colisaoHitbox ((x1,y1),(x2,y2)) ((x3,y3),(x4,y4)) | x1 >= x3 && x1 <= x4 && y2 >= y3 && y2 <= y4 = True -- ponto inferior esquerdo
-                                                  | x2 >= x3 && x2 <= x4 && y1 >= y3 && y1 <= y4 = True -- ponto superior direito
-                                                  | x1 >= x3 && x1 <= x4 && y1 >= y3 && y1 <= y4 = True -- ponto superior esquerdo
-                                                  | x2 >= x3 && x2 <= x4 && y2 >= y3 && y2 <= y4 = True -- ponto inferior direito
+colisaoHitbox ((x1,y1),(x2,y2)) ((x3,y3),(x4,y4)) | x1 > x3 && x1 < x4 && y2 > y3 && y2 < y4 = True
+                                                  | x2 > x3 && x2 < x4 && y1 > y3 && y1 < y4 = True
+                                                  | x1 > x3 && x1 < x4 && y1 > y3 && y1 < y4 = True
+                                                  | x2 > x3 && x2 < x4 && y2 > y3 && y2 < y4 = True
                                                   | otherwise = False
 
 
