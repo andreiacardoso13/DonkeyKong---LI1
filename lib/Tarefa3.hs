@@ -196,8 +196,29 @@ movimenta52 (h:t) jog | colisaoHitbox (hitboxColecionavel (snd h)) (hitbox jog) 
                                                                                     then movimenta52 t (jog {pontos = pontos jog + 200})
                                                                                     else movimenta52 t (jog {aplicaDano = (True,10)})
                       | otherwise = movimenta52 t jog
+{-
+movimenta6 :: Jogo -> Jogo
+movimenta6 = undefined
 
+movimenta61 :: [[Bloco]] -> Personagem -> [[Bloco]]
+movimenta61 matriz jog | procuraBlocoInf matriz jog == Alcapao = undefined
+                       | otherwise = matriz
+-}
+{-
+pisaAlcapao :: [[Bloco]] -> Personagem -> Bool
+pisaAlcapao (h:t) jog | mod (snd (snd(hitbox jog))) 1 == 0 = if (snd (posicao jog)) > 1 
+                                                               then pisaAlcapao t jog
+                                                               else undefined
+                      | otherwise = False
+-}
+pisaAlcapao' :: [Bloco] -> Posicao -> Bool -- depois de já ter a linha da matriz onde o personagem está a pisar
+pisaAlcapao' [] _ = False
+pisaAlcapao' (h:t) (x,y) | x >= 0 && x <= 1 && h == Alcapao = True
+                         | otherwise = pisaAlcapao' t (x-1,y)
 
+alteraBlocoParaVazio :: [Bloco] -> Posicao -> [Bloco] --vai ser chamada quando o personagem estiver a pisar o alcapao
+alteraBlocoParaVazio (h:t) (x,y) | x >= 0 && x <= 1 = Vazio : t
+                                 | otherwise = h : alteraBlocoParaVazio t (x-1,y)
 
 {-
 NOTAS 
