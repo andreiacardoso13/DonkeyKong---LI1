@@ -87,7 +87,7 @@ moveEsquerda p AndarEsquerda = (p {velocidade = (-10,0), direcao = Oeste})
 {-| Atualiza a velocidade e direção de uma personagem ao aplicar a ação 'Saltar'. -}
 
 salta :: Personagem -> Acao -> Personagem
-salta p a = undefined
+salta p@(Personagem {velocidade = (h,v)}) Saltar = (p {velocidade = (h,-10)})
 
 {-| Atualiza a velocidade e direção de uma personagem ao aplicar a ação 'Parar'. -}
 
