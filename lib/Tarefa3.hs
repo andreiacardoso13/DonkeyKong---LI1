@@ -224,9 +224,12 @@ Verifica se o Bloco que o personagem está a pisar é um Alcapao
 -}
 pisaAlcapao :: [[Bloco]] -> Personagem -> Bool
 pisaAlcapao [] _ = False
-pisaAlcapao (h:t) pers | eNatural (snd (snd(hitbox pers))) && (snd (posicao pers)) >= 0 = pisaAlcapao t (pers {posicao = (fst (posicao pers), snd (posicao pers) -1)})
-                       | eNatural (snd (snd(hitbox pers))) && (snd (posicao pers)) < 0 = estaEmAlcapao h (posicao pers)
+pisaAlcapao (h:t) pers | eNatural (chaoPersonagem) && (yPersonagem) >= 0 = pisaAlcapao t (pers {posicao = (xPersonagem, yPersonagem -1)})
+                       | eNatural (chaoPersonagem) && (yPersonagem) < 0 = estaEmAlcapao h (posicao pers)
                        | otherwise = False
+      where chaoPersonagem = snd (snd (hitbox pers))
+            yPersonagem = snd (posicao pers)
+            xPersonagem = fst (posicao pers)
 {-|
 Verifica se o Bloco onde se localiza o x da posição recebida é um Alcapão
 
@@ -260,7 +263,7 @@ Altera o Bloco onde se localiza o x da posição recebida para Vazio
 -}
 blocoParaVazioAux :: [Bloco] -> Posicao -> [Bloco] 
 blocoParaVazioAux (h:t) (x,y) | x >= 0 && x <= 1 = Vazio : t
-                                    | otherwise = h : blocoParaVazioAux t (x-1,y)
+                              | otherwise = h : blocoParaVazioAux t (x-1,y)
 
 
 {-|
@@ -284,5 +287,10 @@ adicionar pontos ao jogador quando este mata o fantasma
 fazer o fantasma desaparecer quando sobre ataqueJogador
 
 o jogo acaba quando a vidad do jogador é igual a 0 ou quando este chega à estrela
+
+Colisoes: personagens nao podem sair do mapa nem atravessar blo-
+cos de plataforma. Mais ainda, deve tambem assumir que a hitbox
+da estrela ou de um objecto coleccionavel tem tamanho 1 × 1, i.e.
+estrela/martelo/moeda ocupam um bloco da matriz na totalidade
 
 -}
