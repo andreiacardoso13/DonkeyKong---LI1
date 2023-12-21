@@ -108,6 +108,10 @@ procuraBlocoInf :: [[Bloco]] -> Posicao -> Bloco
 procuraBlocoInf ((h:t):ls) (x,y) | y > 0 = procuraBlocoInf ls (x,y-1)
                                  | x > 1 = procuraBlocoInf [t] (x-1,y)
                                  | otherwise = h
+{- Neste caso deveria dar True
+colisoesParede (Mapa ((1.5,1.5),Este) (1.5,1.5) [[Vazio,Vazio,Vazio,Vazio],[Vazio,Vazio,Plataforma,Plataforma],[Vazio,Vazio,Vazio,Vazio],[Plataforma,Plataforma,Plataforma,Plataforma]]) (Personagem {velocidade = (1,0),tipo = Jogador, posicao= (1.5,1.5),direcao = Este,tamanho = (1,1),emEscada = False,ressalta = False,vida=3,pontos=0,aplicaDano=(False,0)})
+False
+-}
 
 colisoesParede :: Mapa -> Personagem -> Bool
 colisoesParede m p = mapaLimites m p || mapaChao m p
