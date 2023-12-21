@@ -196,62 +196,53 @@ movimenta52 (h:t) jog | colisaoHitbox (hitboxColecionavel (snd h)) (hitbox jog) 
                                                                                     then movimenta52 t (jog {pontos = pontos jog + 200})
                                                                                     else movimenta52 t (jog {aplicaDano = (True,10)})
                       | otherwise = movimenta52 t jog
-{-|
-Se o jogador pisar um Alçapão faz o Alçapão desaparecer
 
-=Exemplos
->>>movimenta6 (Jogo {mapa = Mapa ((1.5,1),Este) (1.5,1) [[Vazio,Vazio,Vazio],[Vazio,Vazio,Vazio],[Alcapao,Alcapao,Plataforma]], inimigos = [],colecionaveis= [], jogador = Personagem {velocidade = (1,0),tipo=Jogador,posicao=(1.5,1), direcao=Este,tamanho=(1,2),emEscada=False,ressalta=False,vida=3,pontos=0,aplicaDano=(False,0)}})
-             = Jogo {mapa = Mapa ((1.5,1.0),Este) (1.5,1.0) [[Vazio,Vazio,Vazio],[Vazio,Vazio,Vazio],[Alcapao,Vazio,Plataforma]], inimigos = [], colecionaveis = [], jogador = Personagem {velocidade = (1.0,0.0), tipo = Jogador, posicao = (1.5,1.0), direcao = Este, tamanho = (1.0,2.0), emEscada = False, ressalta = False, vida = 3, pontos = 0, aplicaDano = (False,0.0)}}
->>>movimenta6 (Jogo {mapa = Mapa ((1.5,1),Este) (1.5,1) [[Vazio,Vazio,Vazio],[Vazio,Vazio,Vazio],[Alcapao,Plataforma,Plataforma]], inimigos = [],colecionaveis= [], jogador = Personagem {velocidade = (1,0),tipo=Jogador,posicao=(1.5,1), direcao=Este,tamanho=(1,2),emEscada=False,ressalta=False,vida=3,pontos=0,aplicaDano=(False,0)}})
-             = Jogo {mapa = Mapa ((1.5,1.0),Este) (1.5,1.0) [[Vazio,Vazio,Vazio],[Vazio,Vazio,Vazio],[Alcapao,Plataforma,Plataforma]], inimigos = [], colecionaveis = [], jogador = Personagem {velocidade = (1.0,0.0), tipo = Jogador, posicao = (1.5,1.0), direcao = Este, tamanho = (1.0,2.0), emEscada = False, ressalta = False, vida = 3, pontos = 0, aplicaDano = (False,0.0)}}
+{-
+
+
+
+movimenta6 (Jogo {mapa = Mapa ((2,1),Oeste) (2,1) [[Vazio,Vazio,Vazio],[Vazio,Vazio,Vazio],[Plataforma,Alcapao,Plataforma]], inimigos = [], colecionaveis = [], jogador = Personagem {velocidade = ((-1),0), tipo = Jogador, posicao = (2.6,1),direcao=Oeste,tamanho=(1,2),emEscada=False,ressalta=False,vida=3,pontos=0,aplicaDano=(False,0)}})
+          = Jogo {mapa = Mapa ((2.0,1.0),Oeste) (2.0,1.0) [[Vazio,Vazio,Vazio],[Vazio,Vazio,Vazio],[Plataforma,Alcapao,Plataforma]], inimigos = [], colecionaveis = [], jogador = Personagem {velocidade = (-1.0,0.0), tipo = Jogador, posicao = (2.6,1.0), direcao = Oeste, tamanho = (1.0,2.0), emEscada = False, ressalta = False, vida = 3, pontos = 0, aplicaDano = (False,0.0)}}
+movimenta6 (Jogo {mapa= Mapa ((2,1),Oeste) (2,1) [[Vazio,Vazio,Vazio],[Vazio,Vazio,Vazio],[Plataforma,Alcapao,Plataforma]], inimigos = [], colecionaveis = [], jogador = Personagem {velocidade = ((-1),0), tipo = Jogador, posicao = (1.5,1),direcao=Oeste,tamanho=(1,2),emEscada=False,ressalta=False,vida=3,pontos=0,aplicaDano=(False,0)}})
+           =Jogo {mapa = Mapa ((2.0,1.0),Oeste) (2.0,1.0) [[Vazio,Vazio,Vazio],[Vazio,Vazio,Vazio],[Plataforma,Vazio,Plataforma]], inimigos = [], colecionaveis = [], jogador = Personagem {velocidade = (-1.0,0.0), tipo = Jogador, posicao = (1.5,1.0), direcao = Oeste, tamanho = (1.0,2.0), emEscada = False, ressalta = False, vida = 3, pontos = 0, aplicaDano = (False,0.0)}} 
+movimenta6 (Jogo {mapa= Mapa ((2,1),Oeste) (2,1) [[Vazio,Vazio,Vazio],[Vazio,Vazio,Vazio],[Plataforma,Alcapao,Plataforma]], inimigos = [], colecionaveis = [], jogador = Personagem {velocidade = ((-1),0), tipo = Jogador, posicao = (0.6,1),direcao=Oeste,tamanho=(1,2),emEscada=False,ressalta=False,vida=3,pontos=0,aplicaDano=(False,0)}})
+           =Jogo {mapa = Mapa ((2.0,1.0),Oeste) (2.0,1.0) [[Vazio,Vazio,Vazio],[Vazio,Vazio,Vazio],[Plataforma,Vazio,Plataforma]], inimigos = [], colecionaveis = [], jogador = Personagem {velocidade = (-1.0,0.0), tipo = Jogador, posicao = (0.6,1.0), direcao = Oeste, tamanho = (1.0,2.0), emEscada = False, ressalta = False, vida = 3, pontos = 0, aplicaDano = (False,0.0)}}
+
+
 -}
+
 movimenta6 :: Jogo -> Jogo
-movimenta6 (Jogo {mapa = Mapa a b matriz,inimigos = listaInimigos,colecionaveis = listaColecionaveis,jogador = jog}) 
-    | pisaAlcapao matriz jog = Jogo {mapa = Mapa a b (blocoParaVazio matriz (fst (posicao jog),(snd(snd(hitbox jog))))),inimigos = listaInimigos,colecionaveis = listaColecionaveis,jogador = jog}
-    | otherwise = Jogo {mapa = Mapa a b matriz,inimigos = listaInimigos,colecionaveis = listaColecionaveis,jogador = jog}
+movimenta6 (Jogo {mapa= Mapa a b blocos ,inimigos = listaInimigos,colecionaveis = listaColecionaveis,jogador = jog}) = (Jogo {mapa = Mapa a b (movimentoesquerda (movimentodireita blocos (hitbox jog)) (hitbox jog)),inimigos = listaInimigos,colecionaveis = listaColecionaveis,jogador = jog})
 
 
-{-|
-Verifica se o Bloco que o personagem está a pisar é um Alcapao
+--se o ponto direito da hitbox estiver num alcapao remove o alcapao
+movimentodireita :: [[Bloco]] -> Hitbox -> [[Bloco]]
+movimentodireita [] _ = []
+movimentodireita (h:t) ((x1,y1),(x2,y2)) | eNatural y2 && y2 == 0 && estaEmAlcapaoAux h (x2,y2) = blocoParaVazioAux h (x2,y2) :t
+                                         | eNatural y2 && y2 == 0 = (h:t)
+                                         | eNatural y2 = h : movimentodireita t ((x1,y1-1),(x2,y2-1))
+                                         | otherwise = (h:t)
 
-=Exemplos
->>>pisaAlcapao [[Vazio,Vazio,Vazio],[Vazio,Vazio,Vazio],[Plataforma,Alcapao,Plataforma]] (Personagem {velocidade = (1,0),tipo = Jogador, posicao = (2.1,1),direcao = Este, tamanho = (1,2),emEscada= False,ressalta = False,vida=3,pontos=0,aplicaDano = (False,0)})
-              =False
->>>pisaAlcapao [[Vazio,Vazio,Vazio],[Vazio,Vazio,Vazio],[Plataforma,Alcapao,Plataforma]] (Personagem {velocidade = (1,0),tipo = Jogador, posicao = (2,1),direcao = Este, tamanho = (1,2),emEscada= False,ressalta = False,vida=3,pontos=0,aplicaDano = (False,0)})
-              =True
->>>pisaAlcapao [[Vazio,Vazio,Vazio],[Vazio,Vazio,Vazio],[Plataforma,Alcapao,Plataforma]] (Personagem {velocidade = (1,0),tipo = Jogador, posicao = (1.5,1),direcao = Este, tamanho = (1,2),emEscada= False,ressalta = False,vida=3,pontos=0,aplicaDano = (False,0)})
-              =True
--}
-pisaAlcapao :: [[Bloco]] -> Personagem -> Bool
-pisaAlcapao [] _ = False
-pisaAlcapao (h:t) pers | eNatural (chaoPersonagem) && (yPersonagem) >= 0 = pisaAlcapao t (pers {posicao = (xPersonagem, yPersonagem -1)})
-                       | eNatural (chaoPersonagem) && (yPersonagem) < 0 = estaEmAlcapao h (posicao pers)
-                       | otherwise = False
-      where chaoPersonagem = snd (snd (hitbox pers))
-            yPersonagem = snd (posicao pers)
-            xPersonagem = fst (posicao pers)
+--se o ponto esquerdo da hitbox estiver num alcapao remove o alcapao
+movimentoesquerda :: [[Bloco]] -> Hitbox -> [[Bloco]]
+movimentoesquerda [] _ = []
+movimentoesquerda (h:t) ((x1,y1),(x2,y2)) | eNatural y2 && y2 == 0 && estaEmAlcapaoAux h (x1,y1) = blocoParaVazioAux h (x1,y1) :t
+                                          | eNatural y2 && y2 == 0 = (h:t)
+                                          | eNatural y2 = h : movimentoesquerda t ((x1,y1-1),(x2,y2-1))
+                                          | otherwise = (h:t)
 {-|
 Verifica se o Bloco onde se localiza o x da posição recebida é um Alcapão
 
 =Exemplos
->>>estaEmAlcapao [Vazio,Alcapao,Plataforma] (0.5,5) = False
->>>estaEmAlcapao [Vazio,Alcapao,Plataforma] (1,5) = True
->>>estaEmAlcapao [Vazio,Alcapao,Plataforma] (2,5) = True
+>>>estaEmAlcapaoAux [Vazio,Alcapao,Plataforma] (0.5,5) = False
+>>>estaEmAlcapaoAux [Vazio,Alcapao,Plataforma] (1,5) = True
+>>>estaEmAlcapaoAux [Vazio,Alcapao,Plataforma] (2,5) = True
 -}
-estaEmAlcapao :: [Bloco] -> Posicao -> Bool
-estaEmAlcapao [] _ = False
-estaEmAlcapao (h:t) (x,y) | x >= 0 && x <= 1 && h == Alcapao = True
-                          | otherwise = estaEmAlcapao t (x-1,y)
-{-|
-Altera o Bloco onde se localiza a posição para Vazio
+estaEmAlcapaoAux :: [Bloco] -> Posicao -> Bool
+estaEmAlcapaoAux [] _ = False
+estaEmAlcapaoAux (h:t) (x,y) | x > 0 && x <= 1 && h == Alcapao = True
+                             | otherwise = estaEmAlcapaoAux t (x-1,y)
 
-=Exemplos
->>>blocoParaVazio [[Vazio,Plataforma,Vazio],[Plataforma,Plataforma,Plataforma]] (1.5,0) = [[Vazio,Vazio,Vazio],[Plataforma,Plataforma,Plataforma]]
->>>blocoParaVazio [[Vazio,Vazio,Vazio],[Plataforma,Plataforma,Plataforma]] (0.5,1) = [[Vazio,Vazio,Vazio],[Vazio,Plataforma,Plataforma]]
--}
-blocoParaVazio :: [[Bloco]] -> Posicao -> [[Bloco]]
-blocoParaVazio (h:t) (x,y) | y == 0 = (blocoParaVazioAux h (x,y)) : t
-                           | otherwise = h : blocoParaVazio t (x,y-1)
 
 {-|
 Altera o Bloco onde se localiza o x da posição recebida para Vazio
@@ -261,9 +252,12 @@ Altera o Bloco onde se localiza o x da posição recebida para Vazio
 >>> blocoParaVazioAux [Plataforma,Plataforma,Alcapao] (2,6) = [Plataforma,Vazio,Alcapao]
 >>> blocoParaVazioAux [Plataforma,Plataforma,Alcapao] (1.5,6) = [Plataforma,Vazio,Alcapao]
 -}
+
 blocoParaVazioAux :: [Bloco] -> Posicao -> [Bloco] 
-blocoParaVazioAux (h:t) (x,y) | x >= 0 && x <= 1 = Vazio : t
+blocoParaVazioAux [] _ = []
+blocoParaVazioAux (h:t) (x,y) | x >= 0 && x <= 1 && h == Alcapao = Vazio : t
                               | otherwise = h : blocoParaVazioAux t (x-1,y)
+
 
 
 
