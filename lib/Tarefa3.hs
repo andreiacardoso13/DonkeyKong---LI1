@@ -266,17 +266,7 @@ blocoParaVazioAux (h:t) (x,y) | x >= 0 && x <= 1 = Vazio : t
                               | otherwise = h : blocoParaVazioAux t (x-1,y)
 
 
-{-|
-Verifica se um número é natural
 
-=Exemplos
->>>eNatural 2.0 = True
->>>eNatural 2.1 = False
--}
-eNatural :: Double -> Bool
-eNatural a | a < 0 = False
-           | a == 0 = True
-           | otherwise = eNatural (a-1)
 {-
 NOTAS 
 
