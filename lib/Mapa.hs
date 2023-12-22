@@ -1,6 +1,5 @@
 module Mapa where
 import LI12324
-import Main
 import Graphics.Gloss
 
 
@@ -40,4 +39,35 @@ m1 :: Mapa
 m1 = Mapa ((0,0), Este) (0,0) [[Vazio     , Plataforma, Vazio     ],
                                [Vazio     , Escada    , Vazio     ],
                                [Plataforma, Plataforma, Plataforma]]
+
+--exemplo de jogo
+
+j1 :: Jogo
+j1 = Jogo {mapa = m1
+          ,inimigos = [Personagem {velocidade=(1,0)
+                                  ,tipo=Fantasma
+                                  ,posicao=(2.5,1.5)
+                                  ,direcao = Este
+                                  ,tamanho = (1,1)
+                                  ,emEscada=False
+                                  ,ressalta=True
+                                  ,vida=1
+                                  ,pontos=0
+                                  ,aplicaDano=(False,0)
+                                   }
+                      ]
+          ,colecionaveis = [(Moeda,(2.5,0.5))]
+          ,jogador = Personagem {velocidade=(1,0)
+                                ,tipo=Fantasma
+                                ,posicao=(0.5,1.5)
+                                ,direcao = Este
+                                ,tamanho = (1,1)
+                                ,emEscada=False
+                                ,ressalta= False
+                                ,vida=3
+                                ,pontos=0
+                                ,aplicaDano=(False,0)
+                                }
+          }
+                        
 
