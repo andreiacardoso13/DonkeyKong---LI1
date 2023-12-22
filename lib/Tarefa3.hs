@@ -282,7 +282,7 @@ movimenta7Jogador map jog | colisoesParede map jog = jog {velocidade = (0,0)}
 movimenta7Inimigos :: Mapa -> [Personagem] -> [Personagem]
 movimenta7Inimigos _ [] = []
 movimenta7Inimigos map (h:t) | colisoesParede map h = (h {velocidade = (0,0)}) : movimenta7Inimigos map t
-                             | otherwise = h : movimenta7Inimigos
+                             | otherwise = h : movimenta7Inimigos map t
 
 {-
 NOTAS 
