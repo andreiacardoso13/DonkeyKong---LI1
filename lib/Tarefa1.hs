@@ -66,6 +66,19 @@ colisaoHitbox ((x1,y1),(x2,y2)) ((x3,y3),(x4,y4)) | x1 > x3 && x1 < x4 && y2 > y
                                                   | otherwise = False
 
 
+{-|
+Verifica se um número é natural
+
+=Exemplos
+>>>eNatural 2.0 = True
+>>>eNatural 2.1 = False
+-}
+eNatural :: Double -> Bool
+eNatural a | a < 0 = False
+           | a == 0 = True
+           | otherwise = eNatural (a-1)
+
+
 {-| Testa se uma personagem se encontra em colisão com os limites do mapa.
 
 = Exemplos
@@ -94,7 +107,6 @@ mapaChao :: Mapa -> Personagem -> Bool
 mapaChao (Mapa _ _ blocos) p@(Personagem {posicao = (x,y)}) = blc == Plataforma && mod' a 1 == 0
       where blc = procuraBlocoInf blocos (x,y)
             a = snd(fst(hitbox p))
--- hitbox is only defined for characters, not blocks!! 
 
 {-| Indica o tipo de Bloco situado abaixo do Bloco onde a personagem se encontra.
 
@@ -108,6 +120,7 @@ procuraBlocoInf :: [[Bloco]] -> Posicao -> Bloco
 procuraBlocoInf ((h:t):ls) (x,y) | y > 0 = procuraBlocoInf ls (x,y-1)
                                  | x > 1 = procuraBlocoInf [t] (x-1,y)
                                  | otherwise = h
+
 {- Neste caso deveria dar True
 colisoesParede (Mapa ((1.5,1.5),Este) (1.5,1.5) [[Vazio,Vazio,Vazio,Vazio],[Vazio,Vazio,Plataforma,Plataforma],[Vazio,Vazio,Vazio,Vazio],[Plataforma,Plataforma,Plataforma,Plataforma]]) (Personagem {velocidade = (1,0),tipo = Jogador, posicao= (1.5,1.5),direcao = Este,tamanho = (1,1),emEscada = False,ressalta = False,vida=3,pontos=0,aplicaDano=(False,0)})
 False
@@ -116,17 +129,6 @@ False
 colisoesParede :: Mapa -> Personagem -> Bool
 colisoesParede m p = mapaLimites m p || mapaChao m p
 
-{-|
-Verifica se um número é natural
-
-=Exemplos
->>>eNatural 2.0 = True
->>>eNatural 2.1 = False
--}
-eNatural :: Double -> Bool
-eNatural a | a < 0 = False
-           | a == 0 = True
-           | otherwise = eNatural (a-1)
 
 {-| Testa se duas personagens se encontram em colisão.
 
