@@ -2,10 +2,6 @@ module Imagens where
 import Graphics.Gloss
 import Graphics.Gloss.Juicy
 
-data Bloco = Escada | Plataforma | Alcapao | Vazio
-data Personagem = Personagem
-data Entidade = MacacoMalvado | Fantasma | Jogador
-
 data Imagens = Imagens {
     escada :: Picture,
     alcapao :: Picture,
