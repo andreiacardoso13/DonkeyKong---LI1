@@ -142,10 +142,6 @@ procuraBlocoSup ((h:t):ls) (x,y) | y > 2 = procuraBlocoSup ls (x,y-1)
                                  | x > 1 = procuraBlocoSup [t] (x-1,y)
                                  | otherwise = h
 
-{- Neste caso deveria dar True
-colisoesParede (Mapa ((1.5,1.5),Este) (1.5,1.5) [[Vazio,Vazio,Vazio,Vazio],[Vazio,Vazio,Plataforma,Plataforma],[Vazio,Vazio,Vazio,Vazio],[Plataforma,Plataforma,Plataforma,Plataforma]]) (Personagem {velocidade = (1,0),tipo = Jogador, posicao= (1.5,1.5),direcao = Este,tamanho = (1,1),emEscada = False,ressalta = False,vida=3,pontos=0,aplicaDano=(False,0)})
-False
--}
 
 colisoesParede :: Mapa -> Personagem -> Bool
 colisoesParede m p = mapaLimites m p || platColisoes m p
@@ -165,13 +161,3 @@ colisoesPersonagens p1 p2 = compHtbx hb1 hb2 || compHtbx hb2 hb1
           hb2 = hitbox p2
           compHtbx hb1 hb2 = fst (fst hb1) >= fst (fst hb2) && fst (fst hb1) <= fst (snd hb2) && snd (fst hb1) >= snd (fst hb2) && snd (fst hb1) <= snd (snd hb2)
 
-
-
-
--- MAPA DE EXEMPLO -- ADICIONAR A MAPA.HS IG
-
-blocos4x4 :: [[Bloco]]
-blocos4x4 = [[Vazio     ,Vazio     ,Vazio     ,Vazio     ],
-             [Plataforma,Vazio     ,Plataforma,Plataforma],
-             [Vazio     ,Vazio     ,Vazio     ,Vazio     ],
-             [Plataforma,Plataforma,Plataforma,Plataforma]]
