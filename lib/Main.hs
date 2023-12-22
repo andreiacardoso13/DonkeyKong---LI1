@@ -57,4 +57,4 @@ reageEvento :: Event -> EstadoGloss -> EstadoGloss
 reageEvento _ s = s
 
 reageTempo :: Float -> EstadoGloss -> EstadoGloss
-reageTempo = undefined
+reageTempo n ((x,y),z) = ((x,y),z)
