@@ -95,21 +95,16 @@ mapaLimites (Mapa _ _ blocos) p = eLim <= 0 || dLim >= fromIntegral mapaLargura 
         mapaAltura = length blocos
   -- "fromIntegral" faz os valores mapaLargura e mapaAltura serem doubles como os valores das coords
 
-{-| Testa se uma personagem se encontra em colisão com (em cima de) algum bloco de plataforma.
+{-| Testa se uma personagem se encontra em colisão comz algum bloco de plataforma.
 
 = Exemplos
 
->>> mapaChao (Mapa ((0,0), Este) (0,0) [[Vazio,Plataforma,Vazio],[Vazio,Escada,Vazio],[Plataforma,Plataforma,Plataforma]]) (Personagem {velocidade = (0,0), tipo = Jogador, posicao = (1.5,1.5), direcao = Norte, tamanho = (1,1), emEscada = True, ressalta = False, vida = 3, pontos = 0, aplicaDano = (False, 0)}) = True
->>> mapaChao (Mapa ((0,0), Este) (0,0) [[Vazio,Plataforma,Vazio],[Vazio,Escada,Vazio],[Plataforma,Plataforma,Plataforma]]) (Personagem {velocidade = (0,0), tipo = Fantasma, posicao = (1.5,1.5), direcao = Este, tamanho = (0.5,0.5), emEscada = True, ressalta = True, vida = 1, pontos = 0, aplicaDano = (False, 0)}) = False
+>>> platColisoes (Mapa ((0,0), Este) (0,0) [[Plataforma,Vazio,Vazio],[Vazio,Vazio,Vazio],[Plataforma,Plataforma,Plataforma]]) (Personagem {velocidade = (0,0), tipo = Jogador, posicao = (0.5,1.5), direcao = Oeste, tamanho = (1,1), emEscada = False, ressalta = False, vida = 3, pontos = 0, aplicaDano = (False, 0)}) = True
+>>> platColisoes (Mapa ((0,0), Este) (0,0) [[Plataforma,Vazio,Vazio],[Vazio,Vazio,Vazio],[Plataforma,Plataforma,Plataforma]]) (Personagem {velocidade = (0,0), tipo = Jogador, posicao = (2,1), direcao = Este, tamanho = (1,1), emEscada = False, ressalta = False, vida = 1, pontos = 100, aplicaDano = (False, 0)}) = False
 -}
 
-mapaChao :: Mapa -> Personagem -> Bool
-mapaChao (Mapa _ _ blocos) p@(Personagem {posicao = (x,y)}) = blc == Plataforma && mod' a 1 == 0
-      where blc = procuraBlocoInf blocos (x,y)
-            a = snd(fst(hitbox p))
-
 platColisoes :: Mapa -> Personagem -> Bool
-platColisoes (Mapa _ _ blocos) p@(Personagem {posicao = (x,y)}) = blcI == Plataforma && mod' a 1 == 0 || blcS == Plataforma && mod' b 1 == 0 || blcD == Plataforma && mod' c 1 == 0 || blcE == Plataforma && mod' d 1 == 0
+platColisoes (Mapa _ _ blocos) p@(Personagem {posicao = (x,y),tamanho = (l,a)}) = blcI == Plataforma && mod' a 1 == 0 || blcS == Plataforma && mod' b 1 == 0 || blcD == Plataforma && mod' c 1 == 0 || blcE == Plataforma && mod' d 1 == 0
       where blcI = procuraBlocoInf blocos (x,y)
             blcS = procuraBlocoSup blocos (x,y)
             blcD = procuraBlocoDir blocos (x,y)
