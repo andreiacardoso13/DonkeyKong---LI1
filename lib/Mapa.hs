@@ -40,6 +40,12 @@ m1 = Mapa ((0,0), Este) (0,0) [[Vazio     , Plataforma, Vazio     ],
                                [Vazio     , Escada    , Vazio     ],
                                [Plataforma, Plataforma, Plataforma]]
 
+m2 :: Mapa
+m2 = Mapa ((0,0), Este) (0,0) [[Vazio     ,Vazio     ,Vazio     ,Vazio     ],
+                               [Plataforma,Vazio     ,Plataforma,Plataforma],
+                               [Vazio     ,Vazio     ,Vazio     ,Vazio     ],
+                               [Plataforma,Plataforma,Plataforma,Plataforma]]
+
 --exemplo de jogo
 
 j1 :: Jogo
