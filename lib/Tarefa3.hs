@@ -102,7 +102,7 @@ Verifica onde estão os inimigos e se estiverem em cima do bloco
 
 movimenta3Inimigos :: [[Bloco]] -> [Personagem] -> [Personagem]
 movimenta3Inimigos m [] = []
-movimenta3Inimigos m (inim : t) | procuraBlocoInf m (posicao inim) == Vazio = inim {velocidade = gravidade} : movimenta3Inimigos m t
+movimenta3Inimigos m (inim : t) | procuraBlocoInf m (posicao inim) == Vazio = inim {velocidade = (fst (velocidade inim), snd gravidade)} : movimenta3Inimigos m t
                                 | otherwise = inim : movimenta3Inimigos m t
 
 {-|
@@ -271,7 +271,18 @@ blocoParaVazioAux (h:t) (x,y) | x >= 0 && x <= 1 && h == Alcapao = Vazio : t
                               | otherwise = h : blocoParaVazioAux t (x-1,y)
 
 
+--Tem de ser alterada, colisoesParede também vê se este está bater contra plataformas, nao apenas mapas
+movimenta7 :: Jogo -> Jogo
+movimenta7 jogo' = jogo' {inimigos = movimenta7Inimigos (mapa jogo') (inimigos jogo'), jogador = movimenta7Jogador (mapa jogo') (jogador jogo')}
 
+movimenta7Jogador :: Mapa -> Personagem -> Personagem
+movimenta7Jogador map jog | colisoesParede map jog = jog {velocidade = (0,0)}
+                          | otherwise = jog
+
+movimenta7Inimigos :: Mapa -> [Personagem] -> [Personagem]
+movimenta7Inimigos _ [] = []
+movimenta7Inimigos map (h:t) | colisoesParede map h = (h {velocidade = (0,0)}) : movimenta7Inimigos map t
+                             | otherwise = h : movimenta7Inimigos
 
 {-
 NOTAS 
