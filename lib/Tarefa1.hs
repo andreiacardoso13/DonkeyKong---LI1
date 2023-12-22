@@ -153,7 +153,7 @@ False
 -}
 
 colisoesParede :: Mapa -> Personagem -> Bool
-colisoesParede m p = mapaLimites m p || mapaChao m p
+colisoesParede m p = mapaLimites m p || platColisoes m p
 
 
 {-| Testa se duas personagens se encontram em colisão.
