@@ -108,6 +108,17 @@ mapaChao (Mapa _ _ blocos) p@(Personagem {posicao = (x,y)}) = blc == Plataforma 
       where blc = procuraBlocoInf blocos (x,y)
             a = snd(fst(hitbox p))
 
+platColisoes :: Mapa -> Personagem -> Bool
+platColisoes (Mapa _ _ blocos) p@(Personagem {posicao = (x,y)}) = blcI == Plataforma && mod' a 1 == 0 || blcS == Plataforma && mod' b 1 == 0 || blcD == Plataforma && mod' c 1 == 0 || blcE == Plataforma && mod' d 1 == 0
+      where blcI = procuraBlocoInf blocos (x,y)
+            blcS = procuraBlocoSup blocos (x,y)
+            blcD = procuraBlocoDir blocos (x,y)
+            blcE = procuraBlocoEsq blocos (x,y)
+            a = snd(fst(hitbox p))
+            b = snd(snd(hitbox p))
+            c = fst(snd(hitbox p))
+            d = fst(fst(hitbox p))
+
 {-| Indica o tipo de Bloco situado abaixo do Bloco onde a personagem se encontra.
 
 = Exemplos
@@ -119,6 +130,21 @@ mapaChao (Mapa _ _ blocos) p@(Personagem {posicao = (x,y)}) = blc == Plataforma 
 procuraBlocoInf :: [[Bloco]] -> Posicao -> Bloco
 procuraBlocoInf ((h:t):ls) (x,y) | y > 0 = procuraBlocoInf ls (x,y-1)
                                  | x > 1 = procuraBlocoInf [t] (x-1,y)
+                                 | otherwise = h
+
+procuraBlocoDir :: [[Bloco]] -> Posicao -> Bloco
+procuraBlocoDir ((h:t):ls) (x,y) | y > 1 = procuraBlocoDir ls (x,y-1)
+                                 | x > 0 = procuraBlocoDir [t] (x-1,y)
+                                 | otherwise = h
+
+procuraBlocoEsq :: [[Bloco]] -> Posicao -> Bloco
+procuraBlocoEsq ((h:t):ls) (x,y) | y > 1 = procuraBlocoEsq ls (x,y-1)
+                                 | x > 2 = procuraBlocoEsq [t] (x-1,y)
+                                 | otherwise = h
+
+procuraBlocoSup :: [[Bloco]] -> Posicao -> Bloco
+procuraBlocoSup ((h:t):ls) (x,y) | y > 2 = procuraBlocoSup ls (x,y-1)
+                                 | x > 1 = procuraBlocoSup [t] (x-1,y)
                                  | otherwise = h
 
 {- Neste caso deveria dar True
@@ -143,3 +169,14 @@ colisoesPersonagens p1 p2 = compHtbx hb1 hb2 || compHtbx hb2 hb1
     where hb1 = hitbox p1
           hb2 = hitbox p2
           compHtbx hb1 hb2 = fst (fst hb1) >= fst (fst hb2) && fst (fst hb1) <= fst (snd hb2) && snd (fst hb1) >= snd (fst hb2) && snd (fst hb1) <= snd (snd hb2)
+
+
+
+
+-- MAPA DE EXEMPLO -- ADICIONAR A MAPA.HS IG
+
+blocos4x4 :: [[Bloco]]
+blocos4x4 = [[Vazio     ,Vazio     ,Vazio     ,Vazio     ],
+             [Plataforma,Vazio     ,Plataforma,Plataforma],
+             [Vazio     ,Vazio     ,Vazio     ,Vazio     ],
+             [Plataforma,Plataforma,Plataforma,Plataforma]]
