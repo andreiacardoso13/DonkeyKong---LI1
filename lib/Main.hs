@@ -3,26 +3,37 @@ import Graphics.Gloss
 import Graphics.Gloss.Interface.Pure.Game
 import LI12324
 import Imagens
+import Graphics.Gloss.Juicy -- precisa apenas de ficar no Imagens ACHO
+
 
 {- main :: IO ()
 main = do
   putStrLn "Hello, PrimateKong!"
 -}
 
-data Estado = Estado {posicao :: (Float,Float)
-                     , vel :: (Float,Float)
-                     }
+type Estado = (Float,Float)
+
+type EstadoGloss = (Estado,Picture)
+
+estadoGlossInicial :: Maybe Picture -> EstadoGloss
+estadoGlossInicial maybeImagem = case maybeImagem of
+  Just imagem -> (estadoInicial,imagem)
+  Nothing -> error "Erro ao carregar imagem"
 
 main :: IO ()
 main = do 
-        imagens <- getImages
-        play  janela                          -- janela onde irá decorrer o jogo
+       -- imagens <- getImages
+        maybeEscada <- loadJuicyPNG "imagens/ladder.png"
+        case maybeEscada of 
+          Just escada -> play
+              janela                          -- janela onde irá decorrer o jogo
               bg                              -- cor do fundo da janela
               fr                              -- frame rate
-              estadoInicial                   -- define estado inicial do jogo
+              (estadoGlossInicial maybeEscada)                 -- define estado inicial do jogo
               desenhaEstado                   -- desenha o estado do jogo
               reageEvento                     -- reage a um evento
               reageTempo                      -- reage ao passar do tempo
+          Nothing -> putStrLn "Erro ao carregar imagem"
 
 janela :: Display
 janela = InWindow
@@ -37,13 +48,13 @@ fr :: Int
 fr = 20
 
 estadoInicial :: Estado
-estadoInicial = Estado (0,0) (50,75)
+estadoInicial = (0,0)
 
-desenhaEstado :: Estado -> Picture
-desenhaEstado e = rectangleSolid 50 50
+desenhaEstado :: EstadoGloss -> Picture
+desenhaEstado ((x,y),z) = Translate x y z
 
-reageEvento :: Event -> Estado -> Estado
+reageEvento :: Event -> EstadoGloss -> EstadoGloss
 reageEvento _ s = s
 
-reageTempo :: Float -> Estado -> Estado
-reageTempo t e = e
+reageTempo :: Float -> EstadoGloss -> EstadoGloss
+reageTempo = undefined
