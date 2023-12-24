@@ -3,6 +3,7 @@ import Graphics.Gloss
 import Graphics.Gloss.Interface.Pure.Game
 import LI12324
 import Imagens
+import Mapa
 import Graphics.Gloss.Juicy -- precisa apenas de ficar no Imagens ACHO
 
 
@@ -11,14 +12,11 @@ main = do
   putStrLn "Hello, PrimateKong!"
 -}
 
-type Estado = (Float,Float)
+data Estado = Estado {jogo :: Jogo}
 
 type EstadoGloss = (Estado,Picture)
 
-estadoGlossInicial :: Maybe Picture -> EstadoGloss
-estadoGlossInicial maybeImagem = case maybeImagem of
-  Just imagem -> (estadoInicial,imagem)
-  Nothing -> error "Erro ao carregar imagem"
+
 
 main :: IO ()
 main = do 
@@ -48,13 +46,20 @@ fr :: Int
 fr = 20
 
 estadoInicial :: Estado
-estadoInicial = (0,0)
+estadoInicial = Estado {jogo = j1}
+
+estadoGlossInicial :: Maybe Picture -> EstadoGloss
+estadoGlossInicial maybeImagem = case maybeImagem of
+  Just imagem -> (estadoInicial,imagem)
+  Nothing -> error "Erro ao carregar imagem"
 
 desenhaEstado :: EstadoGloss -> Picture
-desenhaEstado ((x,y),z) = Translate x y z
+desenhaEstado (jog,z) = z
 
 reageEvento :: Event -> EstadoGloss -> EstadoGloss
 reageEvento _ s = s
 
 reageTempo :: Float -> EstadoGloss -> EstadoGloss
-reageTempo n ((x,y),z) = ((x,y),z)
+reageTempo n (jog,z) = (jog,z)
+
+
