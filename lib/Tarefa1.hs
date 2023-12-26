@@ -79,7 +79,7 @@ eNatural a | a < 0 = False
            | otherwise = eNatural (a-1)
 
 
-{-| Testa se uma personagem se encontra em colisão com os limites do mapa.
+{-| Testa se uma Personagem se encontra em colisão com os limites do Mapa.
 
 = Exemplos
 
@@ -95,7 +95,7 @@ mapaLimites (Mapa _ _ blocos) p = eLim <= 0 || dLim >= fromIntegral mapaLargura 
         mapaAltura = length blocos
   -- "fromIntegral" faz os valores mapaLargura e mapaAltura serem doubles como os valores das coords
 
-{-| Testa se uma personagem se encontra em colisão comz algum bloco de plataforma.
+{-| Testa se uma Personagem se encontra em colisão com alguma Plataforma.
 
 = Exemplos
 
@@ -114,40 +114,48 @@ platColisoes (Mapa _ _ blocos) p@(Personagem {posicao = (x,y),tamanho = (l,a)}) 
             c = fst(snd(hitbox p))
             d = fst(fst(hitbox p))
 
-{-| Indica o tipo de Bloco situado abaixo do Bloco onde a personagem se encontra.
-
-= Exemplos
-
->>> procuraBlocoInf [[Vazio,Plataforma,Vazio],[Vazio,Escada,Vazio],[Plataforma,Plataforma,Plataforma]] (1.5,1.5) = Plataforma
->>> procuraBlocoInf [[Vazio,Plataforma,Vazio],[Vazio,Escada,Vazio],[Plataforma,Plataforma,Plataforma]] (2.5,0.5) = Vazio
--}
+{-| Indica o tipo de Bloco situado abaixo do Bloco onde a personagem se encontra. -}
 
 procuraBlocoInf :: [[Bloco]] -> Posicao -> Bloco
 procuraBlocoInf ((h:t):ls) (x,y) | y > 0 = procuraBlocoInf ls (x,y-1)
                                  | x > 1 = procuraBlocoInf [t] (x-1,y)
                                  | otherwise = h
 
+{-| Indica o tipo de Bloco situado à direita do Bloco onde a personagem se encontra. -}
+
 procuraBlocoDir :: [[Bloco]] -> Posicao -> Bloco
 procuraBlocoDir ((h:t):ls) (x,y) | y > 1 = procuraBlocoDir ls (x,y-1)
                                  | x > 0 = procuraBlocoDir [t] (x-1,y)
                                  | otherwise = h
+
+{-| Indica o tipo de Bloco situado à esquerda do Bloco onde a personagem se encontra. -}
 
 procuraBlocoEsq :: [[Bloco]] -> Posicao -> Bloco
 procuraBlocoEsq ((h:t):ls) (x,y) | y > 1 = procuraBlocoEsq ls (x,y-1)
                                  | x > 2 = procuraBlocoEsq [t] (x-1,y)
                                  | otherwise = h
 
+{-| Indica o tipo de Bloco situado acima do Bloco onde a personagem se encontra. -}
+
 procuraBlocoSup :: [[Bloco]] -> Posicao -> Bloco
 procuraBlocoSup ((h:t):ls) (x,y) | y > 2 = procuraBlocoSup ls (x,y-1)
                                  | x > 1 = procuraBlocoSup [t] (x-1,y)
                                  | otherwise = h
 
+{-| Dado um Mapa e uma Personagem, testa se a Personagem se encontra em colisão com os limites do Mapa ou com alguma Plataforma.
+
+= Exemplos
+
+>>> colisoesParede (Mapa ((0,0), Este) (0,0) [[Plataforma,Vazio,Vazio],[Vazio,Vazio,Vazio],[Plataforma,Plataforma,Plataforma]]) (Personagem {velocidade = (0,0), tipo = Jogador, posicao = (2.5,0.5), direcao = Oeste, tamanho = (1,1), emEscada = False, ressalta = False, vida = 2, pontos = 350, aplicaDano = (False, 0)}) = True
+>>> colisoesParede (Mapa ((0,0), Este) (0,0) [[Plataforma,Vazio,Vazio],[Vazio,Vazio,Vazio],[Plataforma,Plataforma,Plataforma]]) (Personagem {velocidade = (0,0), tipo = Jogador, posicao = (1.5,1.5), direcao = Oeste, tamanho = (1,1), emEscada = False, ressalta = False, vida = 2, pontos = 350, aplicaDano = (False, 0)}) = True
+>>> colisoesParede (Mapa ((0,0), Este) (0,0) [[Plataforma,Vazio,Vazio],[Vazio,Vazio,Vazio],[Plataforma,Plataforma,Plataforma]]) (Personagem {velocidade = (0,0), tipo = Jogador, posicao = (2,1), direcao = Oeste, tamanho = (1,1), emEscada = False, ressalta = False, vida = 2, pontos = 350, aplicaDano = (False, 0)}) = False
+-}
 
 colisoesParede :: Mapa -> Personagem -> Bool
 colisoesParede m p = mapaLimites m p || platColisoes m p
 
 
-{-| Testa se duas personagens se encontram em colisão.
+{-| Testa se duas Personagens se encontram em colisão.
 
 = Exemplos
 
