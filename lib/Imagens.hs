@@ -44,5 +44,10 @@ getImages = do
                Just monkeyDefeated      <- loadJuicyPNG "imagens/monkeyDefeated.png"
                Just monkeyFalling       <- loadJuicyPNG "imagens/monkeyFalling.png"
 
-               let images = [escada, alcapao, plataforma, estrela, moeda, vazio]
+               let images = [escada, alcapao, plataforma, estrela, moeda, martelo, ghostLeft1,
+                             ghostLeft2, ghostRight1, ghostRight2, marioClimbing1, marioClimbing2,
+                             marioHammerLeft1, marioHammerLeft2, marioHammerLeft3, marioHammerLeft4,
+                             marioHammerRight1, marioHammerRight2, marioHammerRight3, marioHammerRight4,
+                             marioJumpingLeft1, marioJumpingRight1, marioStandingBack, marioStandingLeft,
+                             marioStandingRight, marioWalkingLeft1, marioWalkingRight1, monkeyDefeated, monkeyFalling]
                return images
