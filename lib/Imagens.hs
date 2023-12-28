@@ -2,16 +2,11 @@ module Imagens where
 import Graphics.Gloss
 import Graphics.Gloss.Juicy
 
-data Imagens = Imagens {
-    escada :: Picture,
-    alcapao :: Picture,
-    plataforma :: Picture,
-    estrela :: Picture,
-    moeda :: Picture,
-    vazio :: Picture
-    }
+data Imagem = Ladder | Trapdoor | Platform | Estrela | Coin | Hammer | GhostLeft1 | GhostLeft2 | GhostRight1 | GhostRight2 | MarioClimbing1 | MarioClimbing2 | MarioHammerLeft1 | MarioHammerLeft2 | MarioHammerLeft3 | MarioHammerLeft4 | MarioHammerRight1 | MarioHammerRight2 | MarioHammerRight3 | MarioHammerRight4 | MarioJumpingLeft1 | MarioJumpingRight1 | MarioStandingBack | MarioStandingLeft | MarioStandingRight | MarioWalkingLeft1 | MarioWalkingRight1 | MonkeyDefeated | MonkeyFalling deriving (Eq)
 
-getImages :: IO [Picture]
+type Imagens = [(Imagem, Picture)]
+
+getImages :: IO Imagens
 getImages = do
                Just escada              <- loadJuicyPNG "imagens/ladder.png"
                Just alcapao             <- loadJuicyPNG "imagens/alcapao.png"
@@ -44,10 +39,16 @@ getImages = do
                Just monkeyDefeated      <- loadJuicyPNG "imagens/monkeyDefeated.png"
                Just monkeyFalling       <- loadJuicyPNG "imagens/monkeyFalling.png"
 
-               let images = [escada, alcapao, plataforma, estrela, moeda, martelo, ghostLeft1,
-                             ghostLeft2, ghostRight1, ghostRight2, marioClimbing1, marioClimbing2,
-                             marioHammerLeft1, marioHammerLeft2, marioHammerLeft3, marioHammerLeft4,
-                             marioHammerRight1, marioHammerRight2, marioHammerRight3, marioHammerRight4,
-                             marioJumpingLeft1, marioJumpingRight1, marioStandingBack, marioStandingLeft,
-                             marioStandingRight, marioWalkingLeft1, marioWalkingRight1, monkeyDefeated, monkeyFalling]
+               let images = [(Ladder,escada), (Trapdoor,alcapao), (Platform,plataforma), (Estrela,estrela),
+                             (Coin,moeda), (Hammer,martelo), (GhostLeft1,ghostLeft1), (GhostLeft2,ghostLeft2),
+                             (GhostRight1,ghostRight1), (GhostRight2,ghostRight2), (MarioClimbing1,marioClimbing1),
+                             (MarioClimbing2,marioClimbing2), (MarioHammerLeft1,marioHammerLeft1),
+                             (MarioHammerLeft2,marioHammerLeft2), (MarioHammerLeft3,marioHammerLeft3),
+                             (MarioHammerLeft4,marioHammerLeft4), (MarioHammerRight1,marioHammerRight1),
+                             (MarioHammerRight2,marioHammerRight2), (MarioHammerRight3,marioHammerRight3),
+                             (MarioHammerRight4,marioHammerRight4), (MarioJumpingLeft1,marioJumpingLeft1),
+                             (MarioJumpingRight1,marioJumpingRight1), (MarioStandingBack,marioStandingBack),
+                             (MarioStandingLeft,marioStandingLeft), (MarioStandingRight,marioStandingRight),
+                             (MarioWalkingLeft1,marioWalkingLeft1), (MarioWalkingRight1,marioWalkingRight1),
+                             (MonkeyDefeated,monkeyDefeated), (MonkeyFalling,monkeyFalling)]
                return images
