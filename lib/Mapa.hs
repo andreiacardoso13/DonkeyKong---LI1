@@ -1,6 +1,22 @@
 module Mapa where
 import LI12324
 import Graphics.Gloss
+import Imagens
+import Data.Maybe
+
+-- [("escada",escada), ("alcapao",alcapao), ("plataforma",plataforma), ("estrela",estrela),("moeda",moeda), ("martelo",martelo), ("ghostLeft1",ghostLeft1), ("ghostLeft2",ghostLeft2),("ghostRight1",ghostRight1), ("ghostRight2",ghostRight2), ("marioClimbing1",marioClimbing1),("marioClimbing2",marioClimbing2), ("marioHammerLeft1",marioHammerLeft1),("marioHammerLeft2",marioHammerLeft2), ("marioHammerLeft3",marioHammerLeft3),("marioHammerLeft4",marioHammerLeft4), ("marioHammerRight1",marioHammerRight1),("marioHammerRight2",marioHammerRight2), ("marioHammerRight3",marioHammerRight3),("marioHammerRight4",marioHammerRight4), ("marioJumpingLeft1",marioJumpingLeft1),("marioJumpingRight1",marioJumpingRight1), ("marioStandingBack",marioStandingBack),("marioStandingLeft",marioStandingLeft), ("marioStandingRight",marioStandingRight),("marioWalkingLeft1",marioWalkingLeft1), ("marioWalkingRight1",marioWalkingRight1),("monkeyDefeated",monkeyDefeated), ("monkeyFalling",monkeyFalling)]
+
+getImagem :: Imagem -> Imagens -> Picture
+getImagem im imgs = fromJust (lookup im imgs)
+
+desenhaBlocos :: Imagens -> Imagem -> Posicao -> Picture
+desenhaBlocos imgs b (x,y) = getImagem b imgs
+
+desenhaLinhas :: Imagens -> [Imagem] -> [Posicao] -> [Picture]
+desenhaLinhas imgs (h:t) (p:ps) = desenhaBlocos imgs h p : desenhaLinhas imgs t ps
+
+desenhaMapa :: Imagens -> [[Imagem]] -> [[Posicao]] -> [[Picture]]
+desenhaMapa imgs ((h:t):ls) ((p:ps):as) = desenhaLinhas imgs (h:t) (p:ps) : desenhaMapa imgs ls as
 
 
 mapaInicial :: Mapa
