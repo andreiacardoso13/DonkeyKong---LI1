@@ -4,7 +4,6 @@ import Graphics.Gloss.Interface.Pure.Game
 import LI12324
 import Imagens
 import Mapa
-import Data.Maybe (fromMaybe)
 import Graphics.Gloss.Juicy -- precisa apenas de ficar no Imagens ACHO
 
 
@@ -13,26 +12,20 @@ main = do
   putStrLn "Hello, PrimateKong!"
 -}
 
-data Estado = Estado {jogo :: Jogo}
-
-type EstadoGloss = (Estado,[(Bloco, (Maybe Picture,(Float,Float)))])
-
+data Estado = Estado {jogo :: Jogo, imagens :: Imagens}
 
 
 main :: IO ()
-main = do 
-       -- imagens <- getImages
-        maybeEscada <- loadJuicyPNG "imagens/ladder.png"
-        case maybeEscada of 
-          Just escada -> play
-              janela                                          -- janela onde irá decorrer o jogo
-              bg                                       -- cor do fundo da janela
-              fr                                          -- frame rate
-              (estadoGlossInicial [(Escada, (maybeEscada,(0,0)))])                 -- define estado inicial do jogo
-              desenhaEstado                                                   --desenha o estado do jogo
-              reageEvento                                           -- reage a um evento
-              reageTempo                                      -- reage ao passar do tempo
-          Nothing -> putStrLn "Erro ao carregar imagem"
+main = do
+  images <- getImages
+  play janela
+       bg
+       fr
+       (estadoInicial images)
+       desenhaEstado
+       reageEvento
+       reageTempo
+
 
 
 janela :: Display
@@ -47,27 +40,17 @@ bg = white
 fr :: Int
 fr = 20
 
-estadoInicial :: Estado
-estadoInicial = Estado {jogo = j1}
+estadoInicial :: Imagens -> Estado
+estadoInicial images = Estado {jogo = j1, imagens = images}
 
-estadoGlossInicial :: [(Bloco, (Maybe Picture, (Float, Float)))] -> EstadoGloss
-estadoGlossInicial textures = (estadoInicial, textures' textures)
-  where
-    textures' :: [(Bloco, (Maybe Picture, (Float, Float)))] -> [(Bloco, (Maybe Picture, (Float, Float)))]
-    textures' [] = []
-    textures' ((bloco, (maybePicture, (a, b))) : t) = (bloco, (maybePicture, (realToFrac a, realToFrac b))) : textures' t
-
-desenhaEstado :: EstadoGloss -> Picture
-desenhaEstado (_, [(_, (aMaybe, (_, _)))]) =
-  case aMaybe of
-    Just a -> a
-    Nothing -> rectangleSolid 50 50
+desenhaEstado :: Estado -> Picture
+desenhaEstado s = Pictures[getImagem MarioStandingRight (imagens s), Translate 10 10 (getImagem Ladder (imagens s)), Translate (-30) 30 (Scale 0.2 0.2 (getImagem Coin (imagens s)))]
 
 
-reageEvento :: Event -> EstadoGloss -> EstadoGloss
+reageEvento :: Event -> Estado -> Estado
 reageEvento _ s = s
 
-reageTempo :: Float -> EstadoGloss -> EstadoGloss
-reageTempo n (jog,z) = (jog,z)
+reageTempo :: Float -> Estado -> Estado
+reageTempo _ s = s
 
 
