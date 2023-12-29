@@ -4,6 +4,7 @@ import Graphics.Gloss.Interface.Pure.Game
 import LI12324
 import Imagens
 import Mapa
+import Data.Fixed
 
 
 {- main :: IO ()
@@ -11,7 +12,7 @@ main = do
   putStrLn "Hello, PrimateKong!"
 -}
 
-data Estado = Estado {jogo :: Jogo, imagens :: Imagens}
+data Estado = Estado {jogo :: Jogo, imagens :: Imagens, tempo :: Float} -- o tempo aumenta 4 por segundo, serve para alterar as imagens automaticamente
 
 
 main :: IO ()
@@ -42,7 +43,7 @@ fr = 20
 
 
 estadoInicial :: Imagens -> Estado
-estadoInicial images = Estado {jogo = j1, imagens = images}
+estadoInicial images = Estado {jogo = j1, imagens = images, tempo = 1}
 
 desenhaEstado :: Estado -> Picture
 desenhaEstado s = Pictures((desenhaMapa1 (-715.5,450.5) s)++desenhaJogador s)
@@ -59,32 +60,70 @@ desenhaLinhas1 (x,y) imgs (h : t) | h == Escada = (Translate x y (getImagem Ladd
                                   | h == Vazio = desenhaLinhas1 (x+53,y) imgs t 
 
 desenhaJogador :: Estado -> [Picture]
-desenhaJogador est | (emEscada (jogador(jogo est))) == True = [Translate (-742 + x) (-477 + y) (getImagem MarioClimbing2 (imagens est))]
-                   | fst (aplicaDano (jogador(jogo est))) == True && (direcao (jogador (jogo (est)))) == Este = [Translate (-742 + x) (-477 + y) (getImagem MarioHammerRight1 (imagens est))]
-                   | fst (aplicaDano (jogador(jogo est))) == True && (direcao (jogador (jogo (est)))) == Oeste = [Translate (-742 + x) (-477 + y) (getImagem MarioHammerLeft1 (imagens est))]  
-                   | (direcao (jogador (jogo (est)))) == Este && (velocidade (jogador (jogo (est)))) /= (0,0) = [Translate (-742 + x) (-477 + y) (getImagem MarioWalkingRight1 (imagens est))]
-                   | (direcao (jogador (jogo (est)))) == Oeste && (velocidade (jogador (jogo (est)))) /= (0,0) = [Translate (-742 + x) (-477 + y) (getImagem MarioWalkingLeft1 (imagens est))]
-                   | (direcao (jogador (jogo (est)))) == Este  = [Translate (-742 + x) (-477 + y) (getImagem MarioStandingRight (imagens est))]
-                   | (direcao (jogador (jogo (est)))) == Oeste  = [Translate (-742 + x) (-477 + y) (getImagem MarioStandingLeft(imagens est))]
-                   | otherwise = [Translate (-742 + x) (-477 + y) (getImagem MarioHammerLeft2 (imagens est))]
+desenhaJogador est | direcao (jogador (jogo est)) == Este = desenhaJogEste est
+                   | direcao (jogador (jogo est)) == Oeste = desenhaJogOeste est
+                   | otherwise = if ePar (tempo est) 
+                                   then [desenhaJogadorAux est MarioClimbing1]
+                                   else [desenhaJogadorAux est MarioClimbing2]
+
+
+desenhaJogEste :: Estado -> [Picture]
+desenhaJogEste est | snd velocidadeJog /= 0 = [desenhaJogadorAux est MarioJumpingRight1] -- está a saltar/cair para a direita
+                   | velocidadeJog /= (0,0) && aplicaDanoJog == True = if ePar(tempo est) 
+                                                                         then [desenhaJogadorAux est MarioHammerRight3] -- está a andar para a direita com o martelo para baixo
+                                                                         else [desenhaJogadorAux est MarioHammerRight2] -- está a andar para a direita com o martelo para cima
+                   | velocidadeJog /= (0,0) = if ePar (tempo est ) 
+                                                then [desenhaJogadorAux est MarioWalkingRight1] -- está a andar para a direita (desenho a andar)
+                                                else [desenhaJogadorAux est MarioStandingRight] -- está a andar para a direita (desenho parado)
+                   | velocidadeJog == (0,0) && aplicaDanoJog == True if ePar(tempo est) 
+                                                                       then [desenhaJogadorAux est MarioHammerRight1] --está parado e com martelo para baixo
+                                                                       else [desenhaJogadorAux est MarioHammerRight4] --está parado e com martelo para cima
+                   | otherwise = [desenhaJogadorAux est MarioStandingRight] -- mario parado virado pra direita
+    where velocidadeJog = velocidade (jogador (jogo est))
+          aplicaDanoJog = fst (aplicaDano(jogador(jogo est)))
+
+
+desenhaJogOeste :: Estado -> [Picture]
+desenhaJogOeste est | snd velocidadeJog /= 0 = [desenhaJogadorAux est MarioJumpingLeft1] -- está a saltar/cair para a esquerda
+                    | velocidadeJog /= (0,0) && aplicaDanoJog == True = if ePar(tempo est) 
+                                                                         then [desenhaJogadorAux est MarioHammerLeft3] -- está a andar para a esquerda com o martelo para baixo
+                                                                         else [desenhaJogadorAux est MarioHammerLeft2] -- está a andar para a esquerda com o martelo para cima
+                    | velocidadeJog /= (0,0) = if ePar (tempo est ) 
+                                                then [desenhaJogadorAux est MarioWalkingLeft1] -- está a andar para a esquerda (desenho a andar)
+                                                else [desenhaJogadorAux est MarioStandingLeft] -- está a andar para a esquerda (desenho parado)
+                    | velocidadeJog == (0,0) && aplicaDanoJog == True if ePar(tempo est) 
+                                                                       then [desenhaJogadorAux est MarioHammerLeft1] --está parado virado para a esquerda e com martelo para baixo
+                                                                       else [desenhaJogadorAux est MarioHammerLeft4] --está parado virado para a esquerda e com martelo para cima
+                    | otherwise = [desenhaJogadorAux est MarioStandingLeft] -- mario parado virado pra esquerda
+    where velocidadeJog = velocidade (jogador (jogo est))
+          aplicaDanoJog = fst (aplicaDano(jogador(jogo est)))
+
+
+desenhaJogadorAux :: Estado -> Imagem -> Picture
+desenhaJogadorAux est img = Translate (x - 742) (y - 477) (getImagem img (imagens est))
     where x = realToFrac $ (fst (posicao (jogador(jogo est)))) * 53
           y = realToFrac $ (snd (posicao (jogador(jogo est)))) * 53
 
-{-
+--verifica se a casa das unidades de um numero é par
+ePar :: Float -> Bool
+ePar n = eParAux (mod' n 10)
 
-converteCoordenadasPers :: Picture -> Picture
-converteCoordenadasPers img = Translate (x - 742) (y - 477) 
-
-converteCoordenadasMapa :: Posicao -> Posicao 
-converteCoordenadasMapa (x,y) = (x - 715.5, y - 450.5)
-
--}
+eParAux :: Float -> Bool
+eParAux n | n >= 0 && n < 1 = True 
+          | n < 0 = False
+          | otherwise = eParAux (n-2)
 
 
 reageEvento :: Event -> Estado -> Estado
 reageEvento _ s = s
 
 reageTempo :: Float -> Estado -> Estado
-reageTempo _ s = s
+--reageTempo t (Estado {jogo = (Jogo {mapa = m, inimigos = inim, colecionaveis =col, jogador = jog}), imagens = imgs,tempo=tp}) = (Estado {jogo = (Jogo {mapa = m, inimigos = inim, colecionaveis =col, jogador = jog {posicao = b (posicao jog)}}), imagens = imgs,tempo=tp+0.2})
+--reageTempo _ s = s
+reageTempo t s = s {tempo = tempo s + 0.2}
 
+{-
+b :: Posicao -> Posicao
+b (x,y) = (x+0.1,y)
+-}
 
