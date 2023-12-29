@@ -117,6 +117,7 @@ platColisoes (Mapa _ _ blocos) p@(Personagem {posicao = (x,y),tamanho = (l,a)}) 
 {-| Indica o tipo de Bloco situado abaixo do Bloco onde a personagem se encontra. -}
 
 procuraBlocoInf :: [[Bloco]] -> Posicao -> Bloco
+procuraBlocoInf [l] _ = Vazio 
 procuraBlocoInf ((h:t):ls) (x,y) | y > 0 = procuraBlocoInf ls (x,y-1)
                                  | x > 1 = procuraBlocoInf [t] (x-1,y)
                                  | otherwise = h
