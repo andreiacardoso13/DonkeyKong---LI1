@@ -34,7 +34,7 @@ janela = InWindow
   (255,60)    -- posição no ecrã
 
 bg :: Color
-bg = white
+bg = black
 
 fr :: Int
 fr = 20
@@ -59,19 +59,27 @@ desenhaLinhas1 (x,y) imgs (h : t) | h == Escada = (Translate x y (getImagem Ladd
                                   | h == Vazio = desenhaLinhas1 (x+53,y) imgs t 
 
 desenhaJogador :: Estado -> [Picture]
---desenhaJogador (Estado {jogo = (Jogo {jogador = jog}), imagens = img})
-desenhaJogador est | (direcao (jogador (jogo (est)))) == Norte = [getImagem MarioWalkingRight1 (imagens est)]
-                   | otherwise = [getImagem Estrela (imagens est)]
-
-
+desenhaJogador est | (emEscada (jogador(jogo est))) == True = [Translate (-742 + x) (-477 + y) (getImagem MarioClimbing2 (imagens est))]
+                   | fst (aplicaDano (jogador(jogo est))) == True && (direcao (jogador (jogo (est)))) == Este = [Translate (-742 + x) (-477 + y) (getImagem MarioHammerRight1 (imagens est))]
+                   | fst (aplicaDano (jogador(jogo est))) == True && (direcao (jogador (jogo (est)))) == Oeste = [Translate (-742 + x) (-477 + y) (getImagem MarioHammerLeft1 (imagens est))]  
+                   | (direcao (jogador (jogo (est)))) == Este && (velocidade (jogador (jogo (est)))) /= (0,0) = [Translate (-742 + x) (-477 + y) (getImagem MarioWalkingRight1 (imagens est))]
+                   | (direcao (jogador (jogo (est)))) == Oeste && (velocidade (jogador (jogo (est)))) /= (0,0) = [Translate (-742 + x) (-477 + y) (getImagem MarioWalkingLeft1 (imagens est))]
+                   | (direcao (jogador (jogo (est)))) == Este  = [Translate (-742 + x) (-477 + y) (getImagem MarioStandingRight (imagens est))]
+                   | (direcao (jogador (jogo (est)))) == Oeste  = [Translate (-742 + x) (-477 + y) (getImagem MarioStandingLeft(imagens est))]
+                   | otherwise = [Translate (-742 + x) (-477 + y) (getImagem MarioHammerLeft2 (imagens est))]
+    where x = realToFrac $ (fst (posicao (jogador(jogo est)))) * 53
+          y = realToFrac $ (snd (posicao (jogador(jogo est)))) * 53
 
 {-
-converteCoordenadas :: Posicao -> Posicao 
-converteCoordenadas (x,y) = (x - 742, y - 477)
+
+converteCoordenadasPers :: Picture -> Picture
+converteCoordenadasPers img = Translate (x - 742) (y - 477) 
 
 converteCoordenadasMapa :: Posicao -> Posicao 
 converteCoordenadasMapa (x,y) = (x - 715.5, y - 450.5)
+
 -}
+
 
 reageEvento :: Event -> Estado -> Estado
 reageEvento _ s = s
