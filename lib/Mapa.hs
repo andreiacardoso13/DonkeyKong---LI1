@@ -65,7 +65,7 @@ m2 = Mapa ((0,0), Este) (0,0) [[Vazio     ,Vazio     ,Vazio     ,Vazio     ],
 --exemplo de jogo
 
 j1 :: Jogo
-j1 = Jogo {mapa = m1
+j1 = Jogo {mapa = mapaInicial
           ,inimigos = [Personagem {velocidade=(1,0)
                                   ,tipo=Fantasma
                                   ,posicao=(2.5,1.5)
