@@ -287,6 +287,10 @@ movimenta7Inimigos map (h:t) | colisoesParede map h = (h {velocidade = (0,0)}) :
 {-
 NOTAS 
 
+os personagens só sao desenhados quando tem vidas
+
+fazer uma hitbox especifica para quando o Mario está com o Martelo, e definir o seu tamanho apenas como o sitio onde tá o Mario
+
 Fazer função que atualiza direção automaticamente consoante a velocidade
 
 adicionar pontos ao jogador quando este mata o fantasma
