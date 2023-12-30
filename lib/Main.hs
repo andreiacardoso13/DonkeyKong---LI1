@@ -46,7 +46,7 @@ estadoInicial :: Imagens -> Estado
 estadoInicial images = Estado {jogo = j1, imagens = images, tempo = 1}
 
 desenhaEstado :: Estado -> Picture
-desenhaEstado s = Pictures((desenhaMapa1 (-715.5,450.5) s)++desenhaJogador s++desenhaInimigos s)
+desenhaEstado s = Pictures((desenhaMapa1 (-715.5,450.5) s)++desenhaJogador s++desenhaInimigos s++desenhaColecionaveis s)
 
 
 
@@ -62,6 +62,8 @@ desenhaLinhas1 (x,y) imgs (h : t) | h == Escada = (Translate x y (getImagem Ladd
                                   | h == Plataforma = (Translate x y(getImagem Platform imgs)): desenhaLinhas1 (x+53,y) imgs t 
                                   | h == Alcapao = (Translate x y(getImagem Trapdoor imgs)): desenhaLinhas1 (x+53,y) imgs t 
                                   | h == Vazio = desenhaLinhas1 (x+53,y) imgs t 
+
+
 
 
 
@@ -121,6 +123,8 @@ desenhaJogadorAux est img = Translate (x - 742) (477 - y) (getImagem img (imagen
 
 
 
+
+
 desenhaInimigos :: Estado -> [Picture]
 desenhaInimigos (Estado {jogo = Jogo {inimigos = []}, imagens = imgs, tempo = tp}) = []
 desenhaInimigos (Estado {jogo = jog, imagens = imgs, tempo = tp}) = desenhaInimigosAux (Estado {jogo = jog {inimigos = take 1 (inimigos jog)}, imagens = imgs, tempo = tp}) : (desenhaInimigos (Estado {jogo = jog {inimigos = drop 1 (inimigos jog)}, imagens = imgs, tempo = tp}))
@@ -144,6 +148,26 @@ desenhaInimAux est img = Translate (x - 742) (480 - y) (getImagem img (imagens e
 
 
 
+
+
+desenhaColecionaveis :: Estado -> [Picture]
+desenhaColecionaveis (Estado {jogo = Jogo {colecionaveis= []}, imagens = imgs, tempo = tp}) = []
+desenhaColecionaveis (Estado {jogo = jog, imagens = imgs, tempo = tp}) = desenhaColecionaveisAux (Estado {jogo = jog {colecionaveis = take 1 (colecionaveis jog)}, imagens = imgs, tempo = tp}) : (desenhaColecionaveis (Estado {jogo = jog {colecionaveis = drop 1 (colecionaveis jog)}, imagens = imgs, tempo = tp}))
+
+
+desenhaColecionaveisAux :: Estado -> Picture
+desenhaColecionaveisAux est | fst (head (colecionaveis (jogo est))) == Moeda = desenhaColecAux est Coin
+                            | otherwise = desenhaColecAux est Hammer 
+
+desenhaColecAux :: Estado -> Imagem -> Picture
+desenhaColecAux est img = Translate (x - 742) (477 - y) (getImagem img (imagens est))
+    where x = realToFrac $ (fst (snd (head (colecionaveis (jogo est))))) * 53
+          y = realToFrac $ (snd (snd (head (colecionaveis (jogo est))))) * 53
+
+
+
+
+desenhaEstrela ::
 
 
 
