@@ -167,10 +167,6 @@ desenhaColecAux est img = Translate (x - 742) (477 - y) (getImagem img (imagens 
 
 
 
-desenhaEstrela ::
-
-
-
 --verifica se a casa das unidades de um numero é par
 ePar :: Float -> Bool
 ePar n = eParAux (mod' n 10)
