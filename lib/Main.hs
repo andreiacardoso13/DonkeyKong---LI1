@@ -46,7 +46,11 @@ estadoInicial :: Imagens -> Estado
 estadoInicial images = Estado {jogo = j1, imagens = images, tempo = 1}
 
 desenhaEstado :: Estado -> Picture
-desenhaEstado s = Pictures((desenhaMapa1 (-715.5,450.5) s)++desenhaJogador s)
+desenhaEstado s = Pictures((desenhaMapa1 (-715.5,450.5) s)++desenhaJogador s++desenhaInimigos s)
+
+
+
+
 
 desenhaMapa1 :: (Float,Float) -> Estado -> [Picture]
 desenhaMapa1 _ (Estado {jogo = (Jogo {mapa = Mapa a b []})}) = []
@@ -58,6 +62,10 @@ desenhaLinhas1 (x,y) imgs (h : t) | h == Escada = (Translate x y (getImagem Ladd
                                   | h == Plataforma = (Translate x y(getImagem Platform imgs)): desenhaLinhas1 (x+53,y) imgs t 
                                   | h == Alcapao = (Translate x y(getImagem Trapdoor imgs)): desenhaLinhas1 (x+53,y) imgs t 
                                   | h == Vazio = desenhaLinhas1 (x+53,y) imgs t 
+
+
+
+
 
 desenhaJogador :: Estado -> [Picture]
 desenhaJogador est | direcao (jogador (jogo est)) == Este = desenhaJogEste est
@@ -107,6 +115,37 @@ desenhaJogadorAux :: Estado -> Imagem -> Picture
 desenhaJogadorAux est img = Translate (x - 742) (477 - y) (getImagem img (imagens est))
     where x = realToFrac $ (fst (posicao (jogador(jogo est)))) * 53
           y = realToFrac $ (snd (posicao (jogador(jogo est)))) * 53
+
+
+
+
+
+
+desenhaInimigos :: Estado -> [Picture]
+desenhaInimigos (Estado {jogo = Jogo {inimigos = []}, imagens = imgs, tempo = tp}) = []
+desenhaInimigos (Estado {jogo = jog, imagens = imgs, tempo = tp}) = desenhaInimigosAux (Estado {jogo = jog {inimigos = take 1 (inimigos jog)}, imagens = imgs, tempo = tp}) : (desenhaInimigos (Estado {jogo = jog {inimigos = drop 1 (inimigos jog)}, imagens = imgs, tempo = tp}))
+
+desenhaInimigosAux :: Estado -> Picture
+desenhaInimigosAux est | direcao (head (inimigos (jogo est))) == Este = if ePar (tempo est) 
+                                                                          then desenhaInimAux est GhostRight1
+                                                                          else desenhaInimAux est GhostRight2
+                       | otherwise = if ePar (tempo est) 
+                                       then desenhaInimAux est GhostLeft1
+                                       else desenhaInimAux est GhostLeft2
+
+
+desenhaInimAux :: Estado -> Imagem -> Picture
+desenhaInimAux est img = Translate (x - 742) (480 - y) (getImagem img (imagens est))
+    where x = realToFrac $ (fst (posicao (head (inimigos(jogo est))))) * 53
+          y = realToFrac $ (snd (posicao (head (inimigos(jogo est))))) * 53
+
+
+
+
+
+
+
+
 
 --verifica se a casa das unidades de um numero é par
 ePar :: Float -> Bool
