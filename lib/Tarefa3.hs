@@ -287,6 +287,8 @@ movimenta7Inimigos map (h:t) | colisoesParede map h = (h {velocidade = (0,0)}) :
 {-
 NOTAS 
 
+adicionar um BONUS igual ao jogo original, que diminiu consoante o tempo passa e é dado ao jogador quando este ganha
+
 os personagens só sao desenhados quando tem vidas
 
 fazer uma hitbox especifica para quando o Mario está com o Martelo, e definir o seu tamanho apenas como o sitio onde tá o Mario

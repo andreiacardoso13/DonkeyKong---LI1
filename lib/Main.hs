@@ -46,7 +46,7 @@ estadoInicial :: Imagens -> Estado
 estadoInicial images = Estado {jogo = j1, imagens = images, tempo = 1}
 
 desenhaEstado :: Estado -> Picture
-desenhaEstado s = Pictures((desenhaMapa1 (-715.5,450.5) s)++desenhaJogador s++desenhaInimigos s++desenhaColecionaveis s++desenhaEstrela s++desenhaVida s)
+desenhaEstado s = Pictures((desenhaMapa1 (-715.5,450.5) s)++desenhaJogador s++desenhaInimigos s++desenhaColecionaveis s++desenhaEstrela s++desenhaVida s++desenhaPontos s)
 
 
 
@@ -127,7 +127,8 @@ desenhaJogadorAux est img = Translate (x - 742) (477 - y) (getImagem img (imagen
 
 desenhaInimigos :: Estado -> [Picture]
 desenhaInimigos (Estado {jogo = Jogo {inimigos = []}, imagens = imgs, tempo = tp}) = []
-desenhaInimigos (Estado {jogo = jog, imagens = imgs, tempo = tp}) = desenhaInimigosAux (Estado {jogo = jog {inimigos = take 1 (inimigos jog)}, imagens = imgs, tempo = tp}) : (desenhaInimigos (Estado {jogo = jog {inimigos = drop 1 (inimigos jog)}, imagens = imgs, tempo = tp}))
+desenhaInimigos (Estado {jogo = jog, imagens = imgs, tempo = tp}) | vida (head (inimigos jog)) > 0 = desenhaInimigosAux (Estado {jogo = jog {inimigos = take 1 (inimigos jog)}, imagens = imgs, tempo = tp}) : (desenhaInimigos (Estado {jogo = jog {inimigos = drop 1 (inimigos jog)}, imagens = imgs, tempo = tp}))
+                                                                  | otherwise = desenhaInimigos (Estado {jogo = jog {inimigos = drop 1 (inimigos jog)}, imagens = imgs, tempo = tp})
 
 desenhaInimigosAux :: Estado -> Picture
 desenhaInimigosAux est | direcao (head (inimigos (jogo est))) == Este = if ePar (tempo est) 
@@ -142,6 +143,8 @@ desenhaInimAux :: Estado -> Imagem -> Picture
 desenhaInimAux est img = Translate (x - 742) (480 - y) (getImagem img (imagens est))
     where x = realToFrac $ (fst (posicao (head (inimigos(jogo est))))) * 53
           y = realToFrac $ (snd (posicao (head (inimigos(jogo est))))) * 53
+
+
 
 
 
@@ -168,20 +171,71 @@ desenhaColecAux est img = Translate (x - 742) (477 - y) (getImagem img (imagens 
 
 
 
+
+
+
 --por a estrela mais para cima talvez (diminuir ao y)
 desenhaEstrela :: Estado -> [Picture]
 desenhaEstrela s = [Translate (x - 742) (477 - y) (getImagem Estrela (imagens s))]
   where x = 14 * 53
-        y = 4.5 * 53
+        y = 1.5 * 53
+
+
+
 
 
 
 desenhaVida :: Estado -> [Picture] 
-desenhaVida s | vida (jogador (jogo s)) == 0 = [Translate (-630) 440 (Scale 0.3 0.3 (getImagem ZeroVidas (imagens s)))]
-              | vida (jogador (jogo s)) == 1 = [Translate (-630) 440 (Scale 0.3 0.3 (getImagem UmaVida (imagens s)))]
-              | vida (jogador (jogo s)) == 2 = [Translate (-630) 440 (Scale 0.3 0.3 (getImagem DuasVidas (imagens s)))]
-              | otherwise = [Translate (-630) 440 (Scale 0.3 0.3 ( getImagem TresVidas (imagens s)))]
+desenhaVida s | vida (jogador (jogo s)) == 0 = [Translate (-630) 340 (Scale 0.3 0.3 (getImagem ZeroVidas (imagens s)))]
+              | vida (jogador (jogo s)) == 1 = [Translate (-630) 340 (Scale 0.3 0.3 (getImagem UmaVida (imagens s)))]
+              | vida (jogador (jogo s)) == 2 = [Translate (-630) 340 (Scale 0.3 0.3 (getImagem DuasVidas (imagens s)))]
+              | otherwise = [Translate (-630) 340 (Scale 0.3 0.3 ( getImagem TresVidas (imagens s)))]
 
+
+
+desenhaPontos :: Estado -> [Picture]
+desenhaPontos est = desenhaPontosImg est ++ desenhaPontosNum est
+
+desenhaPontosImg :: Estado -> [Picture]
+desenhaPontosImg est = [Translate (-631) (420) (getImagem Score (imagens est))]
+
+desenhaPontosNum :: Estado -> [Picture]
+desenhaPontosNum est = desenhaPontosNum1 est ++ desenhaPontosNum2 est ++ desenhaPontosNum3 est++ desenhaPontosNum4 est++ desenhaPontosNum5 est
+
+desenhaPontosNum1 :: Estado -> [Picture]
+desenhaPontosNum1 est = verificaNumero (div pt 10000) est
+   where pt = (pontos(jogador(jogo est)))
+
+desenhaPontosNum2 :: Estado -> [Picture]
+desenhaPontosNum2 est = map (Translate 30 0) (verificaNumero (mod (div pt 1000) 10) est)
+   where pt = (pontos(jogador(jogo est)))
+
+desenhaPontosNum3 :: Estado -> [Picture]
+desenhaPontosNum3 est = map (Translate 60 0) (verificaNumero (mod (div pt 100) 10) est)
+   where pt = (pontos(jogador(jogo est)))
+
+desenhaPontosNum4 :: Estado -> [Picture]
+desenhaPontosNum4 est = map (Translate 90 0) (verificaNumero (mod (div pt 10) 10) est)
+   where pt = (pontos(jogador(jogo est)))
+
+desenhaPontosNum5 :: Estado -> [Picture]
+desenhaPontosNum5 est = map (Translate 120 0) (verificaNumero (mod pt 10) est)
+   where pt = (pontos(jogador(jogo est)))
+
+verificaNumero :: Int -> Estado -> [Picture]
+verificaNumero int est | int == 0 = desenhaPontosAux est Num0
+                       | int == 1 = desenhaPontosAux est Num1
+                       | int == 2 = desenhaPontosAux est Num2
+                       | int == 3 = desenhaPontosAux est Num3
+                       | int == 4 = desenhaPontosAux est Num4
+                       | int == 5 = desenhaPontosAux est Num5
+                       | int == 6 = desenhaPontosAux est Num6
+                       | int == 7 = desenhaPontosAux est Num7
+                       | int == 8 = desenhaPontosAux est Num8
+                       | int == 9 = desenhaPontosAux est Num9
+
+desenhaPontosAux :: Estado -> Imagem -> [Picture]
+desenhaPontosAux est img = [Translate (-690) (400) (Scale 0.05 0.05 ((getImagem img (imagens est))))]
 
 
 

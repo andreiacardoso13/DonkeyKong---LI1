@@ -2,7 +2,7 @@ module Imagens where
 import Graphics.Gloss
 import Graphics.Gloss.Juicy
 
-data Imagem = Ladder | Trapdoor | Platform | Estrela | Coin | Hammer | GhostLeft1 | GhostLeft2 | GhostRight1 | GhostRight2 | MarioClimbing1 | MarioClimbing2 | MarioHammerLeft1 | MarioHammerLeft2 | MarioHammerLeft3 | MarioHammerLeft4 | MarioHammerRight1 | MarioHammerRight2 | MarioHammerRight3 | MarioHammerRight4 | MarioJumpingLeft1 | MarioJumpingRight1 | MarioStandingBack | MarioStandingLeft | MarioStandingRight | MarioWalkingLeft1 | MarioWalkingRight1 | MonkeyDefeated | MonkeyFalling | VidaCheia | VidaVazia | ZeroVidas | UmaVida | DuasVidas | TresVidas | Num0 | Num1 | Num2 | Num3 | Num4 | Num5 | Num6 | Num7 | Num8 | Num9 deriving (Eq)
+data Imagem = Ladder | Trapdoor | Platform | Estrela | Coin | Hammer | GhostLeft1 | GhostLeft2 | GhostRight1 | GhostRight2 | MarioClimbing1 | MarioClimbing2 | MarioHammerLeft1 | MarioHammerLeft2 | MarioHammerLeft3 | MarioHammerLeft4 | MarioHammerRight1 | MarioHammerRight2 | MarioHammerRight3 | MarioHammerRight4 | MarioJumpingLeft1 | MarioJumpingRight1 | MarioStandingBack | MarioStandingLeft | MarioStandingRight | MarioWalkingLeft1 | MarioWalkingRight1 | MonkeyDefeated | MonkeyFalling | VidaCheia | VidaVazia | ZeroVidas | UmaVida | DuasVidas | TresVidas | Num0 | Num1 | Num2 | Num3 | Num4 | Num5 | Num6 | Num7 | Num8 | Num9 | Score deriving (Eq)
 
 type Imagens = [(Imagem, Picture)]
 
@@ -54,6 +54,7 @@ getImages = do
                Just num7                <- loadJuicyPNG "imagens/num7.png"
                Just num8                <- loadJuicyPNG "imagens/num8.png"
                Just num9                <- loadJuicyPNG "imagens/num9.png"
+               Just score               <- loadJuicyPNG "imagens/score.png"
 
                let images = [(Ladder,escada), (Trapdoor,alcapao), (Platform,plataforma), (Estrela,estrela),
                              (Coin,moeda), (Hammer,martelo), (GhostLeft1,ghostLeft1), (GhostLeft2,ghostLeft2),
@@ -69,5 +70,5 @@ getImages = do
                              (MonkeyDefeated,monkeyDefeated), (MonkeyFalling,monkeyFalling), (VidaCheia,vidaCheia),
                              (VidaVazia,vidaVazia), (ZeroVidas,zeroVidas), (UmaVida,umaVida), (DuasVidas,duasVidas),
                              (TresVidas,tresVidas), (Num0,num0), (Num1,num1), (Num2,num2), (Num3,num3), (Num4,num4),
-                             (Num5,num5), (Num6,num6), (Num7,num7), (Num8,num8), (Num9,num9)]
+                             (Num5,num5), (Num6,num6), (Num7,num7), (Num8,num8), (Num9,num9), (Score,score)]
                return images
