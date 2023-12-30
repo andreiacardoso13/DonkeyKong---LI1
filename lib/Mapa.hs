@@ -68,8 +68,19 @@ j1 :: Jogo
 j1 = Jogo {mapa = mapaInicial
           ,inimigos = [Personagem {velocidade=(1,0)
                                   ,tipo=Fantasma
-                                  ,posicao=(2.5,1.5)
+                                  ,posicao=(5.5,4.5)
                                   ,direcao = Este
+                                  ,tamanho = (1,1)
+                                  ,emEscada=False
+                                  ,ressalta=True
+                                  ,vida=1
+                                  ,pontos=0
+                                  ,aplicaDano=(False,0)
+                                   },
+                        Personagem {velocidade=(1,0)
+                                  ,tipo=Fantasma
+                                  ,posicao=(8.5,7.5)
+                                  ,direcao = Norte
                                   ,tamanho = (1,1)
                                   ,emEscada=False
                                   ,ressalta=True
@@ -78,9 +89,9 @@ j1 = Jogo {mapa = mapaInicial
                                   ,aplicaDano=(False,0)
                                    }
                       ]
-          ,colecionaveis = [(Moeda,(2.5,0.5))]
+          ,colecionaveis = [(Moeda,(2.5,0.5)),(Martelo, (3.5,4.5))]
           ,jogador = Personagem {velocidade=(1,0)
-                                ,tipo=Fantasma
+                                ,tipo=Jogador
                                 ,posicao=(0.5,16.5)
                                 ,direcao = Este
                                 ,tamanho = (1,1)
