@@ -2,7 +2,7 @@ module Imagens where
 import Graphics.Gloss
 import Graphics.Gloss.Juicy
 
-data Imagem = Ladder | Trapdoor | Platform | Estrela | Coin | Hammer | GhostLeft1 | GhostLeft2 | GhostRight1 | GhostRight2 | MarioClimbing1 | MarioClimbing2 | MarioHammerLeft1 | MarioHammerLeft2 | MarioHammerLeft3 | MarioHammerLeft4 | MarioHammerRight1 | MarioHammerRight2 | MarioHammerRight3 | MarioHammerRight4 | MarioJumpingLeft1 | MarioJumpingRight1 | MarioStandingBack | MarioStandingLeft | MarioStandingRight | MarioWalkingLeft1 | MarioWalkingRight1 | MonkeyDefeated | MonkeyFalling | VidaCheia | VidaVazia | ZeroVidas | UmaVida | DuasVidas | TresVidas deriving (Eq)
+data Imagem = Ladder | Trapdoor | Platform | Estrela | Coin | Hammer | GhostLeft1 | GhostLeft2 | GhostRight1 | GhostRight2 | MarioClimbing1 | MarioClimbing2 | MarioHammerLeft1 | MarioHammerLeft2 | MarioHammerLeft3 | MarioHammerLeft4 | MarioHammerRight1 | MarioHammerRight2 | MarioHammerRight3 | MarioHammerRight4 | MarioJumpingLeft1 | MarioJumpingRight1 | MarioStandingBack | MarioStandingLeft | MarioStandingRight | MarioWalkingLeft1 | MarioWalkingRight1 | MonkeyDefeated | MonkeyFalling | VidaCheia | VidaVazia | ZeroVidas | UmaVida | DuasVidas | TresVidas | Num0 | Num1 | Num2 | Num3 | Num4 | Num5 | Num6 | Num7 | Num8 | Num9 deriving (Eq)
 
 type Imagens = [(Imagem, Picture)]
 
@@ -44,6 +44,16 @@ getImages = do
                Just umaVida             <- loadJuicyPNG "imagens/vida1.png"
                Just duasVidas           <- loadJuicyPNG "imagens/vida2.png"
                Just tresVidas           <- loadJuicyPNG "imagens/vida3.png"
+               Just num0                <- loadJuicyPNG "imagens/num0.png"
+               Just num1                <- loadJuicyPNG "imagens/num1.png"
+               Just num2                <- loadJuicyPNG "imagens/num2.png"
+               Just num3                <- loadJuicyPNG "imagens/num3.png"
+               Just num4                <- loadJuicyPNG "imagens/num4.png"
+               Just num5                <- loadJuicyPNG "imagens/num5.png"
+               Just num6                <- loadJuicyPNG "imagens/num6.png"
+               Just num7                <- loadJuicyPNG "imagens/num7.png"
+               Just num8                <- loadJuicyPNG "imagens/num8.png"
+               Just num9                <- loadJuicyPNG "imagens/num9.png"
 
                let images = [(Ladder,escada), (Trapdoor,alcapao), (Platform,plataforma), (Estrela,estrela),
                              (Coin,moeda), (Hammer,martelo), (GhostLeft1,ghostLeft1), (GhostLeft2,ghostLeft2),
@@ -58,5 +68,6 @@ getImages = do
                              (MarioWalkingLeft1,marioWalkingLeft1), (MarioWalkingRight1,marioWalkingRight1),
                              (MonkeyDefeated,monkeyDefeated), (MonkeyFalling,monkeyFalling), (VidaCheia,vidaCheia),
                              (VidaVazia,vidaVazia), (ZeroVidas,zeroVidas), (UmaVida,umaVida), (DuasVidas,duasVidas),
-                             (TresVidas,tresVidas)]
+                             (TresVidas,tresVidas), (Num0,num0), (Num1,num1), (Num2,num2), (Num3,num3), (Num4,num4),
+                             (Num5,num5), (Num6,num6), (Num7,num7), (Num8,num8), (Num9,num9)]
                return images
