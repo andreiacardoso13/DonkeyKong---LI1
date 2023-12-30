@@ -104,7 +104,7 @@ desenhaJogOeste est | snd velocidadeJog /= 0 = [desenhaJogadorAux est MarioJumpi
 
 
 desenhaJogadorAux :: Estado -> Imagem -> Picture
-desenhaJogadorAux est img = Translate (x - 742) (y - 477) (getImagem img (imagens est))
+desenhaJogadorAux est img = Translate (x - 742) (477 - y) (getImagem img (imagens est))
     where x = realToFrac $ (fst (posicao (jogador(jogo est)))) * 53
           y = realToFrac $ (snd (posicao (jogador(jogo est)))) * 53
 
