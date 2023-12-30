@@ -71,8 +71,8 @@ movePersonagem p a = case a of
 {-| Atualiza a velocidade e direção de uma personagem ao aplicar a ação 'Subir' ou 'Descer'. -}
 
 usaEscada :: Personagem -> Acao -> Personagem
-usaEscada p a | a == Subir =  (p {velocidade = (0,-10), direcao = Norte})
-              | a == Descer = (p {velocidade = (0, 10), direcao = Norte})
+usaEscada p a | a == Subir =  (p {velocidade = (0,-10), direcao = Norte,  emEscada = True})
+              | a == Descer = (p {velocidade = (0, 10), direcao = Norte,  emEscada = True})
 
 {-| Atualiza a velocidade e direção de uma personagem ao aplicar a ação 'AndarDireita'. -}
 
