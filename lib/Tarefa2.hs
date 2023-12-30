@@ -407,6 +407,6 @@ validaPosicaoMapaColecionaveis (Jogo {mapa = Mapa ((xJogador,yJogador), dir) (a,
 -}
 
 procuraBloco :: [[Bloco]] -> Posicao -> Bloco
-procuraBloco ((h:t):ls) (x,y) | y > 0 = procuraBloco ls (x,y-1)
-                              | x > 0 = procuraBloco [t] (x-1,y)
+procuraBloco ((h:t):ls) (x,y) | y > 1 = procuraBloco ls (x,y-1)
+                              | x > 1 = procuraBloco [t] (x-1,y)
                               | otherwise = h
