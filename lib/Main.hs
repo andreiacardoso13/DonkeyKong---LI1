@@ -14,7 +14,7 @@ main = do
 
 data Estado = Estado {jogo :: Jogo, imagens :: Imagens, tempo :: Float} -- o tempo aumenta 4 por segundo, serve para alterar as imagens automaticamente
 
-
+-- | Função principal, responsável por carregar os elementos visuais presentes no ambiente gŕafico do jogo
 main :: IO ()
 main = do
   images <- getImages
@@ -26,36 +26,40 @@ main = do
        reageEvento
        reageTempo
 
---Um da matriz equivale a 53 do Gloss
-
+-- | Define as propriedades de tamanho o localização da janela do jogo
 janela :: Display
 janela = InWindow
   "Mapa"     -- título de janela    
   (1484,954)  -- dimensão da janela // 53*53 cada bloco
   (255,60)    -- posição no ecrã
 
+-- | Define a cor de fundo da janela de jogo
 bg :: Color
 bg = black
 
+-- | Define o número de frames por segundo, ou seja o número de vezes que o programa é atualizado por segundo
 fr :: Int
 fr = 20
 
 
-
+-- | Recebe as imagens e devolve o estado inicial do jogo
 estadoInicial :: Imagens -> Estado
 estadoInicial images = Estado {jogo = j1, imagens = images, tempo = 1}
 
+
+-- | Desenha no ecrã o que está a acontecer no jogo em cada momento
 desenhaEstado :: Estado -> Picture
 desenhaEstado s = Pictures((desenhaMapa1 (-715.5,450.5) s)++desenhaJogador s++desenhaInimigos s++desenhaColecionaveis s++desenhaEstrela s++desenhaVida s++desenhaPontos s)
 
 
 
 
-
+-- | Fornece a lista de pictures (com as devidas translações) utilizadas para desenhar o mapa do jogo
 desenhaMapa1 :: (Float,Float) -> Estado -> [Picture]
 desenhaMapa1 _ (Estado {jogo = (Jogo {mapa = Mapa a b []})}) = []
 desenhaMapa1 (x,y) (Estado {jogo = (Jogo {mapa = Mapa a b (h:t)}), imagens = imgs}) = (desenhaLinhas1 (x,y) imgs h) ++ (desenhaMapa1 (x,y-53) (Estado {jogo = (Jogo {mapa = Mapa a b t}), imagens = imgs}))
 
+-- | Fornece a lista de pictures (com as devidas translações) utilizadas para desenhar um linha do mapa do jogo
 desenhaLinhas1 :: (Float,Float) -> Imagens -> [Bloco] -> [Picture] 
 desenhaLinhas1 _ _ [] = []
 desenhaLinhas1 (x,y) imgs (h : t) | h == Escada = (Translate x y (getImagem Ladder imgs)) : desenhaLinhas1 (x+53,y) imgs t 
@@ -68,19 +72,20 @@ desenhaLinhas1 (x,y) imgs (h : t) | h == Escada = (Translate x y (getImagem Ladd
 
 
 
-
+-- | Fornece uma lista com um único elemento,sendo esse elemento uma picture do jogador (tendo em conta que ações ele está a realizar e o local do mapa onde se localiza)
 desenhaJogador :: Estado -> [Picture]
 desenhaJogador est | direcao (jogador (jogo est)) == Este = desenhaJogEste est
                    | direcao (jogador (jogo est)) == Oeste = desenhaJogOeste est
                    | otherwise = desenhaJogNorteSul est
                   
-      
+-- | Fornece uma lista com um único elemento, sendo esse elemento uma picture do jogador (é chamada apenas quando o jogador tem direção igual a Norte ou Sul, a imagem fornecida depende do tempo atual do estado)
 desenhaJogNorteSul :: Estado -> [Picture]
 desenhaJogNorteSul est | emEscada (jogador (jogo est)) == True = if ePar (tempo est)
                                                                       then [desenhaJogadorAux est MarioClimbing1]
                                                                       else [desenhaJogadorAux est MarioClimbing2]
                           | otherwise = [desenhaJogadorAux est MarioStandingBack]
 
+-- | Fornece uma lista com um único elemento, sendo esse elemento uma picture do jogador (é chamada apenas quando o jogador tem direção igual a Este, a imagem fornecida depende do tempo atual do estado)
 desenhaJogEste :: Estado -> [Picture]
 desenhaJogEste est | snd velocidadeJog /= 0 = [desenhaJogadorAux est MarioJumpingRight1] -- está a saltar/cair para a direita
                    | velocidadeJog /= (0,0) && aplicaDanoJog == True = if ePar(tempo est) 
@@ -96,7 +101,7 @@ desenhaJogEste est | snd velocidadeJog /= 0 = [desenhaJogadorAux est MarioJumpin
     where velocidadeJog = velocidade (jogador (jogo est))
           aplicaDanoJog = fst (aplicaDano(jogador(jogo est)))
 
-
+-- | Fornece uma lista com um único elemento, sendo esse elemento uma picture do jogador (é chamada apenas quando o jogador tem direção igual a Oeste, a imagem fornecida depende do tempo atual do estado)
 desenhaJogOeste :: Estado -> [Picture]
 desenhaJogOeste est | snd velocidadeJog /= 0 = [desenhaJogadorAux est MarioJumpingLeft1] -- está a saltar/cair para a esquerda
                     | velocidadeJog /= (0,0) && aplicaDanoJog == True = if ePar(tempo est) 
@@ -112,7 +117,7 @@ desenhaJogOeste est | snd velocidadeJog /= 0 = [desenhaJogadorAux est MarioJumpi
     where velocidadeJog = velocidade (jogador (jogo est))
           aplicaDanoJog = fst (aplicaDano(jogador(jogo est)))
 
-
+-- | Devolve uma picture com as devidas translações para se localizar na posição atual do jogador
 desenhaJogadorAux :: Estado -> Imagem -> Picture
 desenhaJogadorAux est img = Translate (x - 742) (477 - y) (getImagem img (imagens est))
     where x = realToFrac $ (fst (posicao (jogador(jogo est)))) * 53
@@ -124,12 +129,13 @@ desenhaJogadorAux est img = Translate (x - 742) (477 - y) (getImagem img (imagen
 
 
 
-
+-- | Fornece uma lista de pictures (com as devidas translações) utilizadas para desenhar os inimigos nas suas posições atuais tendo em conta a sua direção (só desenha o inimigo se este ainda tiver vidas restantes)
 desenhaInimigos :: Estado -> [Picture]
 desenhaInimigos (Estado {jogo = Jogo {inimigos = []}, imagens = imgs, tempo = tp}) = []
 desenhaInimigos (Estado {jogo = jog, imagens = imgs, tempo = tp}) | vida (head (inimigos jog)) > 0 = desenhaInimigosAux (Estado {jogo = jog {inimigos = take 1 (inimigos jog)}, imagens = imgs, tempo = tp}) : (desenhaInimigos (Estado {jogo = jog {inimigos = drop 1 (inimigos jog)}, imagens = imgs, tempo = tp}))
                                                                   | otherwise = desenhaInimigos (Estado {jogo = jog {inimigos = drop 1 (inimigos jog)}, imagens = imgs, tempo = tp})
 
+-- | Fornece uma picture do inimigo com as devidas translações para esta estar na posição atual do inimigo (a imagem fornecida depende o tempo atual do estado)
 desenhaInimigosAux :: Estado -> Picture
 desenhaInimigosAux est | direcao (head (inimigos (jogo est))) == Este = if ePar (tempo est) 
                                                                           then desenhaInimAux est GhostRight1
@@ -138,7 +144,7 @@ desenhaInimigosAux est | direcao (head (inimigos (jogo est))) == Este = if ePar 
                                        then desenhaInimAux est GhostLeft1
                                        else desenhaInimAux est GhostLeft2
 
-
+-- | Fornece uma picture com as devidas translações para se localizar na posição atual do inimigo em questão 
 desenhaInimAux :: Estado -> Imagem -> Picture
 desenhaInimAux est img = Translate (x - 742) (480 - y) (getImagem img (imagens est))
     where x = realToFrac $ (fst (posicao (head (inimigos(jogo est))))) * 53
@@ -152,16 +158,17 @@ desenhaInimAux est img = Translate (x - 742) (480 - y) (getImagem img (imagens e
 
 
 
-
+-- | Fornece uma lista de pictures (com as devidas translações) utilizadas para desenhar o colecionáveis 
 desenhaColecionaveis :: Estado -> [Picture]
 desenhaColecionaveis (Estado {jogo = Jogo {colecionaveis= []}, imagens = imgs, tempo = tp}) = []
 desenhaColecionaveis (Estado {jogo = jog, imagens = imgs, tempo = tp}) = desenhaColecionaveisAux (Estado {jogo = jog {colecionaveis = take 1 (colecionaveis jog)}, imagens = imgs, tempo = tp}) : (desenhaColecionaveis (Estado {jogo = jog {colecionaveis = drop 1 (colecionaveis jog)}, imagens = imgs, tempo = tp}))
 
-
+-- | Fornece uma picture (com as devidas translações) utilizada para desenhar um colecionável
 desenhaColecionaveisAux :: Estado -> Picture
 desenhaColecionaveisAux est | fst (head (colecionaveis (jogo est))) == Moeda = desenhaColecAux est Coin
                             | otherwise = desenhaColecAux est Hammer 
 
+-- | Fornece uma picture com as devidas translações para se localizar na posição do colecionável
 desenhaColecAux :: Estado -> Imagem -> Picture
 desenhaColecAux est img = Translate (x - 742) (477 - y) (getImagem img (imagens est))
     where x = realToFrac $ (fst (snd (head (colecionaveis (jogo est))))) * 53
@@ -174,7 +181,7 @@ desenhaColecAux est img = Translate (x - 742) (477 - y) (getImagem img (imagens 
 
 
 
---por a estrela mais para cima talvez (diminuir ao y)
+-- | Fornece uma lista de um elemento, sendo esse elemento uma picture da estrela, ponto de chegada do jogo
 desenhaEstrela :: Estado -> [Picture]
 desenhaEstrela s = [Translate (x - 742) (477 - y) (getImagem Estrela (imagens s))]
   where x = 14 * 53
@@ -184,7 +191,7 @@ desenhaEstrela s = [Translate (x - 742) (477 - y) (getImagem Estrela (imagens s)
 
 
 
-
+-- | Fornece uma lista de um elemento, sendo esse elemento uma picture dos corações (número de vidas) que o jogador tem
 desenhaVida :: Estado -> [Picture] 
 desenhaVida s | vida (jogador (jogo s)) == 0 = [Translate (-630) 340 (Scale 0.3 0.3 (getImagem ZeroVidas (imagens s)))]
               | vida (jogador (jogo s)) == 1 = [Translate (-630) 340 (Scale 0.3 0.3 (getImagem UmaVida (imagens s)))]
@@ -192,36 +199,44 @@ desenhaVida s | vida (jogador (jogo s)) == 0 = [Translate (-630) 340 (Scale 0.3 
               | otherwise = [Translate (-630) 340 (Scale 0.3 0.3 ( getImagem TresVidas (imagens s)))]
 
 
-
+-- | Fornece uma lista de pictures utilizadas para desenhar a pontuação do jogador no ecrã
 desenhaPontos :: Estado -> [Picture]
 desenhaPontos est = desenhaPontosImg est ++ desenhaPontosNum est
 
+-- | Fornece uma lista de um elemento, sendo esse elemento uma picture do quadrado onde irá aparecer a pontuação atual do jogador
 desenhaPontosImg :: Estado -> [Picture]
 desenhaPontosImg est = [Translate (-631) (420) (getImagem Score (imagens est))]
 
+-- | Fornece uma lista de pictures com as devidas translações para desenhar a pontuação atual do Jogador no ecrã
 desenhaPontosNum :: Estado -> [Picture]
 desenhaPontosNum est = desenhaPontosNum1 est ++ desenhaPontosNum2 est ++ desenhaPontosNum3 est++ desenhaPontosNum4 est++ desenhaPontosNum5 est
 
+-- | Fornece uma lista de um elemento, sendo esse elemento a picture relativa ao primeiro algarismo da pontuação atual do jogador
 desenhaPontosNum1 :: Estado -> [Picture]
 desenhaPontosNum1 est = verificaNumero (div pt 10000) est
    where pt = (pontos(jogador(jogo est)))
 
+-- | Fornece uma lista de um elemento, sendo esse elemento a picture relativa ao segundo algarismo da pontuação atual do jogador
 desenhaPontosNum2 :: Estado -> [Picture]
 desenhaPontosNum2 est = map (Translate 30 0) (verificaNumero (mod (div pt 1000) 10) est)
    where pt = (pontos(jogador(jogo est)))
 
+-- | Fornece uma lista de um elemento, sendo esse elemento a picture relativa ao terceiro algarismo da pontuação atual do jogador
 desenhaPontosNum3 :: Estado -> [Picture]
 desenhaPontosNum3 est = map (Translate 60 0) (verificaNumero (mod (div pt 100) 10) est)
    where pt = (pontos(jogador(jogo est)))
 
+-- | Fornece uma lista de um elemento, sendo esse elemento a picture relativa ao quarto algarismo da pontuação atual do jogador
 desenhaPontosNum4 :: Estado -> [Picture]
 desenhaPontosNum4 est = map (Translate 90 0) (verificaNumero (mod (div pt 10) 10) est)
    where pt = (pontos(jogador(jogo est)))
 
+-- | Fornece uma lista de um elemento, sendo esse elemento a picture relativa ao quinto algarismo da pontuação atual do jogador
 desenhaPontosNum5 :: Estado -> [Picture]
 desenhaPontosNum5 est = map (Translate 120 0) (verificaNumero (mod pt 10) est)
    where pt = (pontos(jogador(jogo est)))
 
+-- | Fornece uma lista de um elemento, sendo esse elemento uma picture relativa ao número da pontuação que o jogador tem em dada casa 
 verificaNumero :: Int -> Estado -> [Picture]
 verificaNumero int est | int == 0 = desenhaPontosAux est Num0
                        | int == 1 = desenhaPontosAux est Num1
