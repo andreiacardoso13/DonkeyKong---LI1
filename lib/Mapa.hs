@@ -81,7 +81,7 @@ j1 = Jogo {mapa = mapaInicial
           ,colecionaveis = [(Moeda,(2.5,0.5))]
           ,jogador = Personagem {velocidade=(1,0)
                                 ,tipo=Fantasma
-                                ,posicao=(0.5,1.5)
+                                ,posicao=(0.5,16.5)
                                 ,direcao = Este
                                 ,tamanho = (1,1)
                                 ,emEscada=False
