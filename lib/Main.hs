@@ -46,7 +46,7 @@ estadoInicial :: Imagens -> Estado
 estadoInicial images = Estado {jogo = j1, imagens = images, tempo = 1}
 
 desenhaEstado :: Estado -> Picture
-desenhaEstado s = Pictures((desenhaMapa1 (-715.5,450.5) s)++desenhaJogador s++desenhaInimigos s++desenhaColecionaveis s)
+desenhaEstado s = Pictures((desenhaMapa1 (-715.5,450.5) s)++desenhaJogador s++desenhaInimigos s++desenhaColecionaveis s++desenhaEstrela s)
 
 
 
@@ -163,6 +163,19 @@ desenhaColecAux :: Estado -> Imagem -> Picture
 desenhaColecAux est img = Translate (x - 742) (477 - y) (getImagem img (imagens est))
     where x = realToFrac $ (fst (snd (head (colecionaveis (jogo est))))) * 53
           y = realToFrac $ (snd (snd (head (colecionaveis (jogo est))))) * 53
+
+
+
+
+
+--por a estrela mais para cima talvez (diminuir ao y)
+desenhaEstrela :: Estado -> [Picture]
+desenhaEstrela s = [Translate (x - 742) (477 - y) (getImagem Estrela (imagens s))]
+  where x = 14 * 53
+        y = 4.5 * 53
+
+
+
 
 
 
