@@ -117,7 +117,6 @@ platColisoes (Mapa _ _ blocos) p@(Personagem {posicao = (x,y),tamanho = (l,a)}) 
 {-| Indica o tipo de Bloco situado abaixo do Bloco onde a personagem se encontra. -}
 
 procuraBlocoInf :: [[Bloco]] -> Posicao -> Bloco
-procuraBlocoInf [l] _ = Vazio 
 procuraBlocoInf ((h:t):ls) (x,y) | y > 0 = procuraBlocoInf ls (x,y-1)
                                  | x > 1 = procuraBlocoInf [t] (x-1,y)
                                  | otherwise = h
@@ -165,8 +164,5 @@ colisoesParede m p = mapaLimites m p || platColisoes m p
 -}
 
 colisoesPersonagens :: Personagem -> Personagem -> Bool
-colisoesPersonagens p1 p2 = compHtbx hb1 hb2 || compHtbx hb2 hb1
-    where hb1 = hitbox p1
-          hb2 = hitbox p2
-          compHtbx hb1 hb2 = fst (fst hb1) >= fst (fst hb2) && fst (fst hb1) <= fst (snd hb2) && snd (fst hb1) >= snd (fst hb2) && snd (fst hb1) <= snd (snd hb2)
+colisoesPersonagens p1 p2 = colisaoHitbox (hitbox p1) (hitbox p2)
 
