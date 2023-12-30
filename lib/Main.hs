@@ -127,7 +127,8 @@ desenhaJogadorAux est img = Translate (x - 742) (477 - y) (getImagem img (imagen
 
 desenhaInimigos :: Estado -> [Picture]
 desenhaInimigos (Estado {jogo = Jogo {inimigos = []}, imagens = imgs, tempo = tp}) = []
-desenhaInimigos (Estado {jogo = jog, imagens = imgs, tempo = tp}) = desenhaInimigosAux (Estado {jogo = jog {inimigos = take 1 (inimigos jog)}, imagens = imgs, tempo = tp}) : (desenhaInimigos (Estado {jogo = jog {inimigos = drop 1 (inimigos jog)}, imagens = imgs, tempo = tp}))
+desenhaInimigos (Estado {jogo = jog, imagens = imgs, tempo = tp}) | vida (head (inimigos jog)) > 0 = desenhaInimigosAux (Estado {jogo = jog {inimigos = take 1 (inimigos jog)}, imagens = imgs, tempo = tp}) : (desenhaInimigos (Estado {jogo = jog {inimigos = drop 1 (inimigos jog)}, imagens = imgs, tempo = tp}))
+                                                                  | otherwise = desenhaInimigos (Estado {jogo = jog {inimigos = drop 1 (inimigos jog)}, imagens = imgs, tempo = tp})
 
 desenhaInimigosAux :: Estado -> Picture
 desenhaInimigosAux est | direcao (head (inimigos (jogo est))) == Este = if ePar (tempo est) 
