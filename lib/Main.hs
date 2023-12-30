@@ -74,14 +74,14 @@ desenhaJogNorteSul est | emEscada (jogador (jogo est)) == True = if ePar (tempo 
 desenhaJogEste :: Estado -> [Picture]
 desenhaJogEste est | snd velocidadeJog /= 0 = [desenhaJogadorAux est MarioJumpingRight1] -- está a saltar/cair para a direita
                    | velocidadeJog /= (0,0) && aplicaDanoJog == True = if ePar(tempo est) 
-                                                                         then [desenhaJogadorAux est MarioHammerRight3] -- está a andar para a direita com o martelo para baixo
-                                                                         else [desenhaJogadorAux est MarioHammerRight2] -- está a andar para a direita com o martelo para cima
+                                                                         then [Translate 20 0 (desenhaJogadorAux est MarioHammerRight1)] -- está a andar para a direita com o martelo para baixo
+                                                                         else [Translate 0 20 (desenhaJogadorAux est MarioHammerRight4)] -- está a andar para a direita com o martelo para cima
                    | velocidadeJog /= (0,0) = if ePar (tempo est ) 
                                                 then [desenhaJogadorAux est MarioWalkingRight1] -- está a andar para a direita (desenho a andar)
                                                 else [desenhaJogadorAux est MarioStandingRight] -- está a andar para a direita (desenho parado)
                    | velocidadeJog == (0,0) && aplicaDanoJog == True = if ePar(tempo est) 
-                                                                         then [desenhaJogadorAux est MarioHammerRight1] --está parado e com martelo para baixo
-                                                                         else [desenhaJogadorAux est MarioHammerRight4] --está parado e com martelo para cima
+                                                                         then [Translate 20 0 (desenhaJogadorAux est MarioHammerRight1)] --está parado e com martelo para baixo
+                                                                         else [Translate 0 20 (desenhaJogadorAux est MarioHammerRight2)] --está parado e com martelo para cima
                    | otherwise = [desenhaJogadorAux est MarioStandingRight] -- mario parado virado pra direita
     where velocidadeJog = velocidade (jogador (jogo est))
           aplicaDanoJog = fst (aplicaDano(jogador(jogo est)))
@@ -90,14 +90,14 @@ desenhaJogEste est | snd velocidadeJog /= 0 = [desenhaJogadorAux est MarioJumpin
 desenhaJogOeste :: Estado -> [Picture]
 desenhaJogOeste est | snd velocidadeJog /= 0 = [desenhaJogadorAux est MarioJumpingLeft1] -- está a saltar/cair para a esquerda
                     | velocidadeJog /= (0,0) && aplicaDanoJog == True = if ePar(tempo est) 
-                                                                         then [desenhaJogadorAux est MarioHammerLeft3] -- está a andar para a esquerda com o martelo para baixo
-                                                                         else [desenhaJogadorAux est MarioHammerLeft2] -- está a andar para a esquerda com o martelo para cima
+                                                                         then [Translate (-20) 0 (desenhaJogadorAux est MarioHammerLeft1)] -- está a andar para a esquerda com o martelo para baixo
+                                                                         else [Translate 0 20(desenhaJogadorAux est MarioHammerLeft4)] -- está a andar para a esquerda com o martelo para cima
                     | velocidadeJog /= (0,0) = if ePar (tempo est ) 
                                                 then [desenhaJogadorAux est MarioWalkingLeft1] -- está a andar para a esquerda (desenho a andar)
                                                 else [desenhaJogadorAux est MarioStandingLeft] -- está a andar para a esquerda (desenho parado)
                     | velocidadeJog == (0,0) && aplicaDanoJog == True = if ePar(tempo est) 
-                                                                          then [desenhaJogadorAux est MarioHammerLeft1] --está parado virado para a esquerda e com martelo para baixo
-                                                                          else [desenhaJogadorAux est MarioHammerLeft4] --está parado virado para a esquerda e com martelo para cima
+                                                                          then [Translate (-20) 0 (desenhaJogadorAux est MarioHammerLeft1)] --está parado virado para a esquerda e com martelo para baixo
+                                                                          else [Translate 0 20 (desenhaJogadorAux est MarioHammerLeft2)] --está parado virado para a esquerda e com martelo para cima
                     | otherwise = [desenhaJogadorAux est MarioStandingLeft] -- mario parado virado pra esquerda
     where velocidadeJog = velocidade (jogador (jogo est))
           aplicaDanoJog = fst (aplicaDano(jogador(jogo est)))
