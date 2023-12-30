@@ -46,7 +46,7 @@ estadoInicial :: Imagens -> Estado
 estadoInicial images = Estado {jogo = j1, imagens = images, tempo = 1}
 
 desenhaEstado :: Estado -> Picture
-desenhaEstado s = Pictures((desenhaMapa1 (-715.5,450.5) s)++desenhaJogador s++desenhaInimigos s++desenhaColecionaveis s++desenhaEstrela s)
+desenhaEstado s = Pictures((desenhaMapa1 (-715.5,450.5) s)++desenhaJogador s++desenhaInimigos s++desenhaColecionaveis s++desenhaEstrela s++desenhaVida s)
 
 
 
@@ -176,6 +176,11 @@ desenhaEstrela s = [Translate (x - 742) (477 - y) (getImagem Estrela (imagens s)
 
 
 
+desenhaVida :: Estado -> [Picture] 
+desenhaVida s | vida (jogador (jogo s)) == 0 = [Translate (-630) 440 (Scale 0.3 0.3 (getImagem ZeroVidas (imagens s)))]
+              | vida (jogador (jogo s)) == 1 = [Translate (-630) 440 (Scale 0.3 0.3 (getImagem UmaVida (imagens s)))]
+              | vida (jogador (jogo s)) == 2 = [Translate (-630) 440 (Scale 0.3 0.3 (getImagem DuasVidas (imagens s)))]
+              | otherwise = [Translate (-630) 440 (Scale 0.3 0.3 ( getImagem TresVidas (imagens s)))]
 
 
 
