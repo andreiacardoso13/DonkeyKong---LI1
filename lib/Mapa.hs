@@ -79,7 +79,7 @@ j1 = Jogo {mapa = mapaInicial
                                    },
                         Personagem {velocidade=(1,0)
                                   ,tipo=Fantasma
-                                  ,posicao=(8.5,7.5)
+                                  ,posicao=(10.5,10.5)
                                   ,direcao = Norte
                                   ,tamanho = (1,1)
                                   ,emEscada=False
@@ -87,6 +87,17 @@ j1 = Jogo {mapa = mapaInicial
                                   ,vida=1
                                   ,pontos=0
                                   ,aplicaDano=(False,0)
+                                   },
+                        Personagem {velocidade = (1,0)
+                                   ,tipo =MacacoMalvado
+                                   ,posicao=(1,1)
+                                   ,direcao = Este
+                                   ,tamanho = (2,2)
+                                   ,emEscada = False
+                                   ,ressalta = True
+                                   ,vida = 1
+                                   ,pontos = 0
+                                   ,aplicaDano = (False,0)
                                    }
                       ]
           ,colecionaveis = [(Moeda,(17.5,7.5)),(Martelo, (8.5,10.5))]

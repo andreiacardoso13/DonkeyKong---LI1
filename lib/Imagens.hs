@@ -2,7 +2,7 @@ module Imagens where
 import Graphics.Gloss
 import Graphics.Gloss.Juicy
 
-data Imagem = Ladder | Trapdoor | Platform | Estrela | Coin | Hammer | GhostLeft1 | GhostLeft2 | GhostRight1 | GhostRight2 | MarioClimbing1 | MarioClimbing2 | MarioHammerLeft1 | MarioHammerLeft2 | MarioHammerLeft3 | MarioHammerLeft4 | MarioHammerRight1 | MarioHammerRight2 | MarioHammerRight3 | MarioHammerRight4 | MarioJumpingLeft1 | MarioJumpingRight1 | MarioStandingBack | MarioStandingLeft | MarioStandingRight | MarioWalkingLeft1 | MarioWalkingRight1 | MonkeyArmLeft | MonkeyArmRight | MonkeyDefeated | MonkeyFalling | MonkeyStanding | MonkeyWalkingLeft | MonkeyWalkingRight | VidaCheia | VidaVazia | ZeroVidas | UmaVida | DuasVidas | TresVidas | Num0 | Num1 | Num2 | Num3 | Num4 | Num5 | Num6 | Num7 | Num8 | Num9 | Score | Bonus | MarioDefeated1 | MarioDefeated2 | MarioDefeated3 | MarioDefeated4 | MarioDefeatedFinal | GhostDefeated1 | GhostDefeated2 | GhostDefeated3 | GhostDefeated4 | GhostBlueLeft1 | GhostBlueLeft2 | GhostBlueRight1 | GhostBlueRight2 deriving (Eq)
+data Imagem = Ladder | Trapdoor | Platform | Estrela | Coin | Hammer | GhostLeft1 | GhostLeft2 | GhostRight1 | GhostRight2 | MarioClimbing1 | MarioClimbing2 | MarioHammerLeft1 | MarioHammerLeft2 | MarioHammerLeft3 | MarioHammerLeft4 | MarioHammerRight1 | MarioHammerRight2 | MarioHammerRight3 | MarioHammerRight4 | MarioJumpingLeft1 | MarioJumpingRight1 | MarioStandingBack | MarioStandingLeft | MarioStandingRight | MarioWalkingLeft1 | MarioWalkingRight1 | MonkeyArmLeft | MonkeyArmRight | MonkeyDefeated | MonkeyFalling | MonkeyStanding | MonkeyWalkingLeft | MonkeyWalkingRight | VidaCheia | VidaVazia | ZeroVidas | UmaVida | DuasVidas | TresVidas | Num0 | Num1 | Num2 | Num3 | Num4 | Num5 | Num6 | Num7 | Num8 | Num9 | Score | Bonus | MarioDefeated1 | MarioDefeated2 | MarioDefeated3 | MarioDefeated4 | MarioDefeatedFinal | GhostDefeated1 | GhostDefeated2 | GhostDefeated3 | GhostDefeated4 | Congratulations | GhostBlueLeft1 | GhostBlueLeft2 | GhostBlueRight1 | GhostBlueRight2 deriving (Eq)
 
 type Imagens = [(Imagem, Picture)]
 
@@ -69,6 +69,7 @@ getImages = do
                Just ghostDefeated2      <- loadJuicyPNG "imagens/ghostDefeated2.png"
                Just ghostDefeated3      <- loadJuicyPNG "imagens/ghostDefeated3.png"
                Just ghostDefeated4      <- loadJuicyPNG "imagens/ghostDefeated4.png"
+               Just congratulations     <- loadJuicyPNG "imagens/congratulations.png"
                Just ghostBlueLeft1      <- loadJuicyPNG "imagens/ghostBlueLeft1"
                Just ghostBlueLeft2      <- loadJuicyPNG "imagens/ghostBlueLeft2"
                Just ghostBlueRight1     <- loadJuicyPNG "imagens/ghostBlueRight1"
@@ -94,6 +95,6 @@ getImages = do
                              (Score,score), (Bonus,bonus), (MarioDefeated1,marioDefeated1), (MarioDefeated2,marioDefeated2),
                              (MarioDefeated3,marioDefeated3), (MarioDefeated4,marioDefeated4), (MarioDefeatedFinal,marioDefeatedFinal),
                              (GhostDefeated1,ghostDefeated1), (GhostDefeated2,ghostDefeated2), (GhostDefeated3,ghostDefeated3),
-                             (GhostDefeated4,ghostDefeated4), (GhostBlueLeft1,ghostBlueLeft1), (GhostBlueLeft2,ghostBlueLeft2),
-                             (GhostBlueRight1,ghostBlueRight1), (GhostBlueRight2,ghostBlueRight2)]
+                             (GhostDefeated4,ghostDefeated4), (Congratulations,congratulations), (GhostBlueLeft1,ghostBlueLeft1),
+                             (GhostBlueLeft2,ghostBlueLeft2), (GhostBlueRight1,ghostBlueRight1), (GhostBlueRight2,ghostBlueRight2)]
                return images
