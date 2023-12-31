@@ -44,11 +44,11 @@ fr = 20
 
 -- | Recebe as imagens e devolve o estado inicial do jogo
 estadoInicial :: Imagens -> Estado
-estadoInicial images = Estado {jogo = j1, imagens = images, tempo = 1}
+estadoInicial images = Estado {jogo = j1, imagens = images, tempo = 1,bonus = 10000}
 
 -- | Desenha no ecrã o que está a acontecer no jogo em cada momento
 desenhaEstado :: Estado -> Picture
-desenhaEstado s = Pictures((desenhaMapa1 (-715.5,450.5) s)++desenhaJogador s++desenhaInimigos s++desenhaColecionaveis s++desenhaEstrela s++desenhaVida s++desenhaPontos s)
+desenhaEstado s = Pictures((desenhaMapa1 (-715.5,450.5) s)++desenhaJogador s++desenhaInimigos s++desenhaColecionaveis s++desenhaEstrela s++desenhaVida s++desenhaPontos s++desenhaBonus s)
 
 -- | Fornece a lista de pictures (com as devidas translações) utilizadas para desenhar o mapa do jogo
 desenhaMapa1 :: (Float,Float) -> Estado -> [Picture]
@@ -220,6 +220,30 @@ verificaNumero int est | int == 0 = desenhaPontosAux est Num0
 desenhaPontosAux :: Estado -> Imagem -> [Picture]
 desenhaPontosAux est img = [Translate (-690) (400) (Scale 0.05 0.05 ((getImagem img (imagens est))))]
 
+-- tira 1 a cada reage tempo, logo tira 20 por segundo
+desenhaBonus :: Estado -> [Picture]
+desenhaBonus s = desenhaBonusImg s ++ desenhaBonusNum s
+
+desenhaBonusImg :: Estado -> [Picture]
+desenhaBonusImg s = [Translate (630) (418) (getImagem Bonus (imagens s))]
+
+desenhaBonusNum :: Estado -> [Picture]
+desenhaBonusNum s = desenhaBonusNum1 s ++ desenhaBonusNum2 s ++ desenhaBonusNum3 s ++ desenhaBonusNum4 s ++ desenhaBonusNum5 s
+
+desenhaBonusNum1 :: Estado -> [Picture]
+desenhaBonusNum1 est = map (Translate 1265 0) (verificaNumero (div (bonus est) 10000) est)
+
+desenhaBonusNum2 :: Estado -> [Picture]
+desenhaBonusNum2 est = map (Translate 1295 0) (verificaNumero (mod (div (bonus est) 1000) 10) est)
+
+desenhaBonusNum3 :: Estado -> [Picture]
+desenhaBonusNum3 est = map (Translate 1325 0) (verificaNumero (mod (div (bonus est) 100) 10) est)
+
+desenhaBonusNum4 :: Estado -> [Picture]
+desenhaBonusNum4 est = map (Translate 1355 0) (verificaNumero (mod (div (bonus est) 10) 10) est)
+
+desenhaBonusNum5 :: Estado -> [Picture]
+desenhaBonusNum5 est = map (Translate 1385 0) (verificaNumero (mod (bonus est) 10) est)
 
 
 -- | Verifica se a parte decimal de um número está entre 0 e 25 ou 50 e 75
@@ -236,7 +260,7 @@ reageEvento _ s = s
 
 reageTempo :: Float -> Estado -> Estado
 --reageTempo t s = s {tempo = tempo s + 0.05}
-reageTempo t s = s {jogo = movimenta 4 (realToFrac t) (jogo s),tempo = tempo s + (realToFrac t)}
+reageTempo t s = s {jogo = movimenta 4 (realToFrac t) (jogo s),tempo = tempo s + (realToFrac t), bonus = (bonus s) - 1 }
 
 
 

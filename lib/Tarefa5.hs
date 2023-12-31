@@ -20,7 +20,7 @@ import Data.Fixed
 import Graphics.Gloss
 import Graphics.Gloss.Interface.Pure.Game
 
-data Estado = Estado {jogo :: Jogo, imagens :: Imagens, tempo :: Tempo} 
+data Estado = Estado {jogo :: Jogo, imagens :: Imagens, tempo :: Tempo, bonus :: Int} 
 
 keys :: Event -> Estado -> Estado
 keys (EventKey (SpecialKey KeyRight) Down _ _) e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos), 

@@ -307,7 +307,7 @@ tempoAplicaDano t (Jogo {mapa = m, inimigos = inim, colecionaveis = col, jogador
 {-
 NOTAS 
 
-adicionar um BONUS igual ao jogo original, que diminiu consoante o tempo passa e é dado ao jogador quando este ganha
+fazer com que o bonus seja dado ao jogador quando este ganha
 
 fazer uma hitbox especifica para quando o Mario está com o Martelo, e definir o seu tamanho apenas como o sitio onde tá o Mario
 
