@@ -36,18 +36,17 @@ keys (EventKey (SpecialKey KeyLeft)  Down _ _) e@(Estado {jogo = j@(Jogo {mapa =
 keys (EventKey (SpecialKey KeyUp)    Down _ _) e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos), 
                                                                           jogador = jgd@(Personagem {posicao = pos@(x,y), 
                                                                                                      emEscada = esc})})}) | not esc && procuraBloco blocos pos == Escada && mod' x 1 /= 0   = e {jogo = j {jogador = movePersonagem jgd (Just Subir)}}
-                                                                                                                          | esc     && procuraBloco blocos pos == Vazio  && mod' y 1 /= 0.5 = e {jogo = j {jogador = movePersonagem jgd (Just Parar)}}
-                                                                                                                          | esc                                                             = e {jogo = j {jogador = jgd {posicao = (x, max (y-0.5) 0.5)}}}
+                                                                                                                          | esc     && procuraBloco blocos pos == Vazio  && mod' y 1 == 0.5 = e {jogo = j {jogador = movePersonagem (jgd {emEscada = False}) (Just Parar)}}
+                                                                                                                          | esc                                                             = e {jogo = j {jogador = movePersonagem (jgd {posicao = (x, max (y-0.5) 0.5)}) (Just Subir)}}
                                                                                                                           | otherwise = e
 
 keys (EventKey (SpecialKey KeyDown)  Down _ _) e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos), 
                                                                           jogador = jgd@(Personagem {posicao = pos@(x,y), 
-                                                                                                     emEscada = esc})})}) |        procuraBlocoInf blocos pos == Escada     && procuraBloco blocos pos     == Plataforma              = e {jogo = j {jogador = movePersonagem jgd (Just Descer)}}
-                                                                                                                          |        procuraBlocoInf blocos pos == Plataforma && procuraBloco blocos (x,y+2) == Escada && mod' x 1 /= 0 = e {jogo = j {jogador = movePersonagem jgd (Just Descer)}}
-                                                                                                                          | esc && procuraBlocoInf blocos pos == Plataforma && colisoesParede m jgd                                   = e {jogo = j {jogador = movePersonagem jgd (Just Parar)}}
-                                                                                                                          | esc && procuraBlocoInf blocos pos == Escada                                                               = e {jogo = j {jogador = jgd {posicao = (x, min (y+0.5) 16.5)}}}
-
-keys (EventKey (SpecialKey KeySpace) Down _ _) e@(Estado {jogo = j@(Jogo {mapa = m, jogador = jgd@(Personagem {posicao = pos@(x,y)})})}) = e {jogo = j {jogador = jgd {posicao = (x, y+2)}}}
+                                                                                                     emEscada = esc})})}) | not esc && procuraBlocoInf blocos pos == Plataforma && procuraBloco blocos (x,y+2) == Escada     && mod' x 1 /= 0 = e {jogo = j {jogador = movePersonagem jgd (Just Descer)}}
+                                                                                                                          | esc     && procuraBlocoInf blocos pos == Plataforma && colisoesParede m jgd                                       = e {jogo = j {jogador = movePersonagem jgd (Just Parar)}}
+                                                                                                                          | esc     && procuraBlocoInf blocos pos == Escada                                                                   = e {jogo = j {jogador = movePersonagem (jgd {posicao = (x, min (y+0.5) 16.5)}) (Just Descer)}}
+                                                                                                                          |            procuraBlocoInf blocos pos == Plataforma && procuraBloco blocos pos     == Escada                      = e {jogo = j {jogador = movePersonagem (jgd {posicao = (x, min (y+0.5) 16.5)}) (Just Descer)}}
+                                                                                                                          |            procuraBlocoInf blocos pos == Escada     && procuraBloco blocos pos     == Plataforma                  = e {jogo = j {jogador = movePersonagem jgd (Just Descer)}}
 
 keys (EventKey (SpecialKey k) Up _ _) e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos), 
                                                                           jogador = jgd@(Personagem {posicao = pos@(x,y), 
@@ -56,8 +55,17 @@ keys (EventKey (SpecialKey k) Up _ _) e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa 
                                                                                                                                else e
 
 
+keys (EventKey (SpecialKey KeySpace) Down _ _) e@(Estado {jogo = j@(Jogo {mapa = m, jogador = jgd@(Personagem {posicao = pos@(x,y), emEscada = esc})}), tempo = t}) | not esc   = e {jogo = j {jogador = movePersonagem(jgd {posicao = (x, y-0.5)}) (Just Saltar)}}
+                                                                                                                                                                    | otherwise = e
 
 
 keys _ e = e
 
 -- EventKey Key KeyState Modifiers (Float, Float)
+
+
+{-| Determina se um personagem está em queda livre.
+
+-}
+freefall :: Mapa -> Personagem -> Bool
+freefall m p = undefined

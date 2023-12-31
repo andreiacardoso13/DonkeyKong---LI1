@@ -2,6 +2,7 @@ module Main where
 import Graphics.Gloss
 import Graphics.Gloss.Interface.Pure.Game
 import LI12324
+import Tarefa5
 import Imagens
 import Mapa
 import Data.Fixed
@@ -12,8 +13,6 @@ main = do
   putStrLn "Hello, PrimateKong!"
 -}
 
-data Estado = Estado {jogo :: Jogo, imagens :: Imagens, tempo :: Float} -- o tempo aumenta 4 por segundo, serve para alterar as imagens automaticamente
-
 -- | Função principal, responsável por carregar os elementos visuais presentes no ambiente gŕafico do jogo
 main :: IO ()
 main = do
@@ -23,7 +22,7 @@ main = do
        fr
        (estadoInicial images)
        desenhaEstado
-       reageEvento
+       keys
        reageTempo
 
 -- | Define as propriedades de tamanho o localização da janela do jogo
@@ -80,10 +79,12 @@ desenhaJogador est | direcao (jogador (jogo est)) == Este = desenhaJogEste est
                   
 -- | Fornece uma lista com um único elemento, sendo esse elemento uma picture do jogador (é chamada apenas quando o jogador tem direção igual a Norte ou Sul, a imagem fornecida depende do tempo atual do estado)
 desenhaJogNorteSul :: Estado -> [Picture]
-desenhaJogNorteSul est | emEscada (jogador (jogo est)) == True = if ePar (tempo est)
-                                                                      then [desenhaJogadorAux est MarioClimbing1]
-                                                                      else [desenhaJogadorAux est MarioClimbing2]
-                          | otherwise = [desenhaJogadorAux est MarioStandingBack]
+desenhaJogNorteSul est | emEscada (jogador (jogo est)) == True && velocidadeJog /= (0,0) = if ePar (tempo est)
+                                                                                             then [desenhaJogadorAux est MarioClimbing1]
+                                                                                             else [desenhaJogadorAux est MarioClimbing2]
+                       | emEscada (jogador (jogo est)) == True && velocidadeJog == (0,0) = [desenhaJogadorAux est MarioClimbing1]
+                       | otherwise = [desenhaJogadorAux est MarioStandingBack]
+    where velocidadeJog = velocidade (jogador (jogo est))
 
 -- | Fornece uma lista com um único elemento, sendo esse elemento uma picture do jogador (é chamada apenas quando o jogador tem direção igual a Este, a imagem fornecida depende do tempo atual do estado)
 desenhaJogEste :: Estado -> [Picture]
