@@ -119,29 +119,47 @@ desenhaJogadorAux est img = Translate (x - 742) (477 - y) (getImagem img (imagen
 -- | Fornece uma lista de pictures (com as devidas translações) utilizadas para desenhar os inimigos nas suas posições atuais tendo em conta a sua direção (só desenha o inimigo se este ainda tiver vidas restantes)
 desenhaFantasmas :: Estado -> [Picture]
 desenhaFantasmas (Estado {jogo = Jogo {inimigos = []}, imagens = imgs, tempo = tp}) = []
-desenhaFantasmas (Estado {jogo = jog, imagens = imgs, tempo = tp}) | vida (head (inimigos jog)) > 0  && tipo (head (inimigos jog)) == Fantasma = desenhaFantasmasAux (Estado {jogo = jog {inimigos = take 1 (inimigos jog)}, imagens = imgs, tempo = tp}) : (desenhaFantasmas (Estado {jogo = jog {inimigos = drop 1 (inimigos jog)}, imagens = imgs, tempo = tp}))
-                                                                   | otherwise = desenhaFantasmas (Estado {jogo = jog {inimigos = drop 1 (inimigos jog)}, imagens = imgs, tempo = tp})
+desenhaFantasmas (Estado {jogo = jog, imagens = imgs, tempo = tp}) = map (desenhaFantasmasAux imgs tp (jogador jog)) (inimigos jog)
+
+desenhaFantasmasAux :: Imagens -> Tempo -> Personagem -> Personagem -> Picture
+desenhaFantasmasAux img t jog inim | tipo inim == Fantasma && vida inim == 1 = desenhaFantasmaVivo img t jog inim
+                                   | tipo inim == Fantasma && vida inim == 0 = desenhaFantAux inim img GhostDefeated1
+                                   | tipo inim == Fantasma && vida inim >4 && vida inim <=6 = desenhaFantAux inim img GhostDefeated2
+                                   | tipo inim == Fantasma && vida inim >6 && vida inim <= 8 = desenhaFantAux inim img GhostDefeated3
+                                   | tipo inim == Fantasma && vida inim >8 && vida inim <= 10 = desenhaFantAux inim img GhostDefeated4
+                                   | otherwise = rectangleSolid 0.1 0.1
+
+--ESCREVER FUNÇÃO QUE QUANDO FANTASMA TEM OO VIDAS TIRAR VIDAS
 
 
+--vida (head (inimigos jog)) > 0  && tipo (head (inimigos jog)) == Fantasma = desenhaFantasmaVivo (Estado {jogo = jog {inimigos = take 1 (inimigos jog)}, imagens = imgs, tempo = tp}) : (desenhaFantasmas (Estado {jogo = jog {inimigos = drop 1 (inimigos jog)}, imagens = imgs, tempo = tp}))
+ -- | otherwise = desenhaFantasmas (Estado {jogo = jog {inimigos = drop 1 (inimigos jog)}, imagens = imgs, tempo = tp})
 
 
-
+--desenhaFantasmaAtacado :: Estado -> Picture
+--desenhaFantasmaAtacado est | vida head (inimigos (jog est)) == 0 = desenhaFantAux est GhostDefeated1 
 
 
 -- | Fornece uma picture do inimigo com as devidas translações para esta estar na posição atual do inimigo (a imagem fornecida depende o tempo atual do estado)
-desenhaFantasmasAux :: Estado -> Picture
-desenhaFantasmasAux est | direcao (head (inimigos (jogo est))) == Este = if alteraImagem (realToFrac(tempo est))
-                                                                          then desenhaFantAux est GhostRight1
-                                                                          else desenhaFantAux est GhostRight2
-                        | otherwise = if alteraImagem (realToFrac(tempo est))
-                                       then desenhaFantAux est GhostLeft1
-                                       else desenhaFantAux est GhostLeft2
+desenhaFantasmaVivo :: Imagens -> Tempo -> Personagem -> Personagem -> Picture
+desenhaFantasmaVivo img t jog inim | direcao inim == Este && fst (aplicaDano jog) == False = if alteraImagem (realToFrac t)
+                                                                                                then desenhaFantAux inim img GhostRight1
+                                                                                                else desenhaFantAux inim img GhostRight2
+                                   | direcao inim == Este = if alteraImagem (realToFrac t)
+                                                              then desenhaFantAux inim img GhostBlueRight1
+                                                              else desenhaFantAux inim img GhostBlueRight2
+                                   | direcao inim == Oeste && fst (aplicaDano jog) == False = if alteraImagem (realToFrac t)
+                                                                                                 then desenhaFantAux inim img GhostLeft1
+                                                                                                 else desenhaFantAux inim img GhostLeft2
+                                   | otherwise = if alteraImagem (realToFrac t)
+                                                   then desenhaFantAux inim img GhostBlueLeft1
+                                                   else desenhaFantAux inim img GhostBlueLeft2
 
 -- | Fornece uma picture com as devidas translações para se localizar na posição atual do inimigo em questão 
-desenhaFantAux :: Estado -> Imagem -> Picture
-desenhaFantAux est img = Translate (x - 742) (480 - y) (getImagem img (imagens est))
-    where x = realToFrac $ (fst (posicao (head (inimigos(jogo est))))) * 53
-          y = realToFrac $ (snd (posicao (head (inimigos(jogo est))))) * 53
+desenhaFantAux :: Personagem -> Imagens -> Imagem -> Picture
+desenhaFantAux inim imags img = Translate (x - 742) (480 - y) (getImagem img imags)
+    where x = realToFrac $ (fst (posicao inim)) * 53
+          y = realToFrac $ (snd (posicao inim)) * 53
 
 desenhaMacacoMalvado :: Estado -> [Picture]
 desenhaMacacoMalvado est | inimigos (jogo est) == [] = []

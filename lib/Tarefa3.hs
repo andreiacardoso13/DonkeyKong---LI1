@@ -15,7 +15,7 @@ import Tarefa1
 import Mapa
 
 movimenta :: Semente -> Tempo -> Jogo -> Jogo
-movimenta s t j = atualizaDirecao $ tempoAplicaDano t $ efeitoColisoes $ removeAlcapao $ recolheColecionavel $ ataqueDoInimigo $ efeitoGravidade $ ataqueDoJogador j
+movimenta s t j = alteraVidaFantasma $ atualizaDirecao $ tempoAplicaDano t $ efeitoColisoes $ removeAlcapao $ recolheColecionavel $ ataqueDoInimigo $ efeitoGravidade $ ataqueDoJogador j
       
 {-|
 Se o jogador tiver a componente aplicaDano activa e com tempo restante e a 
@@ -61,7 +61,7 @@ Se a hitbox de dano do jogador colidir com um inimigo retira uma vida ao inimigo
 -}
 ataqueDoJogadorInim :: [Personagem] -> Personagem -> [Personagem]
 ataqueDoJogadorInim [] _ = []
-ataqueDoJogadorInim (inim :t) jog | colisaoHitbox (hitbox inim) (hitboxDano jog) && (tipo inim) == Fantasma = (inim {vida = vida inim - 1}) : ataqueDoJogadorInim t jog
+ataqueDoJogadorInim (inim :t) jog | colisaoHitbox (hitbox inim) (hitboxDano jog) && (tipo inim) == Fantasma && (vida inim) == 1 = (inim {vida = vida inim - 1}) : ataqueDoJogadorInim t jog
                                   | otherwise = inim : ataqueDoJogadorInim t jog
         
 {-| 
@@ -76,7 +76,7 @@ Se a hitbox de dano do jogador colidir com um inimigo adiciona 500 pontos ao jog
 -}
 ataqueDoJogadorJog :: [Personagem] -> Personagem -> Personagem
 ataqueDoJogadorJog [] jog = jog
-ataqueDoJogadorJog (inim :t) jog | colisaoHitbox (hitbox inim) (hitboxDano jog) && (tipo inim) == Fantasma && vida inim > 0 = ataqueDoJogadorJog t (jog {pontos = pontos jog + 500})
+ataqueDoJogadorJog (inim :t) jog | colisaoHitbox (hitbox inim) (hitboxDano jog) && (tipo inim) == Fantasma && vida inim == 1 = ataqueDoJogadorJog t (jog {pontos = pontos jog + 500})
                                  | otherwise = ataqueDoJogadorJog t jog
 
 {-|
@@ -154,7 +154,7 @@ Se o jogador colidir com um inimigo retira-lhe uma vida e altera a sua posição
 -}
 ataqueDoInimigoAux :: [Personagem] -> Personagem -> Personagem 
 ataqueDoInimigoAux [] p = p
-ataqueDoInimigoAux (inim : t) jog | colisoesPersonagens inim jog && (vida inim > 0 )= (jog {posicao = (0.5,16.5), vida = vida jog -1})
+ataqueDoInimigoAux (inim : t) jog | colisoesPersonagens inim jog && (vida inim == 1 )= (jog {posicao = (0.5,16.5), vida = vida jog -1})
                                   | otherwise = ataqueDoInimigoAux t jog
 
 {-|
@@ -320,7 +320,13 @@ atualizaDirecaoInim :: [Personagem] -> [Personagem]
 atualizaDirecaoInim [] = []
 atualizaDirecaoInim (h:t) = (atualizaDirecaoPersonagem h) : atualizaDirecaoInim t
 
+alteraVidaFantasma :: Jogo -> Jogo
+alteraVidaFantasma jog = jog {inimigos = map (alteraVidaFantasmaAux) (inimigos jog)}
 
+alteraVidaFantasmaAux :: Personagem -> Personagem
+alteraVidaFantasmaAux inim | vida inim == 0 = inim {vida = 2}
+                           | vida inim >= 2 && vida inim <= 10 =inim {vida = (vida inim) + 1}
+                           | otherwise = inim 
 
 {-
 NOTAS 
