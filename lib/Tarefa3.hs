@@ -125,7 +125,7 @@ efeitoGravidadeJogador m jog | procuraBlocoInf m (posicao jog) == Vazio = jog {v
                              | otherwise = jog
 
 {-|
-Se o jogador colidir com o inimigo retira uma vida ao jogador
+Se o jogador colidir com o inimigo retira-lhe uma vida e altera a sua posição para a inicial
 
 =Exemplos
 >>>ataqueDoInimigo (Jogo {mapa = Mapa ((2.5,1),Oeste) (2.5,1) [[Escada,Alcapao,Vazio],[Escada,Vazio,Plataforma],[Plataforma,Plataforma,Plataforma]]
@@ -144,7 +144,7 @@ ataqueDoInimigo (Jogo {mapa = m
                                           ,jogador = ataqueDoInimigoAux listaInimigos jog})
 
 {-|
-Se o jogador colidir com um inimigo retira uma vida ao jogador
+Se o jogador colidir com um inimigo retira-lhe uma vida e altera a sua posição para a inicial
 
 =Exemplos
 >>> ataqueDoInimigoAux [Personagem {posicao = (1,1),tamanho = (2,2),vida = 1}] 
@@ -154,8 +154,8 @@ Se o jogador colidir com um inimigo retira uma vida ao jogador
 -}
 ataqueDoInimigoAux :: [Personagem] -> Personagem -> Personagem 
 ataqueDoInimigoAux [] p = p
-ataqueDoInimigoAux (inim : t) jog | colisoesPersonagens inim jog && (vida inim > 0 )= (jog {vida = vida jog -1})
-                             | otherwise = ataqueDoInimigoAux t jog
+ataqueDoInimigoAux (inim : t) jog | colisoesPersonagens inim jog && (vida inim > 0 )= (jog {posicao = (0.5,16.5), vida = vida jog -1})
+                                  | otherwise = ataqueDoInimigoAux t jog
 
 {-|
 Reflete as consequências de quando um colecionável é recolhido
@@ -304,14 +304,27 @@ tempoAplicaDano t (Jogo {mapa = m, inimigos = inim, colecionaveis = col, jogador
                                                                                          | snd (aplicaDano jog) > 0 = (Jogo {mapa = m, inimigos = inim, colecionaveis = col, jogador = jog {aplicaDano = (True, snd (aplicaDano jog) - t)}})
                                                                                          | otherwise = (Jogo {mapa = m, inimigos = inim, colecionaveis = col, jogador = jog})
 
+atualizaDirecao :: Jogo -> Jogo 
+atualizaDirecao jog = jog {jogador = atualizaDirecaoPersonagem (jogador jog), inimigos = atualizaDirecaoInim (inimigos jog)}
+
+atualizaDirecaoPersonagem :: Personagem -> Personagem
+atualizaDirecaoPersonagem pers | abs x > abs y && x > 0 = pers {direcao = Este}
+                               | abs x > abs y && x < 0 = pers {direcao = Oeste}
+                               | abs x < abs y && y > 0 = pers {direcao = Norte}
+                               | abs x < abs y && y < 0 = pers {direcao = Sul}
+                               | otherwise = pers
+  where x = fst (velocidade pers)
+        y = snd (velocidade pers)
+
+atualizaDirecaoInim :: [Personagem] -> [Personagem]
+atualizaDirecaoInim [] = []
+atualizaDirecaoInim (h:t) = (atualizaDirecaoPersonagem h) : atualizaDirecaoInim t
 {-
 NOTAS 
 
 fazer com que o bonus seja dado ao jogador quando este ganha
 
 fazer uma hitbox especifica para quando o Mario está com o Martelo, e definir o seu tamanho apenas como o sitio onde tá o Mario
-
-funcao que faça automaticamente quando o aplica Dano >0 igual a True
 
 Main: Tarefa2.hs:(410,1)-(412,45): Non-exhaustive patterns in function procuraBloco
 aconteceu isto quando estava numa plataforma e cliquei seta para baixo

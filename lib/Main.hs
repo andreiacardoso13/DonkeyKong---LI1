@@ -214,7 +214,7 @@ verificaNumero int est | int == 0 = desenhaPontosAux est Num0
                        | int == 6 = desenhaPontosAux est Num6
                        | int == 7 = desenhaPontosAux est Num7
                        | int == 8 = desenhaPontosAux est Num8
-                       | int == 9 = desenhaPontosAux est Num9
+                       | otherwise = desenhaPontosAux est Num9
 
 -- | Pega na imagem recebida e transforma-a numa picture com escala e translação adequadas ao pretendido
 desenhaPontosAux :: Estado -> Imagem -> [Picture]
