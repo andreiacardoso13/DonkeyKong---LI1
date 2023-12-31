@@ -2,7 +2,7 @@ module Imagens where
 import Graphics.Gloss
 import Graphics.Gloss.Juicy
 
-data Imagem = Ladder | Trapdoor | Platform | Estrela | Coin | Hammer | GhostLeft1 | GhostLeft2 | GhostRight1 | GhostRight2 | MarioClimbing1 | MarioClimbing2 | MarioHammerLeft1 | MarioHammerLeft2 | MarioHammerLeft3 | MarioHammerLeft4 | MarioHammerRight1 | MarioHammerRight2 | MarioHammerRight3 | MarioHammerRight4 | MarioJumpingLeft1 | MarioJumpingRight1 | MarioStandingBack | MarioStandingLeft | MarioStandingRight | MarioWalkingLeft1 | MarioWalkingRight1 | MonkeyDefeated | MonkeyFalling | MonkeyStanding | VidaCheia | VidaVazia | ZeroVidas | UmaVida | DuasVidas | TresVidas | Num0 | Num1 | Num2 | Num3 | Num4 | Num5 | Num6 | Num7 | Num8 | Num9 | Score | Bonus | MarioDefeated1 | MarioDefeated2 | MarioDefeated3 | MarioDefeated4 | MarioDefeatedFinal | GhostDefeated1 | GhostDefeated2 | GhostDefeated3 | GhostDefeated4 deriving (Eq)
+data Imagem = Ladder | Trapdoor | Platform | Estrela | Coin | Hammer | GhostLeft1 | GhostLeft2 | GhostRight1 | GhostRight2 | MarioClimbing1 | MarioClimbing2 | MarioHammerLeft1 | MarioHammerLeft2 | MarioHammerLeft3 | MarioHammerLeft4 | MarioHammerRight1 | MarioHammerRight2 | MarioHammerRight3 | MarioHammerRight4 | MarioJumpingLeft1 | MarioJumpingRight1 | MarioStandingBack | MarioStandingLeft | MarioStandingRight | MarioWalkingLeft1 | MarioWalkingRight1 | MonkeyArmLeft | MonkeyArmRight | MonkeyDefeated | MonkeyFalling | MonkeyStanding | MonkeyWalkingLeft | MonkeyWalkingRight | VidaCheia | VidaVazia | ZeroVidas | UmaVida | DuasVidas | TresVidas | Num0 | Num1 | Num2 | Num3 | Num4 | Num5 | Num6 | Num7 | Num8 | Num9 | Score | Bonus | MarioDefeated1 | MarioDefeated2 | MarioDefeated3 | MarioDefeated4 | MarioDefeatedFinal | GhostDefeated1 | GhostDefeated2 | GhostDefeated3 | GhostDefeated4 | GhostBlueLeft1 | GhostBlueLeft2 | GhostBlueRight1 | GhostBlueRight2 deriving (Eq)
 
 type Imagens = [(Imagem, Picture)]
 
@@ -14,7 +14,6 @@ getImages = do
                Just estrela             <- loadJuicyPNG "imagens/estrela.png"
                Just moeda               <- loadJuicyPNG "imagens/moeda.png"
                Just martelo             <- loadJuicyPNG "imagens/hammer.png"
---             Just vazio               <- loadJuicyPNG "imagens/vazio.png"
                Just ghostLeft1          <- loadJuicyPNG "imagens/ghostLeft1.png"
                Just ghostLeft2          <- loadJuicyPNG "imagens/ghostLeft2.png"
                Just ghostRight1         <- loadJuicyPNG "imagens/ghostRight1.png"
@@ -36,9 +35,13 @@ getImages = do
                Just marioStandingRight  <- loadJuicyPNG "imagens/marioStandingRight.png"
                Just marioWalkingLeft1   <- loadJuicyPNG "imagens/marioWalkingLeft1.png"
                Just marioWalkingRight1  <- loadJuicyPNG "imagens/marioWalkingRight1.png"
+               Just monkeyArmLeft       <- loadJuicyPNG "imagens/monkeyArmLeft.png"
+               Just monkeyArmRight      <- loadJuicyPNG "imagens/monkeyArmRight.png"
                Just monkeyDefeated      <- loadJuicyPNG "imagens/monkeyDefeated.png"
                Just monkeyFalling       <- loadJuicyPNG "imagens/monkeyFalling.png"
                Just monkeyStanding      <- loadJuicyPNG "imagens/monkeyStanding.png"
+               Just monkeyWalkingLeft   <- loadJuicyPNG "imagens/monkeyWalkingLeft.png"
+               Just monkeyWalkingRight  <- loadJuicyPNG "imagens/monkeyWalkingRight.png" 
                Just vidaCheia           <- loadJuicyPNG "imagens/vidacheia.png"
                Just vidaVazia           <- loadJuicyPNG "imagens/vidavazia.png"
                Just zeroVidas           <- loadJuicyPNG "imagens/vida0.png"
@@ -66,6 +69,10 @@ getImages = do
                Just ghostDefeated2      <- loadJuicyPNG "imagens/ghostDefeated2.png"
                Just ghostDefeated3      <- loadJuicyPNG "imagens/ghostDefeated3.png"
                Just ghostDefeated4      <- loadJuicyPNG "imagens/ghostDefeated4.png"
+               Just ghostBlueLeft1      <- loadJuicyPNG "imagens/ghostBlueLeft1"
+               Just ghostBlueLeft2      <- loadJuicyPNG "imagens/ghostBlueLeft2"
+               Just ghostBlueRight1     <- loadJuicyPNG "imagens/ghostBlueRight1"
+               Just ghostBlueRight2     <- loadJuicyPNG "imagens/ghostBlueRight2"
 
                let images = [(Ladder,escada), (Trapdoor,alcapao), (Platform,plataforma), (Estrela,estrela),
                              (Coin,moeda), (Hammer,martelo), (GhostLeft1,ghostLeft1), (GhostLeft2,ghostLeft2),
@@ -78,12 +85,15 @@ getImages = do
                              (MarioJumpingRight1,marioJumpingRight1), (MarioStandingBack,marioStandingBack),
                              (MarioStandingLeft,marioStandingLeft), (MarioStandingRight,marioStandingRight),
                              (MarioWalkingLeft1,marioWalkingLeft1), (MarioWalkingRight1,marioWalkingRight1),
+                             (MonkeyArmLeft,monkeyArmLeft), (MonkeyArmRight,monkeyArmRight),
                              (MonkeyDefeated,monkeyDefeated), (MonkeyFalling,monkeyFalling), (MonkeyStanding,monkeyStanding),
+                             (MonkeyWalkingLeft,monkeyWalkingLeft), (MonkeyWalkingRight,monkeyWalkingRight),
                              (VidaCheia,vidaCheia), (VidaVazia,vidaVazia), (ZeroVidas,zeroVidas), (UmaVida,umaVida),
                              (DuasVidas,duasVidas), (TresVidas,tresVidas), (Num0,num0), (Num1,num1), (Num2,num2),
                              (Num3,num3), (Num4,num4), (Num5,num5), (Num6,num6), (Num7,num7), (Num8,num8), (Num9,num9),
                              (Score,score), (Bonus,bonus), (MarioDefeated1,marioDefeated1), (MarioDefeated2,marioDefeated2),
                              (MarioDefeated3,marioDefeated3), (MarioDefeated4,marioDefeated4), (MarioDefeatedFinal,marioDefeatedFinal),
                              (GhostDefeated1,ghostDefeated1), (GhostDefeated2,ghostDefeated2), (GhostDefeated3,ghostDefeated3),
-                             (GhostDefeated4,ghostDefeated4)]
+                             (GhostDefeated4,ghostDefeated4), (GhostBlueLeft1,ghostBlueLeft1), (GhostBlueLeft2,ghostBlueLeft2),
+                             (GhostBlueRight1,ghostBlueRight1), (GhostBlueRight2,ghostBlueRight2)]
                return images
