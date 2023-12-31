@@ -48,7 +48,7 @@ estadoInicial images = Estado {jogo = j1, imagens = images, tempo = 1,bonus = 15
 
 -- | Desenha no ecrã o que está a acontecer no jogo em cada momento
 desenhaEstado :: Estado -> Picture
-desenhaEstado s = Pictures((desenhaMapa1 (-715.5,450.5) s)++desenhaJogador s++desenhaInimigos s++desenhaColecionaveis s++desenhaEstrela s++desenhaVida s++desenhaPontos s++desenhaBonus s)
+desenhaEstado s = Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s)
 
 -- | Fornece a lista de pictures (com as devidas translações) utilizadas para desenhar o mapa do jogo
 desenhaMapa1 :: (Float,Float) -> Estado -> [Picture]
@@ -117,25 +117,30 @@ desenhaJogadorAux est img = Translate (x - 742) (477 - y) (getImagem img (imagen
           y = realToFrac $ (snd (posicao (jogador(jogo est)))) * 53
 
 -- | Fornece uma lista de pictures (com as devidas translações) utilizadas para desenhar os inimigos nas suas posições atuais tendo em conta a sua direção (só desenha o inimigo se este ainda tiver vidas restantes)
-desenhaInimigos :: Estado -> [Picture]
-desenhaInimigos (Estado {jogo = Jogo {inimigos = []}, imagens = imgs, tempo = tp}) = []
-desenhaInimigos (Estado {jogo = jog, imagens = imgs, tempo = tp}) | vida (head (inimigos jog)) > 0 = desenhaInimigosAux (Estado {jogo = jog {inimigos = take 1 (inimigos jog)}, imagens = imgs, tempo = tp}) : (desenhaInimigos (Estado {jogo = jog {inimigos = drop 1 (inimigos jog)}, imagens = imgs, tempo = tp}))
-                                                                  | otherwise = desenhaInimigos (Estado {jogo = jog {inimigos = drop 1 (inimigos jog)}, imagens = imgs, tempo = tp})
+desenhaFantasmas :: Estado -> [Picture]
+desenhaFantasmas (Estado {jogo = Jogo {inimigos = []}, imagens = imgs, tempo = tp}) = []
+desenhaFantasmas (Estado {jogo = jog, imagens = imgs, tempo = tp}) | vida (head (inimigos jog)) > 0  && tipo (head (inimigos jog)) == Fantasma = desenhaFantasmasAux (Estado {jogo = jog {inimigos = take 1 (inimigos jog)}, imagens = imgs, tempo = tp}) : (desenhaFantasmas (Estado {jogo = jog {inimigos = drop 1 (inimigos jog)}, imagens = imgs, tempo = tp}))
+                                                                   | otherwise = desenhaFantasmas (Estado {jogo = jog {inimigos = drop 1 (inimigos jog)}, imagens = imgs, tempo = tp})
 
 -- | Fornece uma picture do inimigo com as devidas translações para esta estar na posição atual do inimigo (a imagem fornecida depende o tempo atual do estado)
-desenhaInimigosAux :: Estado -> Picture
-desenhaInimigosAux est | direcao (head (inimigos (jogo est))) == Este = if alteraImagem (realToFrac(tempo est))
-                                                                          then desenhaInimAux est GhostRight1
-                                                                          else desenhaInimAux est GhostRight2
+desenhaFantasmasAux :: Estado -> Picture
+desenhaFantasmasAux est | direcao (head (inimigos (jogo est))) == Este = if alteraImagem (realToFrac(tempo est))
+                                                                          then desenhaFantAux est GhostRight1
+                                                                          else desenhaFantAux est GhostRight2
                        | otherwise = if alteraImagem (realToFrac(tempo est))
-                                       then desenhaInimAux est GhostLeft1
-                                       else desenhaInimAux est GhostLeft2
+                                       then desenhaFantAux est GhostLeft1
+                                       else desenhaFantAux est GhostLeft2
 
 -- | Fornece uma picture com as devidas translações para se localizar na posição atual do inimigo em questão 
-desenhaInimAux :: Estado -> Imagem -> Picture
-desenhaInimAux est img = Translate (x - 742) (480 - y) (getImagem img (imagens est))
+desenhaFantAux :: Estado -> Imagem -> Picture
+desenhaFantAux est img = Translate (x - 742) (480 - y) (getImagem img (imagens est))
     where x = realToFrac $ (fst (posicao (head (inimigos(jogo est))))) * 53
           y = realToFrac $ (snd (posicao (head (inimigos(jogo est))))) * 53
+
+desenhaMacacoMalvado :: Estado -> [Picture]
+desenhaMacacoMalvado est | inimigos (jogo est) == [] = []
+                         | tipo (head(inimigos(jogo est))) == MacacoMalvado = [Translate 0 265 (getImagem MonkeyStanding (imagens est))]
+                         | otherwise = desenhaMacacoMalvado $ est {jogo = Jogo {inimigos = drop 1 (inimigos (jogo est))}}
 
 -- | Fornece uma lista de pictures (com as devidas translações) utilizadas para desenhar o colecionáveis 
 desenhaColecionaveis :: Estado -> [Picture]

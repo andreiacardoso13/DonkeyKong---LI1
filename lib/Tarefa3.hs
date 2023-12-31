@@ -15,7 +15,7 @@ import Tarefa1
 import Mapa
 
 movimenta :: Semente -> Tempo -> Jogo -> Jogo
-movimenta s t j = tempoAplicaDano t $ efeitoColisoes $ removeAlcapao $ recolheColecionavel $ ataqueDoInimigo $ efeitoGravidade $ ataqueDoJogador j
+movimenta s t j = atualizaDirecao $ tempoAplicaDano t $ efeitoColisoes $ removeAlcapao $ recolheColecionavel $ ataqueDoInimigo $ efeitoGravidade $ ataqueDoJogador j
       
 {-|
 Se o jogador tiver a componente aplicaDano activa e com tempo restante e a 
@@ -39,7 +39,7 @@ ataqueDoJogador (Jogo {mapa = m ,inimigos = listaInimigos,colecionaveis = listaC
         | fst (aplicaDano jog) == True && snd (aplicaDano jog) > 0 = Jogo {mapa = m 
                                                                           ,inimigos = ataqueDoJogadorInim listaInimigos jog
                                                                           ,colecionaveis = listaColecionaveis
-                                                                          ,jogador = jog
+                                                                          ,jogador = ataqueDoJogadorJog listaInimigos jog
                                                                           }
         | otherwise = (Jogo {mapa = m 
                             ,inimigos = listaInimigos 
@@ -62,7 +62,7 @@ Se a hitbox de dano do jogador colidir com um inimigo retira uma vida ao inimigo
 ataqueDoJogadorInim :: [Personagem] -> Personagem -> [Personagem]
 ataqueDoJogadorInim [] _ = []
 ataqueDoJogadorInim (inim :t) jog | colisaoHitbox (hitbox inim) (hitboxDano jog) && (tipo inim) == Fantasma = (inim {vida = vida inim - 1}) : ataqueDoJogadorInim t jog
-                            | otherwise = inim : ataqueDoJogadorInim t jog
+                                  | otherwise = inim : ataqueDoJogadorInim t jog
         
 {-| 
 Se a hitbox de dano do jogador colidir com um inimigo adiciona 500 pontos ao jogador
@@ -76,8 +76,8 @@ Se a hitbox de dano do jogador colidir com um inimigo adiciona 500 pontos ao jog
 -}
 ataqueDoJogadorJog :: [Personagem] -> Personagem -> Personagem
 ataqueDoJogadorJog [] jog = jog
-ataqueDoJogadorJog (inim :t) jog | colisaoHitbox (hitbox inim) (hitboxDano jog) && (tipo inim) == Fantasma = ataqueDoJogadorJog t (jog {pontos = pontos jog + 500})
-                             | otherwise = ataqueDoJogadorJog t jog
+ataqueDoJogadorJog (inim :t) jog | colisaoHitbox (hitbox inim) (hitboxDano jog) && (tipo inim) == Fantasma && vida inim > 0 = ataqueDoJogadorJog t (jog {pontos = pontos jog + 500})
+                                 | otherwise = ataqueDoJogadorJog t jog
 
 {-|
 Se os personagens estiverem em cima dum bloco "Vazio"
@@ -90,12 +90,12 @@ altera a sua velocidade de maneira a sofrerem efeito da gravidade
 -}
 efeitoGravidade :: Jogo -> Jogo
 efeitoGravidade (Jogo {mapa = (Mapa posI posF matriz) 
-                 ,inimigos = listaInimigos
-                 ,colecionaveis = listaColecionaveis
-                 ,jogador = jog}) = (Jogo {mapa = (Mapa posI posF matriz)
-                                          ,inimigos = efeitoGravidadeInimigos matriz listaInimigos
-                                          ,colecionaveis = listaColecionaveis
-                                          ,jogador = efeitoGravidadeJogador matriz jog})
+                      ,inimigos = listaInimigos
+                      ,colecionaveis = listaColecionaveis
+                      ,jogador = jog}) = (Jogo {mapa = (Mapa posI posF matriz)
+                                               ,inimigos = efeitoGravidadeInimigos matriz listaInimigos
+                                               ,colecionaveis = listaColecionaveis
+                                               ,jogador = efeitoGravidadeJogador matriz jog})
 
 {-|
 Verifica onde estão os inimigos e se estiverem em cima do bloco 
@@ -136,12 +136,12 @@ Se o jogador colidir com o inimigo retira-lhe uma vida e altera a sua posição 
 -}
 ataqueDoInimigo :: Jogo -> Jogo
 ataqueDoInimigo (Jogo {mapa = m 
-                 ,inimigos = listaInimigos
-                 ,colecionaveis = listaColecionaveis
-                 ,jogador = jog}) = (Jogo {mapa = m 
-                                          ,inimigos = listaInimigos
-                                          ,colecionaveis = listaColecionaveis
-                                          ,jogador = ataqueDoInimigoAux listaInimigos jog})
+                      ,inimigos = listaInimigos
+                      ,colecionaveis = listaColecionaveis
+                      ,jogador = jog}) = (Jogo {mapa = m 
+                                               ,inimigos = listaInimigos
+                                               ,colecionaveis = listaColecionaveis
+                                               ,jogador = ataqueDoInimigoAux listaInimigos jog})
 
 {-|
 Se o jogador colidir com um inimigo retira-lhe uma vida e altera a sua posição para a inicial
@@ -168,9 +168,9 @@ Reflete as consequências de quando um colecionável é recolhido
 -}
 recolheColecionavel :: Jogo -> Jogo 
 recolheColecionavel (Jogo {mapa = m ,inimigos = listaInimigos,colecionaveis = listaColecionaveis,jogador = jog}) = Jogo {mapa = m 
-                                                                                                               ,inimigos = listaInimigos
-                                                                                                               ,colecionaveis = removeColecionavel listaColecionaveis jog
-                                                                                                               ,jogador = efeitoColecionavel listaColecionaveis jog}
+                                                                                                                        ,inimigos = listaInimigos
+                                                                                                                        ,colecionaveis = removeColecionavel listaColecionaveis jog
+                                                                                                                        ,jogador = efeitoColecionavel listaColecionaveis jog}
 {-|
 Se houver colisão entre um personagem e um colecionável remove o colécionável da lista
 
@@ -319,8 +319,12 @@ atualizaDirecaoPersonagem pers | abs x > abs y && x > 0 = pers {direcao = Este}
 atualizaDirecaoInim :: [Personagem] -> [Personagem]
 atualizaDirecaoInim [] = []
 atualizaDirecaoInim (h:t) = (atualizaDirecaoPersonagem h) : atualizaDirecaoInim t
+
+
 {-
 NOTAS 
+
+fazer lista com os tamanhos de todas as entidades
 
 fazer com que o bonus seja dado ao jogador quando este ganha
 
@@ -329,11 +333,7 @@ fazer uma hitbox especifica para quando o Mario está com o Martelo, e definir o
 Main: Tarefa2.hs:(410,1)-(412,45): Non-exhaustive patterns in function procuraBloco
 aconteceu isto quando estava numa plataforma e cliquei seta para baixo
 
-Fazer função que atualiza direção automaticamente consoante a velocidade
-
 o jogo acaba quando a vidad do jogador é igual a 0 ou quando este chega à estrela
-
-fazer o reage tempo diminuir 1 a cada segundo ao aplicaDano do jogador
 
 em relação ao movimento aleatorio do inimigo, ele poderia fazer essa aleatoriadade pelo tempo, por exemplo se o tempo do estado for multiplo de 5 faz essa escolha...
 mas continuar a fazer essa aleatoriedade sempre que passa por uma escada e pode subir/descer
