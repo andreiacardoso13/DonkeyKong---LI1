@@ -44,7 +44,7 @@ fr = 20
 
 -- | Recebe as imagens e devolve o estado inicial do jogo
 estadoInicial :: Imagens -> Estado
-estadoInicial images = Estado {jogo = j1, imagens = images, tempo = 1,bonus = 15000}
+estadoInicial images = Estado {jogo = j1, imagens = images, tempo = 0 ,bonus = 15000}
 
 -- | Desenha no ecrã o que está a acontecer no jogo em cada momento
 desenhaEstado :: Estado -> Picture
@@ -127,7 +127,7 @@ desenhaFantasmasAux :: Estado -> Picture
 desenhaFantasmasAux est | direcao (head (inimigos (jogo est))) == Este = if alteraImagem (realToFrac(tempo est))
                                                                           then desenhaFantAux est GhostRight1
                                                                           else desenhaFantAux est GhostRight2
-                       | otherwise = if alteraImagem (realToFrac(tempo est))
+                        | otherwise = if alteraImagem (realToFrac(tempo est))
                                        then desenhaFantAux est GhostLeft1
                                        else desenhaFantAux est GhostLeft2
 
@@ -139,8 +139,21 @@ desenhaFantAux est img = Translate (x - 742) (480 - y) (getImagem img (imagens e
 
 desenhaMacacoMalvado :: Estado -> [Picture]
 desenhaMacacoMalvado est | inimigos (jogo est) == [] = []
-                         | tipo (head(inimigos(jogo est))) == MacacoMalvado = [Translate 0 265 (getImagem MonkeyStanding (imagens est))]
+                         | entd == MacacoMalvado && vx == 0 = if alteraImagem (realToFrac (tempo est))
+                                                                then [desenhaMacacoAux est MonkeyArmRight]
+                                                                else [desenhaMacacoAux est MonkeyArmLeft]
+                         | entd == MacacoMalvado && vx > 0 = [desenhaMacacoAux est MonkeyWalkingRight]
+                         | entd == MacacoMalvado && vx < 0 = [desenhaMacacoAux est MonkeyWalkingLeft]
                          | otherwise = desenhaMacacoMalvado $ est {jogo = Jogo {inimigos = drop 1 (inimigos (jogo est))}}
+  where (vx,vy) = velocidade (head(inimigos(jogo(est))))
+        entd = tipo(head(inimigos(jogo est)))
+
+
+desenhaMacacoAux :: Estado -> Imagem -> Picture
+desenhaMacacoAux est img = Translate (x - 742) (477 - y) (getImagem img (imagens est))
+    where x = realToFrac $ (fst (posicao (head (inimigos(jogo est))))) * 53
+          y = realToFrac $ (snd (posicao (head (inimigos(jogo est))))) * 53
+
 
 -- | Fornece uma lista de pictures (com as devidas translações) utilizadas para desenhar o colecionáveis 
 desenhaColecionaveis :: Estado -> [Picture]
