@@ -2,11 +2,12 @@ module Main where
 import Graphics.Gloss
 import Graphics.Gloss.Interface.Pure.Game
 import LI12324
+import Tarefa2
+import Tarefa3
 import Tarefa5
 import Imagens
 import Mapa
 import Data.Fixed
-import Tarefa3
 
 
 {- main :: IO ()
@@ -235,7 +236,7 @@ reageEvento _ s = s
 
 reageTempo :: Float -> Estado -> Estado
 --reageTempo t s = s {tempo = tempo s + 0.05}
-reageTempo t s = s {jogo = movimenta 4 (realToFrac t) (jogo s),tempo = tempo s + 0.05}
+reageTempo t s = s {jogo = movimenta 4 (realToFrac t) (jogo s),tempo = tempo s + (realToFrac t)}
 
 
 

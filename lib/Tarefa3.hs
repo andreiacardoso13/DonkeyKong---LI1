@@ -15,8 +15,8 @@ import Tarefa1
 import Mapa
 
 movimenta :: Semente -> Tempo -> Jogo -> Jogo
-movimenta s t j = efeitoColisoes (removeAlcapao (recolheColecionavel (ataqueDoInimigo (efeitoGravidade (ataqueDoJogador j)))))
-
+movimenta s t j = tempoAplicaDano t $ efeitoColisoes $ removeAlcapao $ recolheColecionavel $ ataqueDoInimigo $ efeitoGravidade $ ataqueDoJogador j
+      
 {-|
 Se o jogador tiver a componente aplicaDano activa e com tempo restante e a 
 hitbox de dano do jogador colidir com um fantasma retira uma vida ao fantasma
@@ -183,7 +183,7 @@ Se houver colisão entre um personagem e um colecionável remove o colécionáve
 removeColecionavel :: [(Colecionavel, Posicao)] -> Personagem -> [(Colecionavel, Posicao)]
 removeColecionavel [] jog = []
 removeColecionavel (h:t) jog | colisaoHitbox (hitboxColecionavel (snd h)) (hitbox jog) = removeColecionavel t jog
-                      | otherwise = h : removeColecionavel t jog
+                             | otherwise = h : removeColecionavel t jog
 
 {-|
 Devolve o personagem com as consequência de recolher um colecionável
@@ -198,9 +198,9 @@ Devolve o personagem com as consequência de recolher um colecionável
 efeitoColecionavel :: [(Colecionavel, Posicao)] -> Personagem -> Personagem
 efeitoColecionavel [] jog = jog
 efeitoColecionavel (h:t) jog | colisaoHitbox (hitboxColecionavel (snd h)) (hitbox jog) = if fst h == Moeda
-                                                                                    then efeitoColecionavel t (jog {pontos = pontos jog + 200})
-                                                                                    else efeitoColecionavel t (jog {aplicaDano = (True,10)})
-                      | otherwise = efeitoColecionavel t jog
+                                                                                            then efeitoColecionavel t (jog {pontos = pontos jog + 200})
+                                                                                            else efeitoColecionavel t (jog {aplicaDano = (True,10)})
+                             | otherwise = efeitoColecionavel t jog
 
 {-|
 Faz o Alçapão desaparecer caso este esteja a ser pisado pelo Jogador
@@ -270,7 +270,7 @@ Altera o Bloco onde se localiza o x da posição recebida para Vazio
 blocoParaVazio :: [Bloco] -> Posicao -> [Bloco] 
 blocoParaVazio [] _ = []
 blocoParaVazio (h:t) (x,y) | x >= 0 && x <= 1 && h == Alcapao = Vazio : t
-                              | otherwise = h : blocoParaVazio t (x-1,y)
+                           | otherwise = h : blocoParaVazio t (x-1,y)
 
 
 efeitoColisoes :: Jogo -> Jogo
@@ -297,8 +297,12 @@ efeitoColisoesMapa m jog | mapaLimites m jog = if fst(posicao jog) > 14
                                                     else jog {posicao = (fst (posicao jog) +0.1, snd (posicao jog))}
                             | otherwise = jog
 
+-- faz o efeito do tempo no parâmetro aplicaDano do jogador
 
-
+tempoAplicaDano :: Tempo -> Jogo -> Jogo
+tempoAplicaDano t (Jogo {mapa = m, inimigos = inim, colecionaveis = col, jogador = jog}) | snd (aplicaDano jog) <= 0 = (Jogo {mapa = m, inimigos = inim, colecionaveis = col, jogador = jog {aplicaDano = (False, 0)}})
+                                                                                         | snd (aplicaDano jog) > 0 = (Jogo {mapa = m, inimigos = inim, colecionaveis = col, jogador = jog {aplicaDano = (True, snd (aplicaDano jog) - t)}})
+                                                                                         | otherwise = (Jogo {mapa = m, inimigos = inim, colecionaveis = col, jogador = jog})
 
 {-
 NOTAS 
@@ -306,6 +310,11 @@ NOTAS
 adicionar um BONUS igual ao jogo original, que diminiu consoante o tempo passa e é dado ao jogador quando este ganha
 
 fazer uma hitbox especifica para quando o Mario está com o Martelo, e definir o seu tamanho apenas como o sitio onde tá o Mario
+
+funcao que faça automaticamente quando o aplica Dano >0 igual a True
+
+Main: Tarefa2.hs:(410,1)-(412,45): Non-exhaustive patterns in function procuraBloco
+aconteceu isto quando estava numa plataforma e cliquei seta para baixo
 
 Fazer função que atualiza direção automaticamente consoante a velocidade
 
