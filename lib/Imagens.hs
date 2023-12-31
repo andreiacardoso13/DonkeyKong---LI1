@@ -70,10 +70,10 @@ getImages = do
                Just ghostDefeated3      <- loadJuicyPNG "imagens/ghostDefeated3.png"
                Just ghostDefeated4      <- loadJuicyPNG "imagens/ghostDefeated4.png"
                Just congratulations     <- loadJuicyPNG "imagens/congratulations.png"
-               Just ghostBlueLeft1      <- loadJuicyPNG "imagens/ghostBlueLeft1"
-               Just ghostBlueLeft2      <- loadJuicyPNG "imagens/ghostBlueLeft2"
-               Just ghostBlueRight1     <- loadJuicyPNG "imagens/ghostBlueRight1"
-               Just ghostBlueRight2     <- loadJuicyPNG "imagens/ghostBlueRight2"
+               Just ghostBlueLeft1      <- loadJuicyPNG "imagens/ghostBlueLeft1.png"
+               Just ghostBlueLeft2      <- loadJuicyPNG "imagens/ghostBlueLeft2.png"
+               Just ghostBlueRight1     <- loadJuicyPNG "imagens/ghostBlueRight1.png"
+               Just ghostBlueRight2     <- loadJuicyPNG "imagens/ghostBlueRight2.png"
 
                let images = [(Ladder,escada), (Trapdoor,alcapao), (Platform,plataforma), (Estrela,estrela),
                              (Coin,moeda), (Hammer,martelo), (GhostLeft1,ghostLeft1), (GhostLeft2,ghostLeft2),

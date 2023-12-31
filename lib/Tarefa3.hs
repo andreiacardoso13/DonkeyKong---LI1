@@ -295,7 +295,7 @@ efeitoColisoesMapa :: Mapa -> Personagem -> Personagem
 efeitoColisoesMapa m jog | mapaLimites m jog = if fst(posicao jog) > 14 
                                                     then jog {posicao = (fst (posicao jog) -0.1, snd (posicao jog))}
                                                     else jog {posicao = (fst (posicao jog) +0.1, snd (posicao jog))}
-                            | otherwise = jog
+                         | otherwise = jog
 
 -- faz o efeito do tempo no parâmetro aplicaDano do jogador
 
@@ -321,8 +321,11 @@ atualizaDirecaoInim [] = []
 atualizaDirecaoInim (h:t) = (atualizaDirecaoPersonagem h) : atualizaDirecaoInim t
 
 
+
 {-
 NOTAS 
+
+utilizar a tarefa4 para se o tempo passar de 5 macaco começar a andar. E se chegar a certa posição ir para a esquerda
 
 fazer lista com os tamanhos de todas as entidades
 

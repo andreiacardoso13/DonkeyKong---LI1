@@ -80,7 +80,7 @@ j1 = Jogo {mapa = mapaInicial
                         Personagem {velocidade=(1,0)
                                   ,tipo=Fantasma
                                   ,posicao=(10.5,10.5)
-                                  ,direcao = Norte
+                                  ,direcao = Este
                                   ,tamanho = (1,1)
                                   ,emEscada=False
                                   ,ressalta=True
@@ -88,11 +88,11 @@ j1 = Jogo {mapa = mapaInicial
                                   ,pontos=0
                                   ,aplicaDano=(False,0)
                                    },
-                        Personagem {velocidade = (1,0)
+                        Personagem {velocidade = (0,0)
                                    ,tipo =MacacoMalvado
-                                   ,posicao=(1,1)
+                                   ,posicao=(14,4)
                                    ,direcao = Este
-                                   ,tamanho = (2,2)
+                                   ,tamanho = (2.4,2)
                                    ,emEscada = False
                                    ,ressalta = True
                                    ,vida = 1
