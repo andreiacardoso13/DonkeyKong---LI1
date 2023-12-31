@@ -122,6 +122,12 @@ desenhaFantasmas (Estado {jogo = Jogo {inimigos = []}, imagens = imgs, tempo = t
 desenhaFantasmas (Estado {jogo = jog, imagens = imgs, tempo = tp}) | vida (head (inimigos jog)) > 0  && tipo (head (inimigos jog)) == Fantasma = desenhaFantasmasAux (Estado {jogo = jog {inimigos = take 1 (inimigos jog)}, imagens = imgs, tempo = tp}) : (desenhaFantasmas (Estado {jogo = jog {inimigos = drop 1 (inimigos jog)}, imagens = imgs, tempo = tp}))
                                                                    | otherwise = desenhaFantasmas (Estado {jogo = jog {inimigos = drop 1 (inimigos jog)}, imagens = imgs, tempo = tp})
 
+
+
+
+
+
+
 -- | Fornece uma picture do inimigo com as devidas translações para esta estar na posição atual do inimigo (a imagem fornecida depende o tempo atual do estado)
 desenhaFantasmasAux :: Estado -> Picture
 desenhaFantasmasAux est | direcao (head (inimigos (jogo est))) == Este = if alteraImagem (realToFrac(tempo est))
@@ -284,8 +290,10 @@ reageEvento :: Event -> Estado -> Estado
 reageEvento _ s = s
 
 reageTempo :: Float -> Estado -> Estado
---reageTempo t s = s {tempo = tempo s + 0.05}
-reageTempo t s = s {jogo = movimenta 4 (realToFrac t) (jogo s),tempo = tempo s + (realToFrac t), bonus = (bonus s) - 5 }
+reageTempo t s = s {jogo = movimenta 4 (realToFrac t) (jogo s),tempo = tempo s + (realToFrac t), bonus = diminuiBonus (bonus s) }
 
+diminuiBonus :: Int -> Int
+diminuiBonus 0 = 0
+diminuiBonus n = n -5
 
 
