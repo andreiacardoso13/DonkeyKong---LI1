@@ -124,9 +124,9 @@ jOpcoes = Jogo {mapa = mapaOpcoes
 
 j1 :: Jogo
 j1 = Jogo {mapa = mapaInicial
-          ,inimigos = [Personagem {velocidade=(1,0)
+          ,inimigos = [Personagem {velocidade=(0,0)
                                   ,tipo=Fantasma
-                                  ,posicao=(5.5,4.5)
+                                  ,posicao=(10.5,4.5)
                                   ,direcao = Este
                                   ,tamanho = (1,1)
                                   ,emEscada=False
@@ -137,7 +137,7 @@ j1 = Jogo {mapa = mapaInicial
                                    },
                         Personagem {velocidade=(1,0)
                                   ,tipo=Fantasma
-                                  ,posicao=(10.5,10.5)
+                                  ,posicao=(10.5,16.5)
                                   ,direcao = Este
                                   ,tamanho = (1,1)
                                   ,emEscada=False
@@ -158,7 +158,7 @@ j1 = Jogo {mapa = mapaInicial
                                    ,aplicaDano = (False,0)
                                    }
                       ]
-          ,colecionaveis = [(Moeda,(17.5,7.5)),(Martelo, (8.5,10.5))]
+          ,colecionaveis = [(Moeda,(17.5,7.5)),(Martelo, (8.5,16.5))]
           ,jogador = Personagem {velocidade=(1,0)
                                 ,tipo=Jogador
                                 ,posicao=(0.5,16.5)

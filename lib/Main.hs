@@ -350,10 +350,20 @@ reageEvento :: Event -> Estado -> Estado
 reageEvento _ s = s
 
 reageTempo :: Float -> Estado -> Estado
-reageTempo t s = s {jogo = movimenta 4 (realToFrac t) (jogo s),tempo = tempo s + (realToFrac t), bonus = diminuiBonus (bonus s) }
+reageTempo t s = ganhaJogo $ perdeJogo $ s {jogo = movimenta 4 (realToFrac t) (jogo s),tempo = tempo s + (realToFrac t), bonus = diminuiBonus (bonus s)}
 
 diminuiBonus :: Int -> Int
 diminuiBonus 0 = 0
 diminuiBonus n = n - 5
+
+perdeJogo :: Estado -> Estado
+perdeJogo s | vida (jogador (jogo s)) == 0 = s {menu = PerdeuJogo}
+            | otherwise = s
+
+ganhaJogo :: Estado -> Estado
+ganhaJogo s | x > 13.5 && x < 14.5 && y == 1.5 = s {menu = GanhouJogo}
+            | otherwise = s
+   where x = fst(posicao(jogador(jogo s)))
+         y = snd(posicao(jogador(jogo s)))
 
 

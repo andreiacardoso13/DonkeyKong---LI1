@@ -349,6 +349,10 @@ o jogo acaba quando a vidad do jogador é igual a 0 ou quando este chega à estr
 em relação ao movimento aleatorio do inimigo, ele poderia fazer essa aleatoriadade pelo tempo, por exemplo se o tempo do estado for multiplo de 5 faz essa escolha...
 mas continuar a fazer essa aleatoriedade sempre que passa por uma escada e pode subir/descer
 
+por opção tentar novamente em game over
+
+
+
 -}
 
 --j1 :: Jogo

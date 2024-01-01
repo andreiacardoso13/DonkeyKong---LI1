@@ -21,7 +21,7 @@ import Data.Fixed
 import Graphics.Gloss
 import Graphics.Gloss.Interface.Pure.Game
 
-data Estado = Estado {menu :: Menu, jogo :: Jogo, imagens :: Imagens, tempo :: Tempo, bonus :: Int} 
+data Estado = Estado {menu :: Menu, jogo :: Jogo, imagens :: Imagens, tempo :: Tempo, bonus :: Int, highScore :: Int } 
 
 data Menu = Inicio
           | Opcoes Opcao
@@ -55,8 +55,14 @@ keysOpJogar (EventKey (SpecialKey KeyDown) Down _ _) s = s {menu = Opcoes HighSc
 keysOpJogar _ s = s
 
 keysOpHighScore :: Event -> Estado -> Estado
+keysOpHighScore (EventKey (SpecialKey KeyEnter) Down _ _) s = s {menu = ModoHighScore}
 keysOpHighScore (EventKey (SpecialKey KeyUp) Down _ _) s = s {menu = Opcoes Jogar}
 keysOpHighScore _ s = s
+
+
+
+
+
 
 keysModoJogo :: Event -> Estado -> Estado
 keysModoJogo (EventKey (SpecialKey KeyRight) Down _ _) e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos), 
@@ -110,6 +116,13 @@ keysModoJogo (EventKey (SpecialKey keysModoJogopace) Down _ _) e@(Estado {jogo =
 
 
 keysModoJogo _ e = e
+
+
+
+
+
+
+
 
 keysModoHighScore :: Event -> Estado -> Estado
 keysModoHighScore _ s = s
