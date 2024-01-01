@@ -48,18 +48,20 @@ fr = 20
 
 -- | Recebe as imagens e devolve o estado inicial do jogo
 estadoInicial :: Imagens -> Estado
-estadoInicial images = Estado {menu = Opcoes Jogar,jogo = j1, imagens = images, tempo = 0 ,bonus = 15000}
+estadoInicial images = Estado {menu = Inicio,jogo = j1, imagens = images, tempo = 0 ,bonus = 15000}
 --estadoInicial images = Estado {menu = ModoJogo,jogo = j1, imagens = images, tempo = 0 ,bonus = 15000}
 
 
 -- | Desenha no ecrã o que está a acontecer no jogo em cada momento
 desenhaEstado :: Estado -> Picture
-desenhaEstado s | menu s == Opcoes Jogar = Pictures(desenhaMenu s)
+desenhaEstado s | menu s == Inicio = Pictures(desenhaMenu s)
+                | menu s == Opcoes Jogar = rectangleSolid 50 50
                 | menu s == ModoJogo = Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s)
 
 
 desenhaMenu :: Estado -> [Picture]
-desenhaMenu s = [getImagem PrimateKong (imagens s)]
+desenhaMenu s | alteraImagem2 (realToFrac (tempo s)) = [Translate 0 (-200) (Scale 0.3 0.3 (getImagem PressEnter (imagens s))),getImagem PrimateKong (imagens s)]
+              | otherwise = [getImagem PrimateKong (imagens s)]
 
 
 
@@ -308,13 +310,20 @@ desenhaBonusNum5 :: Estado -> [Picture]
 desenhaBonusNum5 est = map (Translate 1385 0) (desenhaPontosAux est Num0) --map (Translate 1385 0) (verificaNumero (mod (bonus est) 10) est)
 
 
--- | Verifica se a parte decimal de um número está entre 0 e 25 ou 50 e 75
+-- | Verifica se a parte decimal de um número está entre 0 e 25 ou 50 e 75, utilizada para alterar uma imagem de 0,25 em 0,24 segundos
 alteraImagem :: Float -> Bool
 alteraImagem n = alteraImagemAux (mod' (n * 10) 10)
 
 -- | Verifica se um número está entre 0 e 2.5 ou 5 e 7.5
 alteraImagemAux :: Float -> Bool
-alteraImagemAux n = n >= 0 && n<2.5 || n>=5 && n<7.5
+alteraImagemAux n = (n >= 0 && n<2.5) || (n>=5 && n<7.5)
+
+
+alteraImagem2 :: Float -> Bool -- faz a imagem piscar a cada 1.5 segundos
+alteraImagem2 n = alteraImagem2Aux (mod' n 10)
+
+alteraImagem2Aux :: Float -> Bool
+alteraImagem2Aux n = (n>=0 && n<=1.5) || (n>=2 && n<=3.5) || (n>= 4 && n<=5.5) || (n>=6 && n<= 7.5) || (n>=8 && n<= 9.5)
 
 
 reageEvento :: Event -> Estado -> Estado
@@ -325,6 +334,6 @@ reageTempo t s = s {jogo = movimenta 4 (realToFrac t) (jogo s),tempo = tempo s +
 
 diminuiBonus :: Int -> Int
 diminuiBonus 0 = 0
-diminuiBonus n = n -5
+diminuiBonus n = n - 5
 
 

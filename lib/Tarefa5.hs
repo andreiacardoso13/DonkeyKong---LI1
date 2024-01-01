@@ -22,7 +22,8 @@ import Graphics.Gloss.Interface.Pure.Game
 
 data Estado = Estado {menu :: Menu, jogo :: Jogo, imagens :: Imagens, tempo :: Tempo, bonus :: Int} 
 
-data Menu = Opcoes Opcao
+data Menu = Inicio
+          | Opcoes Opcao
           | ModoJogo
           | GanhouJogo
           | PerdeuJogo
@@ -95,3 +96,5 @@ freefall e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos),
                                     jogador = jgd@(Personagem {posicao = pos@(x,y)})})}) = if procuraBlocoInf blocos pos == Vazio
                                                                                               then freefall e {jogo = j {jogador = jgd {posicao = (x,y+0.5)}}} 
                                                                                               else e
+
+
