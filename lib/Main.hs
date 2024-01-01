@@ -48,20 +48,25 @@ fr = 20
 
 -- | Recebe as imagens e devolve o estado inicial do jogo
 estadoInicial :: Imagens -> Estado
-estadoInicial images = Estado {menu = Inicio,jogo = j1, imagens = images, tempo = 0 ,bonus = 15000}
+estadoInicial images = Estado {menu = Inicio,jogo = jOpcoes, imagens = images, tempo = 0 ,bonus = 15000}
 --estadoInicial images = Estado {menu = ModoJogo,jogo = j1, imagens = images, tempo = 0 ,bonus = 15000}
 
 
 -- | Desenha no ecrã o que está a acontecer no jogo em cada momento
 desenhaEstado :: Estado -> Picture
-desenhaEstado s | menu s == Inicio = Pictures(desenhaMenu s)
-                | menu s == Opcoes Jogar = rectangleSolid 50 50
+desenhaEstado s | menu s == Inicio = Pictures(desenhaInicio s)
                 | menu s == ModoJogo = Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s)
+                | menu s == GanhouJogo = Pictures [getImagem MonkeyDefeated (imagens s)]
+                | menu s == PerdeuJogo = Pictures [getImagem MarioDefeatedFinal (imagens s)]
+                | otherwise = Pictures(desenhaOpcoes s)
 
+desenhaInicio :: Estado -> [Picture]
+desenhaInicio s | alteraImagem2 (realToFrac (tempo s)) = [Translate 0 (-200) (Scale 0.3 0.3 (getImagem PressEnter (imagens s))),getImagem PrimateKong (imagens s)]
+                | otherwise = [getImagem PrimateKong (imagens s)]
 
-desenhaMenu :: Estado -> [Picture]
-desenhaMenu s | alteraImagem2 (realToFrac (tempo s)) = [Translate 0 (-200) (Scale 0.3 0.3 (getImagem PressEnter (imagens s))),getImagem PrimateKong (imagens s)]
-              | otherwise = [getImagem PrimateKong (imagens s)]
+desenhaOpcoes :: Estado -> [Picture]
+desenhaOpcoes s | menu s == Opcoes Jogar = (desenhaMapa1 (-715.5,450.5) s ++ desenhaFantasmas s ++ [getImagem MonkeyStanding (imagens s)])
+                | otherwise = [rectangleSolid 50 50]
 
 
 

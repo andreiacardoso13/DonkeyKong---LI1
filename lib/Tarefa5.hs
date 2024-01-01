@@ -10,6 +10,7 @@ module Tarefa5 where
 
 import LI12324
 import Imagens
+import Mapa
 -- import Main
 import Tarefa1
 import Tarefa2
@@ -44,6 +45,7 @@ keysInicio (EventKey (SpecialKey KeyEnter) Down _ _) s = s {menu = Opcoes Jogar}
 keysInicio _ s = s
 
 keysOpJogar :: Event -> Estado -> Estado
+keysOpJogar (EventKey (SpecialKey KeyEnter) Down _ _) s = s {menu = ModoJogo, jogo = j1, tempo = 0, bonus = 15000}
 keysOpJogar _ s = s
 
 keysModoJogo :: Event -> Estado -> Estado
