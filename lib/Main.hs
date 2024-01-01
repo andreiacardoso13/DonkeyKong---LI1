@@ -15,17 +15,7 @@ main = do
   putStrLn "Hello, PrimateKong!"
 -}
 
-data Estado = Estado {menu :: Menu, jogo :: Jogo, imagens :: Imagens, tempo :: Tempo, bonus :: Int} 
 
-
-data Menu = Opcoes Opcao
-          | ModoJogo
-          | GanhouJogo
-          | PerdeuJogo
-          deriving Eq
-
-data Opcao = Jogar 
-             deriving Eq
 
 
 
@@ -59,11 +49,19 @@ fr = 20
 -- | Recebe as imagens e devolve o estado inicial do jogo
 estadoInicial :: Imagens -> Estado
 estadoInicial images = Estado {menu = Opcoes Jogar,jogo = j1, imagens = images, tempo = 0 ,bonus = 15000}
+--estadoInicial images = Estado {menu = ModoJogo,jogo = j1, imagens = images, tempo = 0 ,bonus = 15000}
+
 
 -- | Desenha no ecrã o que está a acontecer no jogo em cada momento
 desenhaEstado :: Estado -> Picture
-desenhaEstado s | menu s == Opcoes Jogar = rectangleSolid 50 50
+desenhaEstado s | menu s == Opcoes Jogar = Pictures(desenhaMenu s)
                 | menu s == ModoJogo = Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s)
+
+
+desenhaMenu :: Estado -> [Picture]
+desenhaMenu s = [getImagem PrimateKong (imagens s)]
+
+
 
 -- | Fornece a lista de pictures (com as devidas translações) utilizadas para desenhar o mapa do jogo
 desenhaMapa1 :: (Float,Float) -> Estado -> [Picture]
