@@ -46,8 +46,9 @@ sendo esta do mesmo tamanho do menor retângulo que contém um personagem
 -}
 
 hitboxDano :: Personagem -> Hitbox
-hitboxDano (Personagem {posicao = (x,y), tamanho = (l,a), direcao = dir}) | dir == Oeste || x < 0 = ((x-(3*l/2),y-(a/2)),(x - (l/2), y + (a/2)))
-                                                                          | dir == Este || x > 0 = ((x + (l/2),y-(a/2)),(x + (3*l/2),y + (a/2)))
+hitboxDano (Personagem {posicao = (x,y), tamanho = (l,a), direcao = dir}) | dir == Oeste || x < 0 = ((x-(2*l/2),y-(a/2)),(x, y + (a/2)))
+                                                                          | dir == Este || x > 0 = ((x,y-(a/2)),(x + (2*l/2),y + (a/2)))
+
 
 {-|
 Verifica se duas hitbox estão em colisão
