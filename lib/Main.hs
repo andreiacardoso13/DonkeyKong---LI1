@@ -15,6 +15,20 @@ main = do
   putStrLn "Hello, PrimateKong!"
 -}
 
+data Estado = Estado {menu :: Menu, jogo :: Jogo, imagens :: Imagens, tempo :: Tempo, bonus :: Int} 
+
+
+data Menu = Opcoes Opcao
+          | ModoJogo
+          | GanhouJogo
+          | PerdeuJogo
+          deriving Eq
+
+data Opcao = Jogar 
+             deriving Eq
+
+
+
 -- | Função principal, responsável por carregar os elementos visuais presentes no ambiente gŕafico do jogo
 main :: IO ()
 main = do
@@ -44,11 +58,12 @@ fr = 20
 
 -- | Recebe as imagens e devolve o estado inicial do jogo
 estadoInicial :: Imagens -> Estado
-estadoInicial images = Estado {jogo = j1, imagens = images, tempo = 0 ,bonus = 15000}
+estadoInicial images = Estado {menu = Opcoes Jogar,jogo = j1, imagens = images, tempo = 0 ,bonus = 15000}
 
 -- | Desenha no ecrã o que está a acontecer no jogo em cada momento
 desenhaEstado :: Estado -> Picture
-desenhaEstado s = Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s)
+desenhaEstado s | menu s == Opcoes Jogar = rectangleSolid 50 50
+                | menu s == ModoJogo = Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s)
 
 -- | Fornece a lista de pictures (com as devidas translações) utilizadas para desenhar o mapa do jogo
 desenhaMapa1 :: (Float,Float) -> Estado -> [Picture]
