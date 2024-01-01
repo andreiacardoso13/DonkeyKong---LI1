@@ -57,7 +57,7 @@ desenhaEstado :: Estado -> Picture
 desenhaEstado s | menu s == Inicio = Pictures(desenhaInicio s)
                 | menu s == ModoJogo = Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s)
                 | menu s == ModoHighScore = Pictures [getImagem PalavraHighScore (imagens s)]
-                | menu s == GanhouJogo = Pictures [getImagem MonkeyDefeated (imagens s)]
+                | menu s == GanhouJogo = Pictures (desenhaGanhouJogo s)
                 | menu s == PerdeuJogo = Pictures [getImagem MarioDefeatedFinal (imagens s)]
                 | otherwise = Pictures(desenhaOpcoes s)
 
@@ -198,14 +198,18 @@ desenhaFantAux inim imags img = Translate (x - 742) (480 - y) (getImagem img ima
 
 desenhaMacacoMalvado :: Estado -> [Picture]
 desenhaMacacoMalvado est | inimigos (jogo est) == [] = []
+                         | entd == MacacoMalvado && y > 16.2 = [Translate 0 (-3) (desenhaMacacoAux est MonkeyDefeated)]
+                         | entd == MacacoMalvado && vid == 11 = [desenhaMacacoAux est MonkeyFalling]
                          | entd == MacacoMalvado && vx == 0 = if alteraImagem (realToFrac (tempo est))
                                                                 then [desenhaMacacoAux est MonkeyArmRight]
                                                                 else [desenhaMacacoAux est MonkeyArmLeft]
                          | entd == MacacoMalvado && vx > 0 = [desenhaMacacoAux est MonkeyWalkingRight]
-                         | entd == MacacoMalvado && vx < 0 = [desenhaMacacoAux est MonkeyWalkingLeft]
+                         | entd == MacacoMalvado && vx < 0 = [desenhaMacacoAux est MonkeyWalkingLeft]             
                          | otherwise = desenhaMacacoMalvado $ est {jogo = Jogo {inimigos = drop 1 (inimigos (jogo est))}}
   where (vx,vy) = velocidade (head(inimigos(jogo(est))))
         entd = tipo(head(inimigos(jogo est)))
+        vid = vida (head (inimigos (jogo est)))
+        y = snd (posicao(head(inimigos(jogo est))))
 
 
 desenhaMacacoAux :: Estado -> Imagem -> Picture
@@ -330,6 +334,12 @@ desenhaBonusNum5 :: Estado -> [Picture]
 desenhaBonusNum5 est = map (Translate 1385 0) (desenhaPontosAux est Num0) --map (Translate 1385 0) (verificaNumero (mod (bonus est) 10) est)
 
 
+
+desenhaGanhouJogo :: Estado -> [Picture]
+desenhaGanhouJogo s = desenhaMapa1 (-715.5,450.5) s ++ desenhaJogador s ++ desenhaMacacoMalvado s ++ desenhaBonus s ++ desenhaVida s ++ desenhaPontos s
+
+
+
 -- | Verifica se a parte decimal de um número está entre 0 e 25 ou 50 e 75, utilizada para alterar uma imagem de 0,25 em 0,24 segundos
 alteraImagem :: Float -> Bool
 alteraImagem n = alteraImagemAux (mod' (n * 10) 10)
@@ -350,7 +360,8 @@ reageEvento :: Event -> Estado -> Estado
 reageEvento _ s = s
 
 reageTempo :: Float -> Estado -> Estado
-reageTempo t s = ganhaJogo $ perdeJogo $ s {jogo = movimenta 4 (realToFrac t) (jogo s),tempo = tempo s + (realToFrac t), bonus = diminuiBonus (bonus s)}
+reageTempo t s | menu s == GanhouJogo = s {jogo = Jogo {mapa = mapa (jogo s),inimigos = gravidadeMacaco (realToFrac t) (inimigos (jogo s)), colecionaveis = [], jogador = jogador (jogo s)}}
+               | otherwise = ganhaJogo $ perdeJogo $ s {jogo = movimenta 4 (realToFrac t) (jogo s),tempo = tempo s + (realToFrac t), bonus = diminuiBonus (bonus s)}
 
 diminuiBonus :: Int -> Int
 diminuiBonus 0 = 0
@@ -361,9 +372,15 @@ perdeJogo s | vida (jogador (jogo s)) == 0 = s {menu = PerdeuJogo}
             | otherwise = s
 
 ganhaJogo :: Estado -> Estado
-ganhaJogo s | x > 13.5 && x < 14.5 && y == 1.5 = s {menu = GanhouJogo}
+ganhaJogo s | x > 13.5 && x < 14.5 && y == 1.5 && menu s== ModoJogo = s {menu = GanhouJogo, jogo = Jogo {mapa = mapaGanhou,inimigos = ganhouInimigos (inimigos (jogo s)),colecionaveis = [], jogador = jogGanhaJogo (jogador (jogo s)) (bonus s)}}
             | otherwise = s
    where x = fst(posicao(jogador(jogo s)))
          y = snd(posicao(jogador(jogo s)))
 
+ganhouInimigos :: [Personagem] -> [Personagem]
+ganhouInimigos [] = []
+ganhouInimigos (h:t) = h {vida=11} : ganhouInimigos t
+--alterar vida dos fantasmas para 11, pelo sim pelo nao
 
+jogGanhaJogo :: Personagem -> Int -> Personagem
+jogGanhaJogo jog b = jog {pontos = (pontos jog) + b, velocidade = (0,0)}

@@ -328,6 +328,11 @@ alteraVidaFantasmaAux inim | vida inim == 0 = inim {vida = 2}
                            | vida inim >= 2 && vida inim <= 10 =inim {vida = (vida inim) + 1}
                            | otherwise = inim 
 
+gravidadeMacaco :: Tempo -> [Personagem] -> [Personagem]
+gravidadeMacaco _ [] = []
+gravidadeMacaco tmp (h:t) | tipo h == MacacoMalvado && snd (posicao h) <= 16.1 = (h {posicao = (fst (posicao h), snd (posicao h) + 4 * tmp)}) : t
+                          | otherwise = h : gravidadeMacaco tmp t 
+
 {-
 NOTAS 
 
