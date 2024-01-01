@@ -65,10 +65,14 @@ desenhaInicio s | alteraImagem2 (realToFrac (tempo s)) = [Translate 0 (-200) (Sc
                 | otherwise = [getImagem PrimateKong (imagens s)]
 
 desenhaOpcoes :: Estado -> [Picture]
-desenhaOpcoes s | menu s == Opcoes Jogar = (desenhaMapa1 (-715.5,450.5) s ++ desenhaFantasmas s ++ [getImagem MonkeyStanding (imagens s)])
+desenhaOpcoes s | menu s == Opcoes Jogar = (desenhaMapa1 (-715.5,450.5) s ++ desenhaFantasmas s ++ desenhaMacacoOpcoes s)
                 | otherwise = [rectangleSolid 50 50]
 
-
+desenhaMacacoOpcoes :: Estado -> [Picture]
+desenhaMacacoOpcoes s | (t >= 0 && t<=3) || (t>=5 && t<=8) = [Translate 0 320 (Scale 2 2 (getImagem MonkeyStanding (imagens s)))]
+                      | alteraImagem (realToFrac (tempo s)) = [Translate 0 320 (Scale 2 2 (getImagem MonkeyArmLeft (imagens s)))]
+                      | otherwise = [Translate 0 320 (Scale 2 2 (getImagem MonkeyArmRight (imagens s)))]
+   where t = mod' (tempo s) 10
 
 -- | Fornece a lista de pictures (com as devidas translações) utilizadas para desenhar o mapa do jogo
 desenhaMapa1 :: (Float,Float) -> Estado -> [Picture]
