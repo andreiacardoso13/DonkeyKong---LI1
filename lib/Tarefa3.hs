@@ -331,6 +331,8 @@ alteraVidaFantasmaAux inim | vida inim == 0 = inim {vida = 2}
 {-
 NOTAS 
 
+funcao que atualiza a posicao do jogador no Mapa
+
 utilizar a tarefa4 para se o tempo passar de 5 macaco começar a andar. E se chegar a certa posição ir para a esquerda
 
 fazer lista com os tamanhos de todas as entidades

@@ -109,7 +109,7 @@ jOpcoes = Jogo {mapa = mapaOpcoes
                                         }
                            ] 
                ,colecionaveis = [(Moeda,(17.5,7.5)),(Martelo, (8.5,10.5))]
-               ,jogador = Personagem {velocidade=(1,0)
+               ,jogador = Personagem {velocidade=(0,0)
                                      ,tipo=Jogador
                                      ,posicao=(0.5,16.5)
                                      ,direcao = Este

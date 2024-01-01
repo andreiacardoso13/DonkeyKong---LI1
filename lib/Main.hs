@@ -56,6 +56,7 @@ estadoInicial images = Estado {menu = Inicio,jogo = jOpcoes, imagens = images, t
 desenhaEstado :: Estado -> Picture
 desenhaEstado s | menu s == Inicio = Pictures(desenhaInicio s)
                 | menu s == ModoJogo = Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s)
+                | menu s == ModoHighScore = Pictures [getImagem PalavraHighScore (imagens s)]
                 | menu s == GanhouJogo = Pictures [getImagem MonkeyDefeated (imagens s)]
                 | menu s == PerdeuJogo = Pictures [getImagem MarioDefeatedFinal (imagens s)]
                 | otherwise = Pictures(desenhaOpcoes s)
@@ -65,8 +66,18 @@ desenhaInicio s | alteraImagem2 (realToFrac (tempo s)) = [Translate 0 (-200) (Sc
                 | otherwise = [getImagem PrimateKong (imagens s)]
 
 desenhaOpcoes :: Estado -> [Picture]
-desenhaOpcoes s | menu s == Opcoes Jogar = (desenhaMapa1 (-715.5,450.5) s ++ desenhaFantasmas s ++ desenhaMacacoOpcoes s)
-                | otherwise = [rectangleSolid 50 50]
+desenhaOpcoes s = desenhaOpcoesFundo s ++ desenhaOpcoesOpcao s
+
+desenhaOpcoesFundo :: Estado -> [Picture]
+desenhaOpcoesFundo s = (desenhaMapa1 (-715.5,450.5) s ++ desenhaFantasmas s ++ desenhaMacacoOpcoes s)
+
+
+desenhaOpcoesOpcao :: Estado -> [Picture]
+desenhaOpcoesOpcao s | menu s == Opcoes Jogar = [Scale 1.4 1.4 (getImagem PalavraJogar (imagens s))] ++ [Translate 0 (-70) (getImagem PalavraHighScore (imagens s))] ++ [Translate (-150) 0 (getImagem MarioStandingRight (imagens s))] ++ [Translate 150 0 (getImagem MarioStandingLeft (imagens s))] 
+                     | menu s == Opcoes HighScore = [getImagem PalavraJogar (imagens s)] ++ [Translate 0 (-70) (Scale 1.2 1.2 (getImagem PalavraHighScore (imagens s)))] ++ [Translate (-210) (-65) (getImagem MarioStandingRight (imagens s))] ++ [Translate 210 (-70) (getImagem MarioStandingLeft (imagens s))] 
+                     | otherwise = [rectangleSolid 50 50]
+
+
 
 desenhaMacacoOpcoes :: Estado -> [Picture]
 desenhaMacacoOpcoes s | (t >= 0 && t<=3) || (t>=5 && t<=8) = [Translate 0 320 (Scale 2 2 (getImagem MonkeyStanding (imagens s)))]

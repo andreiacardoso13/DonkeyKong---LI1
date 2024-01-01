@@ -26,17 +26,21 @@ data Estado = Estado {menu :: Menu, jogo :: Jogo, imagens :: Imagens, tempo :: T
 data Menu = Inicio
           | Opcoes Opcao
           | ModoJogo
+          | ModoHighScore
           | GanhouJogo
           | PerdeuJogo
           deriving Eq
 
 data Opcao = Jogar 
+           | HighScore
           deriving Eq
 
 keys :: Event -> Estado -> Estado
 keys evt s | menu s == Inicio = keysInicio evt s
            | menu s == Opcoes Jogar = keysOpJogar evt s
+           | menu s == Opcoes HighScore = keysOpHighScore evt s
            | menu s == ModoJogo = keysModoJogo evt s
+           | menu s == ModoHighScore = keysModoJogo evt s
            | menu s == GanhouJogo = keysGanhouJogo evt s
            | menu s == PerdeuJogo = keysPerdeuJogo evt s
 
@@ -46,7 +50,13 @@ keysInicio _ s = s
 
 keysOpJogar :: Event -> Estado -> Estado
 keysOpJogar (EventKey (SpecialKey KeyEnter) Down _ _) s = s {menu = ModoJogo, jogo = j1, tempo = 0, bonus = 15000}
+keysOpJogar (EventKey (SpecialKey KeyDown) Down _ _) s = s {menu = Opcoes HighScore}
+--keysOpJogar (EventKey (Char 'a') Down _ _)
 keysOpJogar _ s = s
+
+keysOpHighScore :: Event -> Estado -> Estado
+keysOpHighScore (EventKey (SpecialKey KeyUp) Down _ _) s = s {menu = Opcoes Jogar}
+keysOpHighScore _ s = s
 
 keysModoJogo :: Event -> Estado -> Estado
 keysModoJogo (EventKey (SpecialKey KeyRight) Down _ _) e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos), 
@@ -101,6 +111,8 @@ keysModoJogo (EventKey (SpecialKey keysModoJogopace) Down _ _) e@(Estado {jogo =
 
 keysModoJogo _ e = e
 
+keysModoHighScore :: Event -> Estado -> Estado
+keysModoHighScore _ s = s
 
 keysGanhouJogo :: Event -> Estado -> Estado
 keysGanhouJogo _ s = s
