@@ -15,7 +15,7 @@ import Tarefa1
 import Mapa
 
 movimenta :: Semente -> Tempo -> Jogo -> Jogo
-movimenta s t j = movimentoPers $ alteraVidaFantasma $ atualizaDirecao $ tempoAplicaDano t $ efeitoColisoes $ removeAlcapao $ recolheColecionavel $ ataqueDoInimigo $ efeitoGravidade $ ataqueDoJogador j
+movimenta s t j = movimentoPers $ alteraVidaFantasma $ tempoAplicaDano t $ efeitoColisoes $ removeAlcapao $ recolheColecionavel $ ataqueDoInimigo $ efeitoGravidade $ ataqueDoJogador j
       
 {-|
 Se o jogador tiver a componente aplicaDano activa e com tempo restante e a 
@@ -303,22 +303,6 @@ tempoAplicaDano :: Tempo -> Jogo -> Jogo
 tempoAplicaDano t (Jogo {mapa = m, inimigos = inim, colecionaveis = col, jogador = jog}) | snd (aplicaDano jog) <= 0 = (Jogo {mapa = m, inimigos = inim, colecionaveis = col, jogador = jog {aplicaDano = (False, 0)}})
                                                                                          | snd (aplicaDano jog) > 0 = (Jogo {mapa = m, inimigos = inim, colecionaveis = col, jogador = jog {aplicaDano = (True, snd (aplicaDano jog) - t)}})
                                                                                          | otherwise = (Jogo {mapa = m, inimigos = inim, colecionaveis = col, jogador = jog})
-
-atualizaDirecao :: Jogo -> Jogo 
-atualizaDirecao jog = jog {jogador = atualizaDirecaoPersonagem (jogador jog), inimigos = atualizaDirecaoInim (inimigos jog)}
-
-atualizaDirecaoPersonagem :: Personagem -> Personagem
-atualizaDirecaoPersonagem pers | abs x > abs y && x > 0 = pers {direcao = Este}
-                               | abs x > abs y && x < 0 = pers {direcao = Oeste}
-                               | abs x < abs y && y > 0 = pers {direcao = Norte}
-                               | abs x < abs y && y < 0 = pers {direcao = Sul}
-                               | otherwise = pers
-  where x = fst (velocidade pers)
-        y = snd (velocidade pers)
-
-atualizaDirecaoInim :: [Personagem] -> [Personagem]
-atualizaDirecaoInim [] = []
-atualizaDirecaoInim (h:t) = (atualizaDirecaoPersonagem h) : atualizaDirecaoInim t
 
 alteraVidaFantasma :: Jogo -> Jogo
 alteraVidaFantasma jog = jog {inimigos = map (alteraVidaFantasmaAux) (inimigos jog)}
