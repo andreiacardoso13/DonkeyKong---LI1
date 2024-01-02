@@ -48,7 +48,7 @@ fr = 20
 
 -- | Recebe as imagens e devolve o estado inicial do jogo
 estadoInicial :: Imagens -> Estado
-estadoInicial images = Estado {menu = Inicio,jogo = jOpcoes, imagens = images, tempo = 0 ,bonus = 15000}
+estadoInicial images = Estado {menu = Inicio,jogo = jOpcoes, imagens = images, tempo = 0 ,bonus = 15000, highScore = []}
 --estadoInicial images = Estado {menu = ModoJogo,jogo = j1, imagens = images, tempo = 0 ,bonus = 15000}
 
 
@@ -336,8 +336,51 @@ desenhaBonusNum5 est = map (Translate 1385 0) (desenhaPontosAux est Num0) --map 
 
 
 desenhaGanhouJogo :: Estado -> [Picture]
-desenhaGanhouJogo s = desenhaMapa1 (-715.5,450.5) s ++ desenhaJogador s ++ desenhaMacacoMalvado s ++ desenhaBonus s ++ desenhaVida s ++ desenhaPontos s
+desenhaGanhouJogo s = desenhaMapa1 (-715.5,450.5) s ++ desenhaJogador s ++ desenhaMacacoMalvado s ++ desenhaBonus s ++ desenhaVida s ++ desenhaPontos s ++ desenhaFogo s ++ desenhaParabens s
 
+desenhaFogo :: Estado -> [Picture]
+desenhaFogo s | t>=3.00 && t <3.15 = [trans1 f1]
+              | t>=3.15 && t <3.30 = [trans1 f2]
+              | t>=3.30 && t <3.45 = [trans1 f3,trans2 f1]
+              | t>=3.45 && t <3.60 = [trans1 f4,trans2 f2]
+              | t>=3.60 && t <3.75 = [trans1 f5,trans2 f3,trans3 f1]
+              | t>=3.75 && t <3.90 = [trans1 f6,trans2 f4,trans3 f2]
+              | t>=3.90 && t <4.05 = [trans1 f7,trans2 f5,trans3 f3,trans4 f1]
+              | t>=4.05 && t <4.20 = [trans1 f8,trans2 f6,trans3 f4,trans4 f2]
+              | t>=4.20 && t <4.35 = [trans1 f9,trans2 f7,trans3 f5,trans4 f3,trans5 f1]
+              | t>=4.35 && t <4.50 = [trans1 f10,trans2 f8,trans3 f6,trans4 f4,trans5 f2]
+              | t>=4.50 && t <4.65 = [trans2 f9,trans3 f7,trans4 f5,trans5 f3,trans6 f1]
+              | t>=4.65 && t <4.80 = [trans2 f10,trans3 f8,trans4 f6,trans5 f4,trans6 f2]
+              | t>=4.80 && t <4.95 = [trans3 f9,trans4 f7,trans5 f5,trans6 f3]
+              | t>=4.95 && t <5.10 = [trans3 f10,trans4 f8,trans5 f6,trans6 f4]
+              | t>=5.10 && t <5.25 = [trans4 f9,trans5 f7,trans6 f5]
+              | t>=5.25 && t <5.40 = [trans4 f10,trans5 f8,trans6 f6]
+              | t>=5.40 && t <5.55 = [trans5 f9,trans6 f7]
+              | t>=5.55 && t <5.70 = [trans5 f10,trans6 f8]
+              | t>=5.70 && t <5.85 = [trans6 f9]
+              | t>=5.85 && t <6.00 = [trans6 f10]
+              | otherwise = []
+   where t = tempo s
+         trans1 = Translate 300 260
+         trans2 = Translate (-300) 220
+         trans3 = Translate 30 130
+         trans4 = Translate 300 160
+         trans5 = Translate (-100) 290
+         trans6 = Translate (-180) 130
+         f1 = getImagem Firework1 (imagens s)
+         f2 = getImagem Firework2 (imagens s)
+         f3 = getImagem Firework3 (imagens s)
+         f4 = getImagem Firework4 (imagens s)
+         f5 = getImagem Firework5 (imagens s)
+         f6 = getImagem Firework6 (imagens s)
+         f7 = getImagem Firework7 (imagens s)
+         f8 = getImagem Firework8 (imagens s)
+         f9 = getImagem Firework9 (imagens s)
+         f10 = getImagem Firework10 (imagens s)
+
+desenhaParabens :: Estado -> [Picture]
+desenhaParabens s | tempo s >= 3 = [Translate 0 250 (Scale 0.5 0.5 (getImagem Parabens (imagens s))), Translate 0 170 (Scale 1 1 (getImagem DerrotaPrimateKong (imagens s)))]
+                  | otherwise = []
 
 
 -- | Verifica se a parte decimal de um número está entre 0 e 25 ou 50 e 75, utilizada para alterar uma imagem de 0,25 em 0,24 segundos
@@ -360,7 +403,7 @@ reageEvento :: Event -> Estado -> Estado
 reageEvento _ s = s
 
 reageTempo :: Float -> Estado -> Estado
-reageTempo t s | menu s == GanhouJogo = s {jogo = Jogo {mapa = mapa (jogo s),inimigos = gravidadeMacaco (realToFrac t) (inimigos (jogo s)), colecionaveis = [], jogador = jogador (jogo s)}}
+reageTempo t s | menu s == GanhouJogo = s {jogo = Jogo {mapa = mapa (jogo s),inimigos = gravidadeMacaco (realToFrac t) (inimigos (jogo s)), colecionaveis = [], jogador = jogador (jogo s)}, tempo = tempo s + (realToFrac t)}
                | otherwise = ganhaJogo $ perdeJogo $ s {jogo = movimenta 4 (realToFrac t) (jogo s),tempo = tempo s + (realToFrac t), bonus = diminuiBonus (bonus s)}
 
 diminuiBonus :: Int -> Int
@@ -372,7 +415,7 @@ perdeJogo s | vida (jogador (jogo s)) == 0 = s {menu = PerdeuJogo}
             | otherwise = s
 
 ganhaJogo :: Estado -> Estado
-ganhaJogo s | x > 13.5 && x < 14.5 && y == 1.5 && menu s== ModoJogo = s {menu = GanhouJogo, jogo = Jogo {mapa = mapaGanhou,inimigos = ganhouInimigos (inimigos (jogo s)),colecionaveis = [], jogador = jogGanhaJogo (jogador (jogo s)) (bonus s)}}
+ganhaJogo s | x > 13.5 && x < 14.5 && y == 1.5 && menu s== ModoJogo = s {menu = GanhouJogo, jogo = Jogo {mapa = mapaGanhou,inimigos = ganhouInimigos (inimigos (jogo s)),colecionaveis = [], jogador = jogGanhaJogo (jogador (jogo s)) (bonus s)},tempo=0}
             | otherwise = s
    where x = fst(posicao(jogador(jogo s)))
          y = snd(posicao(jogador(jogo s)))
@@ -383,4 +426,4 @@ ganhouInimigos (h:t) = h {vida=11} : ganhouInimigos t
 --alterar vida dos fantasmas para 11, pelo sim pelo nao
 
 jogGanhaJogo :: Personagem -> Int -> Personagem
-jogGanhaJogo jog b = jog {pontos = (pontos jog) + b, velocidade = (0,0)}
+jogGanhaJogo jog b = jog {pontos = (pontos jog) + ((div b 100)*100), velocidade = (0,0)}

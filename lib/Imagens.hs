@@ -2,7 +2,7 @@ module Imagens where
 import Graphics.Gloss
 import Graphics.Gloss.Juicy
 
-data Imagem = Ladder | Trapdoor | Platform | Estrela | Coin | Hammer | GhostLeft1 | GhostLeft2 | GhostRight1 | GhostRight2 | MarioClimbing1 | MarioClimbing2 | MarioHammerLeft1 | MarioHammerLeft2 | MarioHammerLeft3 | MarioHammerLeft4 | MarioHammerRight1 | MarioHammerRight2 | MarioHammerRight3 | MarioHammerRight4 | MarioJumpingLeft1 | MarioJumpingRight1 | MarioStandingBack | MarioStandingLeft | MarioStandingRight | MarioWalkingLeft1 | MarioWalkingRight1 | MonkeyArmLeft | MonkeyArmRight | MonkeyDefeated | MonkeyFalling | MonkeyStanding | MonkeyWalkingLeft | MonkeyWalkingRight | VidaCheia | VidaVazia | ZeroVidas | UmaVida | DuasVidas | TresVidas | Num0 | Num1 | Num2 | Num3 | Num4 | Num5 | Num6 | Num7 | Num8 | Num9 | Score | Bonus | PressEnter | PrimateKong | PalavraJogar | PalavraHighScore | MarioDefeated1 | MarioDefeated2 | MarioDefeated3 | MarioDefeated4 | MarioDefeatedFinal | GhostDefeated1 | GhostDefeated2 | GhostDefeated3 | GhostDefeated4 | Congratulations | GhostBlueLeft1 | GhostBlueLeft2 | GhostBlueRight1 | GhostBlueRight2 deriving (Eq)
+data Imagem = Ladder | Trapdoor | Platform | Estrela | Coin | Hammer | GhostLeft1 | GhostLeft2 | GhostRight1 | GhostRight2 | MarioClimbing1 | MarioClimbing2 | MarioHammerLeft1 | MarioHammerLeft2 | MarioHammerLeft3 | MarioHammerLeft4 | MarioHammerRight1 | MarioHammerRight2 | MarioHammerRight3 | MarioHammerRight4 | MarioJumpingLeft1 | MarioJumpingRight1 | MarioStandingBack | MarioStandingLeft | MarioStandingRight | MarioWalkingLeft1 | MarioWalkingRight1 | MonkeyArmLeft | MonkeyArmRight | MonkeyDefeated | MonkeyFalling | MonkeyStanding | MonkeyWalkingLeft | MonkeyWalkingRight | VidaCheia | VidaVazia | ZeroVidas | UmaVida | DuasVidas | TresVidas | Num0 | Num1 | Num2 | Num3 | Num4 | Num5 | Num6 | Num7 | Num8 | Num9 | Firework1 | Firework2 | Firework3 | Firework4 | Firework5 | Firework6 | Firework7 | Firework8 | Firework9 | Firework10 | DerrotaPrimateKong | Score | Bonus | PressEnter | Parabens | PrimateKong | PalavraJogar | PalavraHighScore | MarioDefeated1 | MarioDefeated2 | MarioDefeated3 | MarioDefeated4 | MarioDefeatedFinal | GhostDefeated1 | GhostDefeated2 | GhostDefeated3 | GhostDefeated4 | Congratulations | GhostBlueLeft1 | GhostBlueLeft2 | GhostBlueRight1 | GhostBlueRight2 deriving (Eq)
 
 type Imagens = [(Imagem, Picture)]
 
@@ -58,10 +58,22 @@ getImages = do
                Just num7                <- loadJuicyPNG "imagens/num7.png"
                Just num8                <- loadJuicyPNG "imagens/num8.png"
                Just num9                <- loadJuicyPNG "imagens/num9.png"
+               Just firework1           <- loadJuicyPNG "imagens/firework1.png"
+               Just firework2           <- loadJuicyPNG "imagens/firework2.png"
+               Just firework3           <- loadJuicyPNG "imagens/firework3.png"
+               Just firework4           <- loadJuicyPNG "imagens/firework4.png"
+               Just firework5           <- loadJuicyPNG "imagens/firework5.png"
+               Just firework6           <- loadJuicyPNG "imagens/firework6.png"
+               Just firework7           <- loadJuicyPNG "imagens/firework7.png"
+               Just firework8           <- loadJuicyPNG "imagens/firework8.png"
+               Just firework9           <- loadJuicyPNG "imagens/firework9.png"
+               Just firework10          <- loadJuicyPNG "imagens/firework10.png"
+               Just derrotaPrimateKong  <- loadJuicyPNG "imagens/derrotaPrimateKong.png"
                Just score               <- loadJuicyPNG "imagens/score.png"
                Just bonus               <- loadJuicyPNG "imagens/bonus.png"
                Just pressEnter          <- loadJuicyPNG "imagens/pressEnter.png"
                Just primateKong         <- loadJuicyPNG "imagens/primateKong.png"
+               Just parabens            <- loadJuicyPNG "imagens/parabens.png"
                Just palavraJogar        <- loadJuicyPNG "imagens/jogar.png"
                Just palavraHighScore    <- loadJuicyPNG "imagens/highScore.png"
                Just marioDefeated1      <- loadJuicyPNG "imagens/marioDefeated1.png" 
@@ -95,10 +107,13 @@ getImages = do
                              (MonkeyWalkingLeft,monkeyWalkingLeft), (MonkeyWalkingRight,monkeyWalkingRight),
                              (VidaCheia,vidaCheia), (VidaVazia,vidaVazia), (ZeroVidas,zeroVidas), (UmaVida,umaVida),
                              (DuasVidas,duasVidas), (TresVidas,tresVidas), (Num0,num0), (Num1,num1), (Num2,num2),
-                             (Num3,num3), (Num4,num4), (Num5,num5), (Num6,num6), (Num7,num7), (Num8,num8), (Num9,num9),
-                             (Score,score), (Bonus,bonus), (PressEnter,pressEnter), (PrimateKong,primateKong),
-                             (PalavraJogar,palavraJogar), (PalavraHighScore,palavraHighScore),
-                             (MarioDefeated1,marioDefeated1), (MarioDefeated2,marioDefeated2), (MarioDefeated3,marioDefeated3), (MarioDefeated4,marioDefeated4), 
+                             (Num3,num3), (Num4,num4), (Num5,num5), (Num6,num6), (Num7,num7), (Num8,num8), (Num9,num9), 
+                             (Firework1,firework1), (Firework2,firework2), (Firework3,firework3), (Firework4,firework4),
+                             (Firework5,firework5), (Firework6,firework6), (Firework7,firework7), (Firework8,firework8), 
+                             (Firework9,firework9), (Firework10,firework10), (DerrotaPrimateKong,derrotaPrimateKong),
+                             (Score,score), (Bonus,bonus), (PressEnter,pressEnter), (PrimateKong,primateKong), (Parabens,parabens),
+                             (PalavraJogar,palavraJogar), (PalavraHighScore,palavraHighScore), (MarioDefeated1,marioDefeated1), 
+                             (MarioDefeated2,marioDefeated2), (MarioDefeated3,marioDefeated3), (MarioDefeated4,marioDefeated4), 
                              (MarioDefeatedFinal,marioDefeatedFinal), (GhostDefeated1,ghostDefeated1), (GhostDefeated2,ghostDefeated2), 
                              (GhostDefeated3,ghostDefeated3), (GhostDefeated4,ghostDefeated4), (Congratulations,congratulations), 
                              (GhostBlueLeft1,ghostBlueLeft1), (GhostBlueLeft2,ghostBlueLeft2), (GhostBlueRight1,ghostBlueRight1), 
