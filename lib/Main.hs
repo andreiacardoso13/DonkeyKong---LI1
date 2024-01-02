@@ -464,7 +464,7 @@ reageEvento _ s = s
 
 reageTempo :: Float -> Estado -> Estado
 reageTempo t s | menu s == GanhouJogo = s {jogo = Jogo {mapa = mapa (jogo s),inimigos = gravidadeMacaco (realToFrac t) (inimigos (jogo s)), colecionaveis = [], jogador = jogador (jogo s)}, tempo = tempo s + (realToFrac t)}
-               | otherwise = ganhaJogo $ perdeJogo $ s {jogo = movimenta 4 (realToFrac t) (jogo s),tempo = tempo s + (realToFrac t), bonus = diminuiBonus (bonus s)}
+               | otherwise = ganhaJogo $ perdeJogo $ s {jogo = movimenta (truncate (tempo s)) (tempo s) (jogo s),tempo = tempo s + (realToFrac t), bonus = diminuiBonus (bonus s)}
 
 diminuiBonus :: Int -> Int
 diminuiBonus 0 = 0

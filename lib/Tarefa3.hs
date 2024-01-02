@@ -13,9 +13,10 @@ import Graphics.Gloss
 import Graphics.Gloss.Interface.Pure.Game
 import Tarefa1
 import Mapa
+import Data.Fixed
 
 movimenta :: Semente -> Tempo -> Jogo -> Jogo
-movimenta s t j = movimentoPers $ alteraVidaFantasma $ tempoAplicaDano t $ efeitoColisoes $ removeAlcapao $ recolheColecionavel $ ataqueDoInimigo $ efeitoGravidade $ ataqueDoJogador j
+movimenta s t j = aleatoriedadeFantasmas s t $ movimentoPers $ alteraVidaFantasma $ tempoAplicaDano $ efeitoColisoes $ removeAlcapao $ recolheColecionavel $ ataqueDoInimigo $ efeitoGravidade $ ataqueDoJogador j
       
 {-|
 Se o jogador tiver a componente aplicaDano activa e com tempo restante e a 
@@ -154,7 +155,7 @@ Se o jogador colidir com um inimigo retira-lhe uma vida e altera a sua posição
 -}
 ataqueDoInimigoAux :: [Personagem] -> Personagem -> Personagem 
 ataqueDoInimigoAux [] p = p
-ataqueDoInimigoAux (inim : t) jog | colisoesPersonagens inim jog && (vida inim == 1 )= (jog {posicao = (0.5,16.5), vida = vida jog -1})
+ataqueDoInimigoAux (inim : t) jog | colisoesPersonagens inim jog && (vida inim == 1 ) && (vida jog <= 3) && (vida jog >0)= (jog {posicao = (0.5,16.5), vida = vida jog -1})
                                   | otherwise = ataqueDoInimigoAux t jog
 
 {-|
@@ -299,10 +300,10 @@ efeitoColisoesMapa m jog | mapaLimites m jog = if fst(posicao jog) > 14
 
 -- faz o efeito do tempo no parâmetro aplicaDano do jogador
 
-tempoAplicaDano :: Tempo -> Jogo -> Jogo
-tempoAplicaDano t (Jogo {mapa = m, inimigos = inim, colecionaveis = col, jogador = jog}) | snd (aplicaDano jog) <= 0 = (Jogo {mapa = m, inimigos = inim, colecionaveis = col, jogador = jog {aplicaDano = (False, 0)}})
-                                                                                         | snd (aplicaDano jog) > 0 = (Jogo {mapa = m, inimigos = inim, colecionaveis = col, jogador = jog {aplicaDano = (True, snd (aplicaDano jog) - t)}})
-                                                                                         | otherwise = (Jogo {mapa = m, inimigos = inim, colecionaveis = col, jogador = jog})
+tempoAplicaDano :: Jogo -> Jogo
+tempoAplicaDano (Jogo {mapa = m, inimigos = inim, colecionaveis = col, jogador = jog}) | snd (aplicaDano jog) <= 0 = (Jogo {mapa = m, inimigos = inim, colecionaveis = col, jogador = jog {aplicaDano = (False, 0)}})
+                                                                                       | snd (aplicaDano jog) > 0 = (Jogo {mapa = m, inimigos = inim, colecionaveis = col, jogador = jog {aplicaDano = (True, snd (aplicaDano jog) - 0.05)}})
+                                                                                       | otherwise = (Jogo {mapa = m, inimigos = inim, colecionaveis = col, jogador = jog})
 
 alteraVidaFantasma :: Jogo -> Jogo
 alteraVidaFantasma jog = jog {inimigos = map (alteraVidaFantasmaAux) (inimigos jog)}
@@ -317,11 +318,6 @@ gravidadeMacaco _ [] = []
 gravidadeMacaco tmp (h:t) | tipo h == MacacoMalvado && snd (posicao h) <= 16.1 = (h {posicao = (fst (posicao h), snd (posicao h) + 4 * tmp)}) : t
                           | otherwise = h : gravidadeMacaco tmp t 
 
-{-
-gravidadeMacaco :: Tempo -> [Personagem] -> [Personagem]
-gravidadeMacaco t p = p
--}
-
 
 movimentoPers :: Jogo -> Jogo
 movimentoPers jogo = jogo {mapa = mapa jogo, inimigos = map movimentoPersAux (inimigos jogo) , colecionaveis = colecionaveis jogo, jogador = movimentoPersAux (jogador jogo)}
@@ -332,7 +328,18 @@ movimentoPersAux pers = pers {posicao = (x + vx*0.025,y + vy *0.025)}
          x = fst(posicao pers)
          y = snd(posicao pers) 
 
+aleatoriedadeFantasmas :: Semente -> Tempo -> Jogo -> Jogo
+aleatoriedadeFantasmas s t j = j{inimigos = aleatFantEscada s (aleatFantAndar s t (inimigos j))}
 
+aleatFantEscada :: Semente -> [Personagem] -> [Personagem]
+aleatFantEscada s p = p
+
+aleatFantAndar :: Semente -> Tempo -> [Personagem] -> [Personagem]
+aleatFantAndar _ _ [] = []
+aleatFantAndar s tp (h:t) | mod' tp 1 == 0 && mod (head(geraAleatorios s 1)) 2 == 0 = (h{velocidade = (-vx,vy)}) : aleatFantAndar (s+1) tp t
+                          | otherwise = (h:t)
+  where (vx,vy) = velocidade h
+      
 {-
 NOTAS 
 

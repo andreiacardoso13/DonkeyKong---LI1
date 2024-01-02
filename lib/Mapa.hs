@@ -135,7 +135,7 @@ jOpcoes = Jogo {mapa = mapaOpcoes
                                      ,tamanho = (1,1)
                                      ,emEscada=False
                                      ,ressalta= False
-                                     ,vida=3
+                                     ,vida=4
                                      ,pontos=0
                                      ,aplicaDano=(False,0)
                                       }
