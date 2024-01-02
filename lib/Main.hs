@@ -49,7 +49,7 @@ fr = 20
 
 -- | Recebe as imagens e devolve o estado inicial do jogo
 estadoInicial :: Imagens -> Estado
-estadoInicial images = Estado {menu = Inicio,jogo = jOpcoes, imagens = images, tempo = 0 ,bonus = 15000, highScore = [(5000,"batata")]}
+estadoInicial images = Estado {menu = Inicio,jogo = jOpcoes, imagens = images, tempo = 0 ,bonus = 15000, highScore = [(5000,"")]}
 --estadoInicial images = Estado {menu = ModoJogo,jogo = j1, imagens = images, tempo = 0 ,bonus = 15000}
 
 
@@ -337,7 +337,7 @@ desenhaBonusNum5 est = map (Translate 1385 0) (desenhaPontosAux est Num0) --map 
 
 
 desenhaGanhouJogo :: Estado -> [Picture]
-desenhaGanhouJogo s = desenhaMapa1 (-715.5,450.5) s ++ desenhaJogador s ++ desenhaMacacoMalvado s ++ desenhaBonus s ++ desenhaVida s ++ desenhaPontos s ++ desenhaFogo s ++ desenhaParabens s ++ desenhaScoreFinal s
+desenhaGanhouJogo s = desenhaMapa1 (-715.5,450.5) s ++ desenhaJogador s ++ desenhaMacacoMalvado s ++ desenhaBonus s ++ desenhaVida s ++ desenhaPontos s ++ desenhaFogo s ++ desenhaParabens s ++ desenhaScoreFinal s ++ desenhaNome (snd (last (highScore s))) (imagens s) 130
 
 desenhaFogo :: Estado -> [Picture]
 desenhaFogo s | t>=3.00 && t <3.15 = [trans1 f1]
@@ -412,7 +412,36 @@ desenhaHighScoreNum4 est = map (Translate 90 0) (desenhaPontosAux est Num0)
 desenhaHighScoreNum5 :: Estado -> [Picture]
 desenhaHighScoreNum5 est = map (Translate 120 0) (desenhaPontosAux est Num0)
 
---desenhaNome :: Estado -> [Picture]
+desenhaNome :: String -> Imagens -> Float -> [Picture] 
+desenhaNome [] _ _ = []
+desenhaNome (h:t) i n | h == 'A' = (Translate n 0 (getImagem A i)) :  desenhaNome t i (n+27)
+                      | h == 'B' = (Translate n 0 (getImagem B i)) :  (desenhaNome t i (n+27))
+                      | h == 'C' = (Translate n 0 (getImagem C i)) :  (desenhaNome t i (n+27))
+                      | h == 'D' = (Translate n 0 (getImagem D i)) :  (desenhaNome t i (n+27))
+                      | h == 'E' = (Translate n 0 (getImagem E i)) :  (desenhaNome t i (n+27))
+                      | h == 'F' = (Translate n 0 (getImagem F i)) :  (desenhaNome t i (n+27))
+                      | h == 'G' = (Translate n 0 (getImagem G i)) :  (desenhaNome t i (n+27))
+                      | h == 'H' = (Translate n 0 (getImagem H i)) :  (desenhaNome t i (n+27))
+                      | h == 'I' = (Translate n 0 (getImagem I i)) :  (desenhaNome t i (n+27))
+                      | h == 'J' = (Translate n 0 (getImagem J i)) :  (desenhaNome t i (n+27))
+                      | h == 'K' = (Translate n 0 (getImagem K i)) :  (desenhaNome t i (n+27))
+                      | h == 'L' = (Translate n 0 (getImagem L i)) :  (desenhaNome t i (n+27))
+                      | h == 'M' = (Translate n 0 (getImagem M i)) :  (desenhaNome t i (n+27))
+                      | h == 'N' = (Translate n 0 (getImagem N i)) :  (desenhaNome t i (n+27))
+                      | h == 'O' = (Translate n 0 (getImagem O i)) :  (desenhaNome t i (n+27))
+                      | h == 'P' = (Translate n 0 (getImagem P i)) :  (desenhaNome t i (n+27))
+                      | h == 'Q' = (Translate n 0 (getImagem Q i)) :  (desenhaNome t i (n+27))
+                      | h == 'R' = (Translate n 0 (getImagem R i)) :  (desenhaNome t i (n+27))
+                      | h == 'S' = (Translate n 0 (getImagem S i)) :  (desenhaNome t i (n+27))
+                      | h == 'T' = (Translate n 0 (getImagem T i)) :  (desenhaNome t i (n+27))
+                      | h == 'U' = (Translate n 0 (getImagem U i)) :  (desenhaNome t i (n+27))
+                      | h == 'V' = (Translate n 0 (getImagem V i)) :  (desenhaNome t i (n+27))
+                      | h == 'W' = (Translate n 0 (getImagem W i)) :  (desenhaNome t i (n+27))
+                      | h == 'X' = (Translate n 0 (getImagem X i)) :  (desenhaNome t i (n+27))
+                      | h == 'Y' = (Translate n 0 (getImagem Y i)) :  (desenhaNome t i (n+27))
+                      | h == 'Z' = (Translate n 0 (getImagem Z i)) :  (desenhaNome t i (n+27))
+
+
 
 -- | Verifica se a parte decimal de um número está entre 0 e 25 ou 50 e 75, utilizada para alterar uma imagem de 0,25 em 0,24 segundos
 alteraImagem :: Float -> Bool
