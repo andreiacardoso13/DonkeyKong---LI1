@@ -2,7 +2,7 @@ module Imagens where
 import Graphics.Gloss
 import Graphics.Gloss.Juicy
 
-data Imagem = Ladder | Trapdoor | Platform | Estrela | Coin | Hammer | GhostLeft1 | GhostLeft2 | GhostRight1 | GhostRight2 | MarioClimbing1 | MarioClimbing2 | MarioHammerLeft1 | MarioHammerLeft2 | MarioHammerLeft3 | MarioHammerLeft4 | MarioHammerRight1 | MarioHammerRight2 | MarioHammerRight3 | MarioHammerRight4 | MarioJumpingLeft1 | MarioJumpingRight1 | MarioStandingBack | MarioStandingLeft | MarioStandingRight | MarioWalkingLeft1 | MarioWalkingRight1 | MonkeyArmLeft | MonkeyArmRight | MonkeyDefeated | MonkeyFalling | MonkeyStanding | MonkeyWalkingLeft | MonkeyWalkingRight | VidaCheia | VidaVazia | ZeroVidas | UmaVida | DuasVidas | TresVidas | Num0 | Num1 | Num2 | Num3 | Num4 | Num5 | Num6 | Num7 | Num8 | Num9 | Firework1 | Firework2 | Firework3 | Firework4 | Firework5 | Firework6 | Firework7 | Firework8 | Firework9 | Firework10 | PlTeuScore | PlHighScoreAtual | PlDerrotasteOPrimateKong | Score | Bonus | PlPressEnter | PlParabens | PlEscreveNome | PrimateKong | PalavraJogar | PalavraHighScore | MarioDefeated1 | MarioDefeated2 | MarioDefeated3 | MarioDefeated4 | MarioDefeatedFinal | GhostDefeated1 | GhostDefeated2 | GhostDefeated3 | GhostDefeated4 | Congratulations | GhostBlueLeft1 | GhostBlueLeft2 | GhostBlueRight1 | GhostBlueRight2 deriving (Eq)
+data Imagem = Ladder | Trapdoor | Platform | Estrela | Coin | Hammer | GhostLeft1 | GhostLeft2 | GhostRight1 | GhostRight2 | MarioClimbing1 | MarioClimbing2 | MarioHammerLeft1 | MarioHammerLeft2 | MarioHammerLeft3 | MarioHammerLeft4 | MarioHammerRight1 | MarioHammerRight2 | MarioHammerRight3 | MarioHammerRight4 | MarioJumpingLeft1 | MarioJumpingRight1 | MarioStandingBack | MarioStandingLeft | MarioStandingRight | MarioWalkingLeft1 | MarioWalkingRight1 | MonkeyArmLeft | MonkeyArmRight | MonkeyDefeated | MonkeyFalling | MonkeyStanding | MonkeyWalkingLeft | MonkeyWalkingRight | VidaCheia | VidaVazia | ZeroVidas | UmaVida | DuasVidas | TresVidas | Num0 | Num1 | Num2 | Num3 | Num4 | Num5 | Num6 | Num7 | Num8 | Num9 | A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z |Firework1 | Firework2 | Firework3 | Firework4 | Firework5 | Firework6 | Firework7 | Firework8 | Firework9 | Firework10 | PlTeuScore | PlHighScoreAtual | PlDerrotasteOPrimateKong | Score | Bonus | PlPressEnter | PlParabens | PlEscreveNome | PrimateKong | PalavraJogar | PalavraHighScore | MarioDefeated1 | MarioDefeated2 | MarioDefeated3 | MarioDefeated4 | MarioDefeatedFinal | GhostDefeated1 | GhostDefeated2 | GhostDefeated3 | GhostDefeated4 | Congratulations | GhostBlueLeft1 | GhostBlueLeft2 | GhostBlueRight1 | GhostBlueRight2 deriving (Eq)
 
 type Imagens = [(Imagem, Picture)]
 
@@ -58,6 +58,32 @@ getImages = do
                Just num7                      <- loadJuicyPNG "imagens/num7.png"
                Just num8                      <- loadJuicyPNG "imagens/num8.png"
                Just num9                      <- loadJuicyPNG "imagens/num9.png"
+               Just a                         <- loadJuicyPNG "imagens/A.png"
+               Just b                         <- loadJuicyPNG "imagens/B.png"
+               Just c                         <- loadJuicyPNG "imagens/C.png"
+               Just d                         <- loadJuicyPNG "imagens/D.png"
+               Just e                         <- loadJuicyPNG "imagens/E.png"
+               Just f                         <- loadJuicyPNG "imagens/F.png"
+               Just g                         <- loadJuicyPNG "imagens/G.png"
+               Just h                         <- loadJuicyPNG "imagens/H.png"
+               Just i                         <- loadJuicyPNG "imagens/I.png"
+               Just j                         <- loadJuicyPNG "imagens/J.png"
+               Just k                         <- loadJuicyPNG "imagens/K.png"
+               Just l                         <- loadJuicyPNG "imagens/L.png"
+               Just m                         <- loadJuicyPNG "imagens/M.png"
+               Just n                         <- loadJuicyPNG "imagens/N.png"
+               Just o                         <- loadJuicyPNG "imagens/O.png"
+               Just p                         <- loadJuicyPNG "imagens/P.png"
+               Just q                         <- loadJuicyPNG "imagens/Q.png"
+               Just r                         <- loadJuicyPNG "imagens/R.png"
+               Just s                         <- loadJuicyPNG "imagens/S.png"
+               Just t                         <- loadJuicyPNG "imagens/T.png"
+               Just u                         <- loadJuicyPNG "imagens/U.png"
+               Just v                         <- loadJuicyPNG "imagens/V.png"
+               Just w                         <- loadJuicyPNG "imagens/W.png"
+               Just x                         <- loadJuicyPNG "imagens/X.png"
+               Just y                         <- loadJuicyPNG "imagens/Y.png"
+               Just z                         <- loadJuicyPNG "imagens/Z.png"
                Just firework1                 <- loadJuicyPNG "imagens/firework1.png"
                Just firework2                 <- loadJuicyPNG "imagens/firework2.png"
                Just firework3                 <- loadJuicyPNG "imagens/firework3.png"
@@ -111,6 +137,8 @@ getImages = do
                              (VidaCheia,vidaCheia), (VidaVazia,vidaVazia), (ZeroVidas,zeroVidas), (UmaVida,umaVida),
                              (DuasVidas,duasVidas), (TresVidas,tresVidas), (Num0,num0), (Num1,num1), (Num2,num2),
                              (Num3,num3), (Num4,num4), (Num5,num5), (Num6,num6), (Num7,num7), (Num8,num8), (Num9,num9), 
+                             (A,a), (B,b), (C,c), (D,d), (E,e), (F,f), (G,g), (H,h), (I,i), (J,j), (K,k), (L,l), (M,m), 
+                             (N,n), (O,o), (P,p), (Q,q), (R,r), (S,s), (T,t), (U,u), (V,v), (W,w), (X,x), (Y,y), (Z,z), 
                              (Firework1,firework1), (Firework2,firework2), (Firework3,firework3), (Firework4,firework4),
                              (Firework5,firework5), (Firework6,firework6), (Firework7,firework7), (Firework8,firework8), 
                              (Firework9,firework9), (Firework10,firework10),(Score,score), (Bonus,bonus), (PlTeuScore,plTeuScore), (PlHighScoreAtual,plHighScoreAtual), (PlDerrotasteOPrimateKong,plDerrotasteOPrimateKong),
