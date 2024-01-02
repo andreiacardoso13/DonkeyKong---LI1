@@ -94,20 +94,3 @@ salta p@(Personagem {velocidade = (h,v)}) Saltar = (p {velocidade = (h,-10)})
 para :: Personagem -> Acao -> Personagem
 para p Parar = (p {velocidade = (0,0)})
 
-{-| Atualiza a velocidade do jogador caso se encontre numa situação de queda livre. -}
-
-freefall :: Mapa -> Personagem -> Personagem
-freefall m@(Mapa _ _ blocos) jgd@(Personagem {posicao = pos@(x,y), velocidade = (h,v)}) = if procuraBlocoInf blocos pos == Vazio
-                                                                         then jgd {velocidade = (0,10)} 
-                                                                         else jgd
-
-{- Determina se um personagem está em queda livre.
-
-freefall :: Estado -> Estado
-freefall e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos), 
-                                    jogador = jgd@(Personagem {posicao = pos@(x,y), velocidade = (h,v)}) = if procuraBlocoInf blocos pos == Vazio
-                                                                                                              then freefall e {jogo = j {jogador = jgd {velocidade = (0,10)}}} 
-                                                                                                              else e
-
--- pra poder usar esta versão, o data Estado deve estar definido neste módulo, em vez de na Tarefa 5, de modo a evitar cyclic imports.
--}
