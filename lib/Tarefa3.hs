@@ -109,7 +109,7 @@ Verifica onde estão os inimigos e se estiverem em cima do bloco
 -}
 efeitoGravidadeInimigos :: [[Bloco]] -> [Personagem] -> [Personagem]
 efeitoGravidadeInimigos m [] = []
-efeitoGravidadeInimigos m (inim : t) | procuraBlocoInf m (posicao inim) == Vazio = inim {velocidade = (fst (velocidade inim), snd gravidade)} : efeitoGravidadeInimigos m t
+efeitoGravidadeInimigos m (inim : t) | procuraBlocoInf m (posicao inim) == Vazio && tipo inim == Fantasma = inim {velocidade = (fst (velocidade inim), snd gravidade)} : efeitoGravidadeInimigos m t
                                      | otherwise = inim : efeitoGravidadeInimigos m t
 
 {-|
@@ -327,23 +327,25 @@ alteraVidaFantasmaAux :: Personagem -> Personagem
 alteraVidaFantasmaAux inim | vida inim == 0 = inim {vida = 2}
                            | vida inim >= 2 && vida inim <= 10 =inim {vida = (vida inim) + 1}
                            | otherwise = inim 
-{-
+
 gravidadeMacaco :: Tempo -> [Personagem] -> [Personagem]
 gravidadeMacaco _ [] = []
 gravidadeMacaco tmp (h:t) | tipo h == MacacoMalvado && snd (posicao h) <= 16.1 = (h {posicao = (fst (posicao h), snd (posicao h) + 4 * tmp)}) : t
                           | otherwise = h : gravidadeMacaco tmp t 
--}
 
+{-
 gravidadeMacaco :: Tempo -> [Personagem] -> [Personagem]
 gravidadeMacaco t p = p
-
+-}
 
 
 movimentoPers :: Jogo -> Jogo
 movimentoPers jogo = jogo {mapa = mapa jogo, inimigos = map movimentoPersAux (inimigos jogo) , colecionaveis = colecionaveis jogo, jogador = movimentoPersAux (jogador jogo)}
 
 movimentoPersAux :: Personagem -> Personagem
-movimentoPersAux pers | vx > 0 = pers {posicao = (x+0.05,y)}
+movimentoPersAux pers | vx == 10 = pers {posicao = (x+0.15,y)}
+                      | vx > 0 = pers {posicao = (x+0.05,y)}
+                      | vx == (-10) = pers {posicao = (x-0.15,y)}
                       | vx < 0 = pers {posicao = (x-0.05,y)}
                       | vy == 10 = pers {posicao = (x,y+ 0.15)}
                       | vy < 0 = pers {posicao = (x,y-0.05)}
