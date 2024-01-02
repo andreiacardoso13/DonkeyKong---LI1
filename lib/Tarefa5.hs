@@ -26,6 +26,7 @@ data Estado = Estado {menu :: Menu, jogo :: Jogo, imagens :: Imagens, tempo :: T
 data Menu = Inicio
           | Opcoes Opcao
           | ModoJogo
+          | ModoPausa
           | ModoHighScore
           | GanhouJogo
           | PerdeuJogo
@@ -40,7 +41,8 @@ keys evt s | menu s == Inicio = keysInicio evt s
            | menu s == Opcoes Jogar = keysOpJogar evt s
            | menu s == Opcoes HighScore = keysOpHighScore evt s
            | menu s == ModoJogo = keysModoJogo evt s
-           | menu s == ModoHighScore = keysModoJogo evt s
+           | menu s == ModoPausa = keysModoPausa evt s 
+           | menu s == ModoHighScore = keysModoHighScore evt s
            | menu s == GanhouJogo = keysGanhouJogo evt s
            | menu s == PerdeuJogo = keysPerdeuJogo evt s
 
@@ -111,24 +113,35 @@ keysModoJogo (EventKey (SpecialKey KeySpace) Down _ _) e@(Estado {jogo = j@(Jogo
                                                                                                      emEscada = esc,
                                                                                                      aplicaDano = (b,_)})}),
                                                                                                      tempo = t})             | b = e
-                                                                                                                             | not esc   =  freefall (e{jogo = j {jogador = movePersonagem (jgd {posicao = (x, y-0.5)}) (Just Saltar)}})
+                                                                                                                             | not (colisoesParede m jgd) = freefall(e{jogo = j {jogador = movePersonagem jgd Nothing}})
+                                                                                                                             | not esc   =  freefall (e{jogo = j {jogador = movePersonagem (jgd {posicao = (x, y-1)}) (Just Saltar)}})
                                                                                                                              | otherwise = e
 
+keysModoJogo (EventKey (SpecialKey KeySpace) Up _ _) e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos),
+                                                                          jogador = jgd@(Personagem {posicao = pos@(x,y),
+                                                                                                     emEscada = esc,
+                                                                                                     aplicaDano = (b,_)})}),
+                                                                                                     tempo = t})             | b = e
+                                                                                                                             | otherwise = freefall (e{jogo = j {jogador = movePersonagem jgd Nothing}})
+
+
+keysModoJogo (EventKey (Char 'p') Down _ _) e@(Estado {menu = ModoJogo}) = e {menu = ModoPausa}
 
 keysModoJogo _ e = e
 
 
-
-
-
-
+keysModoPausa :: Event -> Estado -> Estado
+keysModoPausa (EventKey (Char 'p') Down _ _) e@(Estado {menu = ModoPausa}) = e {menu = ModoJogo}
 
 
 keysModoHighScore :: Event -> Estado -> Estado
+keysModoHighScore (EventKey (SpecialKey KeyEnter) Down _ _) s = s {menu = Opcoes Jogar}
 keysModoHighScore _ s = s
+
 
 keysGanhouJogo :: Event -> Estado -> Estado
 keysGanhouJogo _ s = s
+
 
 keysPerdeuJogo :: Event -> Estado -> Estado
 keysPerdeuJogo _ s = s
