@@ -148,3 +148,5 @@ freefall e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos),
                                                                                               else e
 
 
+
+
