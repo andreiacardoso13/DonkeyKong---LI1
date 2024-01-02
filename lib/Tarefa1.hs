@@ -121,6 +121,7 @@ procuraBlocoInf :: [[Bloco]] -> Posicao -> Bloco
 procuraBlocoInf ((h:t):ls) (x,y) | y > 0 = procuraBlocoInf ls (x,y-1)
                                  | x > 1 = procuraBlocoInf [t] (x-1,y)
                                  | otherwise = h
+procuraBlocoInf _ _ = Vazio
 
 {-| Indica o tipo de Bloco situado à direita do Bloco onde a personagem se encontra. -}
 
@@ -128,13 +129,14 @@ procuraBlocoDir :: [[Bloco]] -> Posicao -> Bloco
 procuraBlocoDir ((h:t):ls) (x,y) | y > 1 = procuraBlocoDir ls (x,y-1)
                                  | x > 0 = procuraBlocoDir [t] (x-1,y)
                                  | otherwise = h
-
+procuraBlocoDir _ _ = Vazio
 {-| Indica o tipo de Bloco situado à esquerda do Bloco onde a personagem se encontra. -}
 
 procuraBlocoEsq :: [[Bloco]] -> Posicao -> Bloco
 procuraBlocoEsq ((h:t):ls) (x,y) | y > 1 = procuraBlocoEsq ls (x,y-1)
                                  | x > 2 = procuraBlocoEsq [t] (x-1,y)
                                  | otherwise = h
+procuraBlocoEsq _ _ = Vazio
 
 {-| Indica o tipo de Bloco situado acima do Bloco onde a personagem se encontra. -}
 
@@ -142,6 +144,7 @@ procuraBlocoSup :: [[Bloco]] -> Posicao -> Bloco
 procuraBlocoSup ((h:t):ls) (x,y) | y > 2 = procuraBlocoSup ls (x,y-1)
                                  | x > 1 = procuraBlocoSup [t] (x-1,y)
                                  | otherwise = h
+procuraBlocoSup _ _ = Vazio
 
 {-| Dado um Mapa e uma Personagem, testa se a Personagem se encontra em colisão com os limites do Mapa ou com alguma Plataforma.
 
