@@ -15,7 +15,7 @@ import Tarefa1
 import Mapa
 
 movimenta :: Semente -> Tempo -> Jogo -> Jogo
-movimenta s t j = alteraVidaFantasma $ atualizaDirecao $ tempoAplicaDano t $ efeitoColisoes $ removeAlcapao $ recolheColecionavel $ ataqueDoInimigo $ efeitoGravidade $ ataqueDoJogador j
+movimenta s t j = movimentoPers $ alteraVidaFantasma $ atualizaDirecao $ tempoAplicaDano t $ efeitoColisoes $ removeAlcapao $ recolheColecionavel $ ataqueDoInimigo $ efeitoGravidade $ ataqueDoJogador j
       
 {-|
 Se o jogador tiver a componente aplicaDano activa e com tempo restante e a 
@@ -327,11 +327,30 @@ alteraVidaFantasmaAux :: Personagem -> Personagem
 alteraVidaFantasmaAux inim | vida inim == 0 = inim {vida = 2}
                            | vida inim >= 2 && vida inim <= 10 =inim {vida = (vida inim) + 1}
                            | otherwise = inim 
-
+{-
 gravidadeMacaco :: Tempo -> [Personagem] -> [Personagem]
 gravidadeMacaco _ [] = []
 gravidadeMacaco tmp (h:t) | tipo h == MacacoMalvado && snd (posicao h) <= 16.1 = (h {posicao = (fst (posicao h), snd (posicao h) + 4 * tmp)}) : t
                           | otherwise = h : gravidadeMacaco tmp t 
+-}
+
+gravidadeMacaco :: Tempo -> [Personagem] -> [Personagem]
+gravidadeMacaco t p = p
+
+
+
+movimentoPers :: Jogo -> Jogo
+movimentoPers jogo = jogo {mapa = mapa jogo, inimigos = map movimentoPersAux (inimigos jogo) , colecionaveis = colecionaveis jogo, jogador = movimentoPersAux (jogador jogo)}
+
+movimentoPersAux :: Personagem -> Personagem
+movimentoPersAux pers | vx > 0 = pers {posicao = (x+0.05,y)}
+                      | vx < 0 = pers {posicao = (x-0.05,y)}
+                      | vy == 10 = pers {posicao = (x,y+ 0.15)}
+                      | vy < 0 = pers {posicao = (x,y-0.05)}
+                      | otherwise = pers
+   where (vx,vy) = velocidade pers
+         x = fst(posicao pers)
+         y = snd(posicao pers) 
 
 {-
 NOTAS 
