@@ -343,13 +343,23 @@ movimentoPers :: Jogo -> Jogo
 movimentoPers jogo = jogo {mapa = mapa jogo, inimigos = map movimentoPersAux (inimigos jogo) , colecionaveis = colecionaveis jogo, jogador = movimentoPersAux (jogador jogo)}
 
 movimentoPersAux :: Personagem -> Personagem
-movimentoPersAux pers | vx == 10 = pers {posicao = (x+0.15,y)}
-                      | vx > 0 = pers {posicao = (x+0.05,y)}
-                      | vx == (-10) = pers {posicao = (x-0.15,y)}
-                      | vx < 0 = pers {posicao = (x-0.05,y)}
-                      | vy == 10 = pers {posicao = (x,y+ 0.15)}
-                      | vy < 0 = pers {posicao = (x,y-0.05)}
-                      | otherwise = pers
+movimentoPersAux pers = movimentoPersX $ movimentoPersY pers
+
+movimentoPersX :: Personagem -> Personagem
+movimentoPersX pers | vx == 10 = pers {posicao = (x+0.15,y)}
+                    | vx > 0 = pers {posicao = (x+0.05,y)}
+                    | vx == (-10) = pers {posicao = (x-0.15,y)}
+                    | vx < 0 = pers {posicao = (x-0.5,y)}
+                    | otherwise = pers
+   where (vx,vy) = velocidade pers
+         x = fst(posicao pers)
+         y = snd(posicao pers) 
+
+movimentoPersY :: Personagem -> Personagem
+movimentoPersY pers | vy == 10 = pers {posicao = (x,y + 0.25)}
+                    | vy < 0 = pers {posicao = (x,y-0.1)}
+                    | vy > 0 = pers {posicao = (x,y+1)}
+                    | otherwise = pers
    where (vx,vy) = velocidade pers
          x = fst(posicao pers)
          y = snd(posicao pers) 
