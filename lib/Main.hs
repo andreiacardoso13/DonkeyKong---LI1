@@ -384,7 +384,7 @@ desenhaParabens s | tempo s >= 3 = [Translate 0 250 (Scale 0.5 0.5 (getImagem Pl
                   | otherwise = []
 
 desenhaScoreFinal :: Estado -> [Picture]
-desenhaScoreFinal s | tempo s > 10 =[Translate (-160) 80 (getImagem PlTeuScore (imagens s)), Translate (-97) 40 (getImagem PlHighScoreAtual (imagens s)), Translate (-76) (0) (getImagem PlEscreveNome (imagens s))] ++ map (Translate 680 (-317)) (desenhaPontosNum s) ++ map (Translate 795 (-357)) (desenhaHighScore s)
+desenhaScoreFinal s | tempo s > 10 =[Translate (-160) 80 (getImagem PlTeuScore (imagens s)), Translate (-97) 40 (getImagem PlHighScoreAtual (imagens s)), Translate (-76) (0) (getImagem PlEscreveNome (imagens s)),color white( line [(115,(-15)),(330,(-15))])] ++ map (Translate 680 (-317)) (desenhaPontosNum s) ++ map (Translate 795 (-357)) (desenhaHighScore s)
                     | tempo s > 9 = [Translate (-160) 80 (getImagem PlTeuScore (imagens s)), Translate (-97) 40 (getImagem PlHighScoreAtual (imagens s))] ++ map (Translate 680 (-317)) (desenhaPontosNum s) ++ map (Translate 795 (-357)) (desenhaHighScore s)
                     | tempo s > 8 = [Translate (-160) 80 (getImagem PlTeuScore (imagens s)), Translate (-97) 40 (getImagem PlHighScoreAtual (imagens s))] ++ map (Translate 680 (-317)) (desenhaPontosNum s)
                     | tempo s > 7 = [Translate (-160) 80 (getImagem PlTeuScore (imagens s))] ++ map (Translate 680 (-317)) (desenhaPontosNum s)
@@ -412,6 +412,7 @@ desenhaHighScoreNum4 est = map (Translate 90 0) (desenhaPontosAux est Num0)
 desenhaHighScoreNum5 :: Estado -> [Picture]
 desenhaHighScoreNum5 est = map (Translate 120 0) (desenhaPontosAux est Num0)
 
+--desenhaNome :: Estado -> [Picture]
 
 -- | Verifica se a parte decimal de um número está entre 0 e 25 ou 50 e 75, utilizada para alterar uma imagem de 0,25 em 0,24 segundos
 alteraImagem :: Float -> Bool
