@@ -14,6 +14,7 @@ import Graphics.Gloss.Interface.Pure.Game
 import Tarefa1
 import Mapa
 import Data.Fixed
+import Data.List
 
 movimenta :: Semente -> Tempo -> Jogo -> Jogo
 movimenta s t j = aleatoriedadeFantasmas s t $ movimentoPers $ alteraVidaFantasma $ tempoAplicaDano $ efeitoColisoes $ removeAlcapao $ recolheColecionavel $ ataqueDoInimigo $ efeitoGravidade $ ataqueDoJogador j
@@ -280,11 +281,11 @@ efeitoColisoes jogo' = jogo' {inimigos = efeitoColisoesInimigos (mapa jogo') (in
 
 
 efeitoColisoesJogador :: Mapa -> Personagem -> Personagem
-efeitoColisoesJogador m jog = efeitoColisoesPlataforma m (efeitoColisoesMapa m jog)
+efeitoColisoesJogador m jog = efeitoColisoesPlataforma m (efeitoColisoesMapaJog m jog)
 
 efeitoColisoesInimigos :: Mapa -> [Personagem] -> [Personagem]
 efeitoColisoesInimigos _ [] = []
-efeitoColisoesInimigos m (h:t) = map (efeitoColisoesPlataforma m) (map (efeitoColisoesMapa m) (h:t))
+efeitoColisoesInimigos m (h:t) = map (efeitoColisoesPlataforma m) (map (efeitoColisoesMapaInim m) (h:t))
 
 efeitoColisoesPlataforma :: Mapa -> Personagem -> Personagem
 efeitoColisoesPlataforma (Mapa a b blocos) pers | platColisoes (Mapa a b blocos) pers && procuraBlocoInf blocos (posicao pers) == Plataforma = pers {velocidade = (fst (velocidade pers),0)}
@@ -292,11 +293,16 @@ efeitoColisoesPlataforma (Mapa a b blocos) pers | platColisoes (Mapa a b blocos)
                                                    | platColisoes (Mapa a b blocos) pers = pers {velocidade = (0,snd (velocidade pers))}
                                                    | otherwise = pers
 
-efeitoColisoesMapa :: Mapa -> Personagem -> Personagem
-efeitoColisoesMapa m jog | mapaLimites m jog = if fst(posicao jog) > 14 
+efeitoColisoesMapaJog :: Mapa -> Personagem -> Personagem
+efeitoColisoesMapaJog m jog | mapaLimites m jog = if fst(posicao jog) > 14 
                                                     then jog {posicao = (fst (posicao jog) -0.1, snd (posicao jog))}
                                                     else jog {posicao = (fst (posicao jog) +0.1, snd (posicao jog))}
-                         | otherwise = jog
+                            | otherwise = jog
+
+efeitoColisoesMapaInim :: Mapa -> Personagem -> Personagem
+efeitoColisoesMapaInim m inim | mapaLimites m inim = inim {velocidade = (-vx,vy)}
+                              | otherwise = inim
+  where (vx,vy) = velocidade inim
 
 -- faz o efeito do tempo no parâmetro aplicaDano do jogador
 
@@ -329,6 +335,7 @@ movimentoPersAux pers = pers {posicao = (x + vx*0.025,y + vy *0.025)}
          y = snd(posicao pers) 
 
 aleatoriedadeFantasmas :: Semente -> Tempo -> Jogo -> Jogo
+--aleatoriedadeFantasmas s t j = j{inimigos = aleatFantAndar s t (inimigos j)}
 aleatoriedadeFantasmas s t j = j{inimigos = aleatFantEscada s (aleatFantAndar s t (inimigos j))}
 
 aleatFantEscada :: Semente -> [Personagem] -> [Personagem]
@@ -336,10 +343,19 @@ aleatFantEscada s p = p
 
 aleatFantAndar :: Semente -> Tempo -> [Personagem] -> [Personagem]
 aleatFantAndar _ _ [] = []
-aleatFantAndar s tp (h:t) | mod' tp 1 == 0 && mod (head(geraAleatorios s 1)) 2 == 0 = (h{velocidade = (-vx,vy)}) : aleatFantAndar (s+1) tp t
-                          | otherwise = (h:t)
+aleatFantAndar s tp (h:t) | alteraImagem3 (realToFrac tp) && (head(geraAleatorios s 1)) > 0 = (h{velocidade = (-1.5,vy)}) : aleatFantAndar (s+5) tp t
+                          | alteraImagem3 (realToFrac tp) && (head(geraAleatorios s 1)) < 0 = (h{velocidade = (1.5,vy)}) : aleatFantAndar (s+5) tp t
+                          | otherwise = h : aleatFantAndar (s+1) tp t
   where (vx,vy) = velocidade h
       
+-- | Verifica se a parte decimal de um número está entre 0 e 25 ou 50 e 75, utilizada para alterar uma imagem de 0,25 em 0,24 segundos
+alteraImagem3 :: Float -> Bool
+alteraImagem3 n = alteraImagem3Aux (mod' n 10)
+
+-- | Verifica se um número está entre 0 e 2.5 ou 5 e 7.5
+alteraImagem3Aux :: Float -> Bool
+alteraImagem3Aux n = (n >= 0 && n<2.5)
+
 {-
 NOTAS 
 
