@@ -138,9 +138,12 @@ keysPerdeuJogo _ s = s
 -- EventKey Key KeyState Modifiers (Float, Float)
 
 {-| Determina se um personagem está em queda livre. -}
-
+{-
 freefall :: Estado -> Estado
 freefall e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos),
                                     jogador = jgd@(Personagem {posicao = pos@(x,y), velocidade = (h,v)})})}) = if procuraBlocoInf blocos pos == Vazio
                                                                                                               then freefall e {jogo = j {jogador = jgd {velocidade = (0,10)}}}
                                                                                                               else e
+-}
+freefall :: Estado -> Estado
+freefall s = s
