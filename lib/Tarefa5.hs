@@ -21,7 +21,7 @@ import Data.Fixed
 import Graphics.Gloss
 import Graphics.Gloss.Interface.Pure.Game
 
-data Estado = Estado {menu :: Menu, jogo :: Jogo, imagens :: Imagens, tempo :: Tempo, bonus :: Int, highScore :: [(String,Int)] } 
+data Estado = Estado {menu :: Menu, jogo :: Jogo, imagens :: Imagens, tempo :: Tempo, bonus :: Int, highScore :: [(Int,String)] } 
 
 data Menu = Inicio
           | Opcoes Opcao
@@ -136,3 +136,6 @@ keysPerdeuJogo _ s = s
 
 
 -- EventKey Key KeyState Modifiers (Float, Float)
+
+freefall :: Estado -> Estado
+freefall s = s
