@@ -8,6 +8,7 @@ import Tarefa5
 import Imagens
 import Mapa
 import Data.Fixed
+import Data.List
 
 
 {- main :: IO ()
@@ -48,7 +49,7 @@ fr = 20
 
 -- | Recebe as imagens e devolve o estado inicial do jogo
 estadoInicial :: Imagens -> Estado
-estadoInicial images = Estado {menu = Inicio,jogo = jOpcoes, imagens = images, tempo = 0 ,bonus = 15000, highScore = []}
+estadoInicial images = Estado {menu = Inicio,jogo = jOpcoes, imagens = images, tempo = 0 ,bonus = 15000, highScore = [(5000,"batata")]}
 --estadoInicial images = Estado {menu = ModoJogo,jogo = j1, imagens = images, tempo = 0 ,bonus = 15000}
 
 
@@ -62,7 +63,7 @@ desenhaEstado s | menu s == Inicio = Pictures(desenhaInicio s)
                 | otherwise = Pictures(desenhaOpcoes s)
 
 desenhaInicio :: Estado -> [Picture]
-desenhaInicio s | alteraImagem2 (realToFrac (tempo s)) = [Translate 0 (-200) (Scale 0.3 0.3 (getImagem PressEnter (imagens s))),getImagem PrimateKong (imagens s)]
+desenhaInicio s | alteraImagem2 (realToFrac (tempo s)) = [Translate 0 (-200) (Scale 0.3 0.3 (getImagem PlPressEnter (imagens s))),getImagem PrimateKong (imagens s)]
                 | otherwise = [getImagem PrimateKong (imagens s)]
 
 desenhaOpcoes :: Estado -> [Picture]
@@ -336,7 +337,7 @@ desenhaBonusNum5 est = map (Translate 1385 0) (desenhaPontosAux est Num0) --map 
 
 
 desenhaGanhouJogo :: Estado -> [Picture]
-desenhaGanhouJogo s = desenhaMapa1 (-715.5,450.5) s ++ desenhaJogador s ++ desenhaMacacoMalvado s ++ desenhaBonus s ++ desenhaVida s ++ desenhaPontos s ++ desenhaFogo s ++ desenhaParabens s
+desenhaGanhouJogo s = desenhaMapa1 (-715.5,450.5) s ++ desenhaJogador s ++ desenhaMacacoMalvado s ++ desenhaBonus s ++ desenhaVida s ++ desenhaPontos s ++ desenhaFogo s ++ desenhaParabens s ++ desenhaScoreFinal s
 
 desenhaFogo :: Estado -> [Picture]
 desenhaFogo s | t>=3.00 && t <3.15 = [trans1 f1]
@@ -379,8 +380,37 @@ desenhaFogo s | t>=3.00 && t <3.15 = [trans1 f1]
          f10 = getImagem Firework10 (imagens s)
 
 desenhaParabens :: Estado -> [Picture]
-desenhaParabens s | tempo s >= 3 = [Translate 0 250 (Scale 0.5 0.5 (getImagem Parabens (imagens s))), Translate 0 170 (Scale 1 1 (getImagem DerrotaPrimateKong (imagens s)))]
+desenhaParabens s | tempo s >= 3 = [Translate 0 250 (Scale 0.5 0.5 (getImagem PlParabens (imagens s))), Translate 0 170 (Scale 1 1 (getImagem PlDerrotasteOPrimateKong (imagens s)))]
                   | otherwise = []
+
+desenhaScoreFinal :: Estado -> [Picture]
+desenhaScoreFinal s | tempo s > 10 =[Translate (-160) 80 (getImagem PlTeuScore (imagens s)), Translate (-97) 40 (getImagem PlHighScoreAtual (imagens s)), Translate (-76) (0) (getImagem PlEscreveNome (imagens s))] ++ map (Translate 680 (-317)) (desenhaPontosNum s) ++ map (Translate 795 (-357)) (desenhaHighScore s)
+                    | tempo s > 9 = [Translate (-160) 80 (getImagem PlTeuScore (imagens s)), Translate (-97) 40 (getImagem PlHighScoreAtual (imagens s))] ++ map (Translate 680 (-317)) (desenhaPontosNum s) ++ map (Translate 795 (-357)) (desenhaHighScore s)
+                    | tempo s > 8 = [Translate (-160) 80 (getImagem PlTeuScore (imagens s)), Translate (-97) 40 (getImagem PlHighScoreAtual (imagens s))] ++ map (Translate 680 (-317)) (desenhaPontosNum s)
+                    | tempo s > 7 = [Translate (-160) 80 (getImagem PlTeuScore (imagens s))] ++ map (Translate 680 (-317)) (desenhaPontosNum s)
+                    | tempo s > 6 = [Translate (-160) 80 (getImagem PlTeuScore (imagens s))] 
+                    | otherwise = []
+
+desenhaHighScore :: Estado -> [Picture]
+desenhaHighScore est = desenhaHighScoreNum1 est ++ desenhaHighScoreNum2 est ++ desenhaHighScoreNum3 est++ desenhaHighScoreNum4 est++ desenhaHighScoreNum5 est
+
+desenhaHighScoreNum1 :: Estado -> [Picture]
+desenhaHighScoreNum1 est = verificaNumero (div pt 10000) est
+   where pt = fst $ head $ reverse $ sort $ highScore est
+
+desenhaHighScoreNum2 :: Estado -> [Picture]
+desenhaHighScoreNum2 est = map (Translate 30 0) (verificaNumero (mod (div pt 1000) 10) est)
+   where pt = fst $ head $ reverse $ sort $ highScore est
+
+desenhaHighScoreNum3 :: Estado -> [Picture]
+desenhaHighScoreNum3 est = map (Translate 60 0) (verificaNumero (mod (div pt 100) 10) est)
+   where pt = fst $ head $ reverse $ sort $ highScore est
+
+desenhaHighScoreNum4 :: Estado -> [Picture]
+desenhaHighScoreNum4 est = map (Translate 90 0) (desenhaPontosAux est Num0)
+
+desenhaHighScoreNum5 :: Estado -> [Picture]
+desenhaHighScoreNum5 est = map (Translate 120 0) (desenhaPontosAux est Num0)
 
 
 -- | Verifica se a parte decimal de um número está entre 0 e 25 ou 50 e 75, utilizada para alterar uma imagem de 0,25 em 0,24 segundos
@@ -415,7 +445,7 @@ perdeJogo s | vida (jogador (jogo s)) == 0 = s {menu = PerdeuJogo}
             | otherwise = s
 
 ganhaJogo :: Estado -> Estado
-ganhaJogo s | x > 13.5 && x < 14.5 && y == 1.5 && menu s== ModoJogo = s {menu = GanhouJogo, jogo = Jogo {mapa = mapaGanhou,inimigos = ganhouInimigos (inimigos (jogo s)),colecionaveis = [], jogador = jogGanhaJogo (jogador (jogo s)) (bonus s)},tempo=0}
+ganhaJogo s | x > 13 && x < 15 && y == 1.5 && menu s== ModoJogo = s {menu = GanhouJogo, jogo = Jogo {mapa = mapaGanhou,inimigos = ganhouInimigos (inimigos (jogo s)),colecionaveis = [], jogador = jogGanhaJogo (jogador (jogo s)) (bonus s)},tempo=0,highScore = highScore s ++ [(pontos (jogador(jogo s)) + (bonus s),"")]}
             | otherwise = s
    where x = fst(posicao(jogador(jogo s)))
          y = snd(posicao(jogador(jogo s)))
