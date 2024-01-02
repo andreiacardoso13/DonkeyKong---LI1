@@ -71,23 +71,23 @@ movePersonagem p a = case a of
 {-| Atualiza a velocidade e direção de uma personagem ao aplicar a ação 'Subir' ou 'Descer'. -}
 
 usaEscada :: Personagem -> Acao -> Personagem
-usaEscada p a | a == Subir =  (p {velocidade = (0,-10), direcao = Norte,  emEscada = True})
-              | a == Descer = (p {velocidade = (0, 10), direcao = Norte,  emEscada = True})
+usaEscada p a | a == Subir =  (p {velocidade = (0,-5), direcao = Norte,  emEscada = True})
+              | a == Descer = (p {velocidade = (0, 5), direcao = Norte,  emEscada = True})
 
 {-| Atualiza a velocidade e direção de uma personagem ao aplicar a ação 'AndarDireita'. -}
 
 moveDireita :: Personagem -> Acao -> Personagem
-moveDireita p AndarDireita = (p {velocidade = (10,0), direcao = Este})
+moveDireita p AndarDireita = (p {velocidade = (5,0), direcao = Este})
 
 {-| Atualiza a velocidade e direção de uma personagem ao aplicar a ação 'AndarEsquerda'. -}
 
 moveEsquerda :: Personagem -> Acao -> Personagem
-moveEsquerda p AndarEsquerda = (p {velocidade = (-10,0), direcao = Oeste})
+moveEsquerda p AndarEsquerda = (p {velocidade = (-5,0), direcao = Oeste})
 
 {-| Atualiza a velocidade e direção de uma personagem ao aplicar a ação 'Saltar'. -}
 
 salta :: Personagem -> Acao -> Personagem
-salta p@(Personagem {velocidade = (h,v)}) Saltar = (p {velocidade = (h,-10)})
+salta p@(Personagem {velocidade = (h,v)}) Saltar = (p {velocidade = (h,-5)})
 
 {-| Atualiza a velocidade e direção de uma personagem ao aplicar a ação 'Parar'. -}
 
