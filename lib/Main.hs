@@ -57,7 +57,7 @@ estadoInicial images = Estado {menu = Inicio,jogo = jOpcoes, imagens = images, t
 desenhaEstado :: Estado -> Picture
 desenhaEstado s | menu s == Inicio = Pictures(desenhaInicio s)
                 | menu s == ModoJogo = Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s)
-                | menu s == ModoPausa = Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s)
+                | menu s == ModoPausa Continuar = Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s)
                 | menu s == ModoHighScore = Pictures [getImagem PalavraHighScore (imagens s)]
                 | menu s == GanhouJogo = Pictures (desenhaGanhouJogo s)
                 | menu s == PerdeuJogo = Pictures [getImagem MarioDefeatedFinal (imagens s)]
@@ -465,7 +465,7 @@ reageEvento _ s = s
 
 reageTempo :: Float -> Estado -> Estado
 reageTempo t s | menu s == GanhouJogo = s {jogo = Jogo {mapa = mapa (jogo s),inimigos = gravidadeMacaco (realToFrac t) (inimigos (jogo s)), colecionaveis = [], jogador = jogador (jogo s)}, tempo = tempo s + (realToFrac t)}
-               | menu s == ModoPausa = s{jogo = jogo s, tempo = tempo s + (realToFrac t), bonus = bonus s}
+               | menu s == ModoPausa Continuar || menu s == ModoPausa Reiniciar || menu s == ModoPausa Home = s{jogo = jogo s, tempo = tempo s + (realToFrac t), bonus = bonus s}
                | otherwise = ganhaJogo $ perdeJogo $ s {jogo = movimenta (truncate (tempo s)) (tempo s) (jogo s),tempo = tempo s + (realToFrac t), bonus = diminuiBonus (bonus s)}
 
 diminuiBonus :: Int -> Int
