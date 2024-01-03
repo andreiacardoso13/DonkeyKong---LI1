@@ -44,7 +44,9 @@ keys evt s | menu s == Inicio = keysInicio evt s
            | menu s == Opcoes Jogar = keysOpJogar evt s
            | menu s == Opcoes HighScore = keysOpHighScore evt s
            | menu s == ModoJogo = keysModoJogo evt s
-           | menu s == ModoPausa = keysModoPausa evt s 
+           | menu s == ModoPausa Continuar = keysModoPausa evt s
+           | menu s == ModoPausa Reiniciar = keysModoPausa evt s
+           | menu s == ModoPausa Home = keysModoPausa evt s
            | menu s == ModoHighScore = keysModoHighScore evt s
            | menu s == GanhouJogo = keysGanhouJogo evt s
            | menu s == PerdeuJogo = keysPerdeuJogo evt s
