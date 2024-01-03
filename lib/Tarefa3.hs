@@ -341,6 +341,19 @@ aleatoriedadeFantasmas s t j = j{inimigos = aleatFantEscada s (aleatFantAndar s 
 aleatFantEscada :: Semente -> [Personagem] -> [Personagem]
 aleatFantEscada s p = p
 
+{-
+CONDIÇOES SUBIR
+|     esc && procuraBloco blocos pos == Vazio && procuraBlocoInf blocos pos == Plataforma && colisoesParede m jgd =  freefall (e{jogo = j {jogador = movePersonagem (jgd {emEscada = False}) (Just Parar)}})
+| not esc && procuraBloco blocos pos == Escada && mod' x 1 /= 0                                                   =  freefall (e{jogo = j {jogador = movePersonagem jgd (Just Subir)}})
+| esc                                                                                                             =  freefall (e{jogo = j {jogador = movePersonagem (jgd {posicao = (x, max (y-0.5) 0.5)}) (Just Subir)}})
+
+CONDIÇOES DESCER
+|esc  && procuraBlocoInf blocos pos == Escada                                                                       =  freefall (e{jogo = j {jogador = movePersonagem (jgd {posicao = (x, min (y+0.5) 16.5)}) (Just Descer)}})
+|esc  && procuraBlocoInf blocos pos == Plataforma && procuraBloco blocos pos     == Escada && colisoesParede m jgd  =  freefall (e{jogo = j {jogador = movePersonagem (jgd {emEscada = False}) (Just Parar)}})
+|        procuraBlocoInf blocos pos == Plataforma && procuraBloco blocos (x,y+2) == Escada && mod' x 1 /= 0         =  freefall (e{jogo = j {jogador = movePersonagem (jgd {posicao = (x, min (y+0.5) 16.5)}) (Just Descer)}})
+|        procuraBlocoInf blocos pos == Escada     && procuraBloco blocos pos     == Plataforma                      =  freefall (e{jogo = j {jogador = movePersonagem jgd (Just Descer)}})
+-}
+
 aleatFantAndar :: Semente -> Tempo -> [Personagem] -> [Personagem]
 aleatFantAndar _ _ [] = []
 aleatFantAndar s tp (h:t) | alteraImagem3 (realToFrac tp) && (head(geraAleatorios s 1)) > 0 && tipo h == Fantasma = (h{velocidade = (-1.5,vy)}) : aleatFantAndar (s+5) tp t
