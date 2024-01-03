@@ -132,6 +132,7 @@ keysModoJogo _ e = e
 
 keysModoPausa :: Event -> Estado -> Estado
 keysModoPausa (EventKey (Char 'p') Down _ _) e@(Estado {menu = ModoPausa}) = e {menu = ModoJogo}
+keysModoPausa _ s = s
 
 
 keysModoHighScore :: Event -> Estado -> Estado

@@ -95,6 +95,8 @@ getImages = do
                Just firework9                 <- loadJuicyPNG "imagens/firework9.png"
                Just firework10                <- loadJuicyPNG "imagens/firework10.png"
                Just score                     <- loadJuicyPNG "imagens/score.png"
+               Just mouse                     <- loadJuicyPNG "imagens/mouse.png"
+               Just pausa                     <- loadJuicyPNG "imagens/pausa.png"
                Just bonus                     <- loadJuicyPNG "imagens/bonus.png"
                Just plDerrotasteOPrimateKong  <- loadJuicyPNG "imagens/derrotaPrimateKong.png"
                Just plTeuScore                <- loadJuicyPNG "imagens/scoreGanhou.png"
