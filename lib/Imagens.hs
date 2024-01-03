@@ -2,7 +2,7 @@ module Imagens where
 import Graphics.Gloss
 import Graphics.Gloss.Juicy
 
-data Imagem = Ladder | Trapdoor | Platform | Estrela | Coin | Hammer | GhostLeft1 | GhostLeft2 | GhostRight1 | GhostRight2 | MarioClimbing1 | MarioClimbing2 | MarioHammerLeft1 | MarioHammerLeft2 | MarioHammerLeft3 | MarioHammerLeft4 | MarioHammerRight1 | MarioHammerRight2 | MarioHammerRight3 | MarioHammerRight4 | MarioJumpingLeft1 | MarioJumpingRight1 | MarioStandingBack | MarioStandingLeft | MarioStandingRight | MarioWalkingLeft1 | MarioWalkingRight1 | MonkeyArmLeft | MonkeyArmRight | MonkeyDefeated | MonkeyFalling | MonkeyStanding | MonkeyWalkingLeft | MonkeyWalkingRight | VidaCheia | VidaVazia | ZeroVidas | UmaVida | DuasVidas | TresVidas | Num0 | Num1 | Num2 | Num3 | Num4 | Num5 | Num6 | Num7 | Num8 | Num9 | A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z |Firework1 | Firework2 | Firework3 | Firework4 | Firework5 | Firework6 | Firework7 | Firework8 | Firework9 | Firework10 | PlTeuScore | PlHighScoreAtual | PlDerrotasteOPrimateKong | Score | Bonus | PlPressEnter | PlParabens | PlEscreveNome | PrimateKong | PalavraJogar | PalavraHighScore | MarioDefeated1 | MarioDefeated2 | MarioDefeated3 | MarioDefeated4 | MarioDefeatedFinal | GhostDefeated1 | GhostDefeated2 | GhostDefeated3 | GhostDefeated4 | Congratulations | GhostBlueLeft1 | GhostBlueLeft2 | GhostBlueRight1 | GhostBlueRight2 deriving (Eq)
+data Imagem = Ladder | Trapdoor | Platform | Estrela | Coin | Hammer | GhostLeft1 | GhostLeft2 | GhostRight1 | GhostRight2 | MarioClimbing1 | MarioClimbing2 | MarioHammerLeft1 | MarioHammerLeft2 | MarioHammerLeft3 | MarioHammerLeft4 | MarioHammerRight1 | MarioHammerRight2 | MarioHammerRight3 | MarioHammerRight4 | MarioJumpingLeft1 | MarioJumpingRight1 | MarioStandingBack | MarioStandingLeft | MarioStandingRight | MarioWalkingLeft1 | MarioWalkingRight1 | MonkeyArmLeft | MonkeyArmRight | MonkeyDefeated | MonkeyFalling | MonkeyStanding | MonkeyWalkingLeft | MonkeyWalkingRight | VidaCheia | VidaVazia | ZeroVidas | UmaVida | DuasVidas | TresVidas | Num0 | Num1 | Num2 | Num3 | Num4 | Num5 | Num6 | Num7 | Num8 | Num9 | A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z |Firework1 | Firework2 | Firework3 | Firework4 | Firework5 | Firework6 | Firework7 | Firework8 | Firework9 | Firework10 | PlTeuScore | PlHighScoreAtual | PlDerrotasteOPrimateKong | Score | Pausa1 | Pausa2 | Pausa3 | Pausa4 | Bonus | PlPressEnter | PlParabens | PlEscreveNome | PrimateKong | PalavraJogar | PalavraHighScore | MarioDefeated1 | MarioDefeated2 | MarioDefeated3 | MarioDefeated4 | MarioDefeatedFinal | GhostDefeated1 | GhostDefeated2 | GhostDefeated3 | GhostDefeated4 | Congratulations | GhostBlueLeft1 | GhostBlueLeft2 | GhostBlueRight1 | GhostBlueRight2 deriving (Eq)
 
 type Imagens = [(Imagem, Picture)]
 
@@ -95,8 +95,10 @@ getImages = do
                Just firework9                 <- loadJuicyPNG "imagens/firework9.png"
                Just firework10                <- loadJuicyPNG "imagens/firework10.png"
                Just score                     <- loadJuicyPNG "imagens/score.png"
-               Just mouse                     <- loadJuicyPNG "imagens/mouse.png"
-               Just pausa                     <- loadJuicyPNG "imagens/pausa.png"
+               Just pausa1                    <- loadJuicyPNG "imagens/pausa1.png"
+               Just pausa2                    <- loadJuicyPNG "imagens/pausa2.png"
+               Just pausa3                    <- loadJuicyPNG "imagens/pausa3.png"
+               Just pausa4                    <- loadJuicyPNG "imagens/pausa4.png"
                Just bonus                     <- loadJuicyPNG "imagens/bonus.png"
                Just plDerrotasteOPrimateKong  <- loadJuicyPNG "imagens/derrotaPrimateKong.png"
                Just plTeuScore                <- loadJuicyPNG "imagens/scoreGanhou.png"
@@ -143,7 +145,7 @@ getImages = do
                              (N,n), (O,o), (P,p), (Q,q), (R,r), (S,s), (T,t), (U,u), (V,v), (W,w), (X,x), (Y,y), (Z,z), 
                              (Firework1,firework1), (Firework2,firework2), (Firework3,firework3), (Firework4,firework4),
                              (Firework5,firework5), (Firework6,firework6), (Firework7,firework7), (Firework8,firework8), 
-                             (Firework9,firework9), (Firework10,firework10),(Score,score), (Bonus,bonus), (PlTeuScore,plTeuScore), (PlHighScoreAtual,plHighScoreAtual), (PlDerrotasteOPrimateKong,plDerrotasteOPrimateKong),
+                             (Firework9,firework9), (Firework10,firework10),(Score,score), (Pausa1,pausa1), (Pausa2,pausa2), (Pausa3,pausa3), (Pausa4,pausa4), (Bonus,bonus), (PlTeuScore,plTeuScore), (PlHighScoreAtual,plHighScoreAtual), (PlDerrotasteOPrimateKong,plDerrotasteOPrimateKong),
                              (PlPressEnter,plpressEnter), (PlEscreveNome,plEscreveNome), (PrimateKong,primateKong), (PlParabens,plParabens),
                              (PalavraJogar,palavraJogar), (PalavraHighScore,palavraHighScore), (MarioDefeated1,marioDefeated1), 
                              (MarioDefeated2,marioDefeated2), (MarioDefeated3,marioDefeated3), (MarioDefeated4,marioDefeated4), 
