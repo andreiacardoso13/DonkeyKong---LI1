@@ -137,6 +137,8 @@ keysModoJogo _ e = e
 
 keysModoPausa :: Event -> Estado -> Estado
 keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Continuar}) = e {menu = ModoJogo}
+
+{-
 keysModoPausa (EventKey (SpecialKey KeyUp) Down _ _) e@(Estado {menu = ModoPausa Continuar}) = e {menu = ModoPausa Reiniciar}
 keysModoPausa (EventKey (SpecialKey KeyRight) Down _ _) e@(Estado {menu = ModoPausa Reiniciar}) = e {menu = ModoPausa Home}
 keysModoPausa (EventKey (SpecialKey KeyLeft) Down _ _) e@(Estado {menu = ModoPausa Home}) = e {menu = ModoPausa Reiniciar}
@@ -144,6 +146,7 @@ keysModoPausa (EventKey (SpecialKey KeyDown) Down _ _) e@(Estado {menu = ModoPau
 keysModoPausa (EventKey (SpecialKey KeyDown) Down _ _) e@(Estado {menu = ModoPausa Reiniciar}) = e {menu = ModoPausa Continuar}
 keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Home}) = e {menu = Opcoes Jogar}
 keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Reiniciar}) = e 
+-}
 keysModoPausa _ s = s
 
 
