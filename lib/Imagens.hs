@@ -145,12 +145,13 @@ getImages = do
                              (N,n), (O,o), (P,p), (Q,q), (R,r), (S,s), (T,t), (U,u), (V,v), (W,w), (X,x), (Y,y), (Z,z), 
                              (Firework1,firework1), (Firework2,firework2), (Firework3,firework3), (Firework4,firework4),
                              (Firework5,firework5), (Firework6,firework6), (Firework7,firework7), (Firework8,firework8), 
-                             (Firework9,firework9), (Firework10,firework10),(Score,score), (Pausa1,pausa1), (Pausa2,pausa2), (Pausa3,pausa3), (Pausa4,pausa4), (Bonus,bonus), (PlTeuScore,plTeuScore), (PlHighScoreAtual,plHighScoreAtual), (PlDerrotasteOPrimateKong,plDerrotasteOPrimateKong),
-                             (PlPressEnter,plpressEnter), (PlEscreveNome,plEscreveNome), (PrimateKong,primateKong), (PlParabens,plParabens),
-                             (PalavraJogar,palavraJogar), (PalavraHighScore,palavraHighScore), (MarioDefeated1,marioDefeated1), 
-                             (MarioDefeated2,marioDefeated2), (MarioDefeated3,marioDefeated3), (MarioDefeated4,marioDefeated4), 
-                             (MarioDefeatedFinal,marioDefeatedFinal), (GhostDefeated1,ghostDefeated1), (GhostDefeated2,ghostDefeated2), 
-                             (GhostDefeated3,ghostDefeated3), (GhostDefeated4,ghostDefeated4), (Congratulations,congratulations), 
-                             (GhostBlueLeft1,ghostBlueLeft1), (GhostBlueLeft2,ghostBlueLeft2), (GhostBlueRight1,ghostBlueRight1), 
-                             (GhostBlueRight2,ghostBlueRight2)]
+                             (Firework9,firework9), (Firework10,firework10),(Score,score), (Pausa1,pausa1), (Pausa2,pausa2),
+                             (Pausa3,pausa3), (Pausa4,pausa4), (Bonus,bonus), (PlTeuScore,plTeuScore), (PlHighScoreAtual,plHighScoreAtual),
+                             (PlDerrotasteOPrimateKong,plDerrotasteOPrimateKong), (PlPressEnter,plpressEnter), (PlEscreveNome,plEscreveNome),
+                             (PrimateKong,primateKong), (PlParabens,plParabens), (PalavraJogar,palavraJogar), (PalavraHighScore,palavraHighScore),
+                             (MarioDefeated1,marioDefeated1), (MarioDefeated2,marioDefeated2), (MarioDefeated3,marioDefeated3),
+                             (MarioDefeated4,marioDefeated4), (MarioDefeatedFinal,marioDefeatedFinal), (GhostDefeated1,ghostDefeated1),
+                             (GhostDefeated2,ghostDefeated2), (GhostDefeated3,ghostDefeated3), (GhostDefeated4,ghostDefeated4),
+                             (Congratulations,congratulations), (GhostBlueLeft1,ghostBlueLeft1), (GhostBlueLeft2,ghostBlueLeft2),
+                             (GhostBlueRight1,ghostBlueRight1), (GhostBlueRight2,ghostBlueRight2)]
                return images
