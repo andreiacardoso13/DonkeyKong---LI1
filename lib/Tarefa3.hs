@@ -17,7 +17,7 @@ import Data.Fixed
 import Data.List
 
 movimenta :: Semente -> Tempo -> Jogo -> Jogo
-movimenta s t j = aleatoriedadeFantasmas s t $ movimentoPers $ alteraVidaFantasma $ tempoAplicaDano $ efeitoColisoes $ removeAlcapao $ recolheColecionavel $ ataqueDoInimigo $ efeitoGravidade $ ataqueDoJogador j
+movimenta s t j = movimentoMacaco t $ aleatoriedadeFantasmas s t $ movimentoPers $ alteraVidaFantasma $ tempoAplicaDano $ efeitoColisoes $ removeAlcapao $ recolheColecionavel $ ataqueDoInimigo $ efeitoGravidade $ ataqueDoJogador j
       
 {-|
 Se o jogador tiver a componente aplicaDano activa e com tempo restante e a 
@@ -343,18 +343,29 @@ aleatFantEscada s p = p
 
 aleatFantAndar :: Semente -> Tempo -> [Personagem] -> [Personagem]
 aleatFantAndar _ _ [] = []
-aleatFantAndar s tp (h:t) | alteraImagem3 (realToFrac tp) && (head(geraAleatorios s 1)) > 0 = (h{velocidade = (-1.5,vy)}) : aleatFantAndar (s+5) tp t
-                          | alteraImagem3 (realToFrac tp) && (head(geraAleatorios s 1)) < 0 = (h{velocidade = (1.5,vy)}) : aleatFantAndar (s+5) tp t
+aleatFantAndar s tp (h:t) | alteraImagem3 (realToFrac tp) && (head(geraAleatorios s 1)) > 0 && tipo h == Fantasma = (h{velocidade = (-1.5,vy)}) : aleatFantAndar (s+5) tp t
+                          | alteraImagem3 (realToFrac tp) && (head(geraAleatorios s 1)) < 0 && tipo h == Fantasma = (h{velocidade = (1.5,vy)}) : aleatFantAndar (s+5) tp t
                           | otherwise = h : aleatFantAndar (s+1) tp t
   where (vx,vy) = velocidade h
       
--- | Verifica se a parte decimal de um número está entre 0 e 25 ou 50 e 75, utilizada para alterar uma imagem de 0,25 em 0,24 segundos
 alteraImagem3 :: Float -> Bool
 alteraImagem3 n = alteraImagem3Aux (mod' n 10)
 
--- | Verifica se um número está entre 0 e 2.5 ou 5 e 7.5
 alteraImagem3Aux :: Float -> Bool
-alteraImagem3Aux n = (n >= 0 && n<2.5)
+alteraImagem3Aux n = (n >= 0 && n<2)
+
+movimentoMacaco :: Tempo -> Jogo -> Jogo
+movimentoMacaco t j = j {inimigos = movimentoMacacoAux t (inimigos j)}
+
+movimentoMacacoAux :: Tempo -> [Personagem] -> [Personagem]
+movimentoMacacoAux _ [] = []
+movimentoMacacoAux tmp (h:t) | tipo h == MacacoMalvado && tmp > 3 && vx == 0 = h{velocidade = (3,0)} : t
+                             | tipo h == MacacoMalvado && x > 23 = h{velocidade = (-vx,vy)} : t
+                             | tipo h == MacacoMalvado && x < 5 = h{velocidade = (-vx,vy)} : t
+                             | otherwise = h : movimentoMacacoAux tmp t
+  where (vx,vy) = velocidade h
+        (x,y) = posicao h
+
 
 {-
 NOTAS 
