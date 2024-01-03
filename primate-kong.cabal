@@ -46,9 +46,6 @@ library
     -- Modules exported by the library.
     exposed-modules:
         Main
-
-    -- Modules included in this library but not exported.
-    other-modules:
         LI12324
         Tarefa1
         Tarefa2
@@ -56,6 +53,10 @@ library
         Tarefa4
         Tarefa5
         Imagens
+
+
+    -- Modules included in this library but not exported.
+    other-modules:
         Mapa
 
     -- LANGUAGE extensions used by modules in this package.
