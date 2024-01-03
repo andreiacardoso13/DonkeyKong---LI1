@@ -26,7 +26,7 @@ data Estado = Estado {menu :: Menu, jogo :: Jogo, imagens :: Imagens, tempo :: T
 data Menu = Inicio
           | Opcoes Opcao
           | ModoJogo
-          | ModoPausa
+          | ModoPausa Opcao
           | ModoHighScore
           | GanhouJogo
           | PerdeuJogo
@@ -34,6 +34,9 @@ data Menu = Inicio
 
 data Opcao = Jogar
            | HighScore
+           | Continuar
+           | Reiniciar
+           | Home
           deriving Eq
 
 keys :: Event -> Estado -> Estado
@@ -125,13 +128,20 @@ keysModoJogo (EventKey (SpecialKey KeySpace) Up _ _) e@(Estado {jogo = j@(Jogo {
                                                                                                                              | otherwise = freefall (e{jogo = j {jogador = movePersonagem jgd Nothing}})
 
 
-keysModoJogo (EventKey (Char 'p') Down _ _) e@(Estado {menu = ModoJogo}) = e {menu = ModoPausa}
+keysModoJogo (EventKey (Char 'p') Down _ _) e@(Estado {menu = ModoJogo}) = e {menu = ModoPausa Continuar}
 
 keysModoJogo _ e = e
 
 
 keysModoPausa :: Event -> Estado -> Estado
-keysModoPausa (EventKey (Char 'p') Down _ _) e@(Estado {menu = ModoPausa}) = e {menu = ModoJogo}
+keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Continuar}) = e {menu = ModoJogo}
+keysModoPausa (EventKey (SpecialKey KeyUp) Down _ _) e@(Estado {menu = ModoPausa Continuar}) = e {menu = ModoPausa Reiniciar}
+keysModoPausa (EventKey (SpecialKey KeyRight) Down _ _) e@(Estado {menu = ModoPausa Reiniciar}) = e {menu = ModoPausa Home}
+keysModoPausa (EventKey (SpecialKey KeyLeft) Down _ _) e@(Estado {menu = ModoPausa Home}) = e {menu = ModoPausa Reiniciar}
+keysModoPausa (EventKey (SpecialKey KeyDown) Down _ _) e@(Estado {menu = ModoPausa Home}) = e {menu = ModoPausa Continuar}
+keysModoPausa (EventKey (SpecialKey KeyDown) Down _ _) e@(Estado {menu = ModoPausa Reiniciar}) = e {menu = ModoPausa Continuar}
+keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Home}) = e {menu = Opcoes Jogar}
+keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Reiniciar}) = e 
 keysModoPausa _ s = s
 
 
