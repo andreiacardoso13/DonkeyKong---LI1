@@ -156,7 +156,8 @@ Se o jogador colidir com um inimigo retira-lhe uma vida e altera a sua posição
 -}
 ataqueDoInimigoAux :: [Personagem] -> Personagem -> Personagem 
 ataqueDoInimigoAux [] p = p
-ataqueDoInimigoAux (inim : t) jog | colisoesPersonagens inim jog && (vida inim == 1 ) && (vida jog <= 3) && (vida jog >0)= (jog {posicao = (0.5,16.5), vida = vida jog -1})
+ataqueDoInimigoAux (inim : t) jog | colisoesPersonagens inim jog && (vida inim == 1 ) && (vida jog <= 3) && (vida jog >1)= (jog {posicao = (10.5,1.5), vida = vida jog -1})
+                                  | colisoesPersonagens inim jog && (vida inim == 1 ) && (vida jog <= 3) && (vida jog >0)= (jog {vida = vida jog -1})
                                   | otherwise = ataqueDoInimigoAux t jog
 
 {-|
@@ -356,8 +357,8 @@ CONDIÇOES DESCER
 
 aleatFantAndar :: Semente -> Tempo -> [Personagem] -> [Personagem]
 aleatFantAndar _ _ [] = []
-aleatFantAndar s tp (h:t) | alteraImagem3 (realToFrac tp) && (head(geraAleatorios s 1)) > 0 && tipo h == Fantasma = (h{velocidade = (-1.5,vy)}) : aleatFantAndar (s+5) tp t
-                          | alteraImagem3 (realToFrac tp) && (head(geraAleatorios s 1)) < 0 && tipo h == Fantasma = (h{velocidade = (1.5,vy)}) : aleatFantAndar (s+5) tp t
+aleatFantAndar s tp (h:t) | alteraImagem3 (realToFrac tp) && (head(geraAleatorios s 1)) > 0 && tipo h == Fantasma = (h{velocidade = (-vx,vy)}) : aleatFantAndar (s+5) tp t
+                          | alteraImagem3 (realToFrac tp) && (head(geraAleatorios s 1)) < 0 && tipo h == Fantasma = (h{velocidade = (vx,vy)}) : aleatFantAndar (s+5) tp t
                           | otherwise = h : aleatFantAndar (s+1) tp t
   where (vx,vy) = velocidade h
       

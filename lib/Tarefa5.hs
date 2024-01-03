@@ -37,6 +37,7 @@ data Opcao = Jogar
            | Continuar
            | Reiniciar
            | Home
+           | Controls
           deriving Eq
 
 keys :: Event -> Estado -> Estado
@@ -137,31 +138,42 @@ keysModoJogo _ e = e
 
 keysModoPausa :: Event -> Estado -> Estado
 keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Continuar}) = e {menu = ModoJogo}
-
-{-
 keysModoPausa (EventKey (SpecialKey KeyUp) Down _ _) e@(Estado {menu = ModoPausa Continuar}) = e {menu = ModoPausa Reiniciar}
 keysModoPausa (EventKey (SpecialKey KeyRight) Down _ _) e@(Estado {menu = ModoPausa Reiniciar}) = e {menu = ModoPausa Home}
+keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Reiniciar}) = e {menu = ModoJogo, jogo = j1, tempo = 0, bonus = 15000}
+
+
 keysModoPausa (EventKey (SpecialKey KeyLeft) Down _ _) e@(Estado {menu = ModoPausa Home}) = e {menu = ModoPausa Reiniciar}
 keysModoPausa (EventKey (SpecialKey KeyDown) Down _ _) e@(Estado {menu = ModoPausa Home}) = e {menu = ModoPausa Continuar}
 keysModoPausa (EventKey (SpecialKey KeyDown) Down _ _) e@(Estado {menu = ModoPausa Reiniciar}) = e {menu = ModoPausa Continuar}
 keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Home}) = e {menu = Opcoes Jogar}
 keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Reiniciar}) = e 
--}
+--falta keys para modoPausa Home right, e todos os de Controls
+
 keysModoPausa _ s = s
 
 
 keysModoHighScore :: Event -> Estado -> Estado
 keysModoHighScore (EventKey (SpecialKey KeyEnter) Down _ _) s = s {menu = Opcoes Jogar}
 keysModoHighScore _ s = s
+--fazer key e delete e para cada letra
+--pressionar enter para voltar para MenuOpcoes
 
 
 keysGanhouJogo :: Event -> Estado -> Estado
+keysGanhouJogo (EventKey (Char 'a') Down _ _) s = s {highScore = escreve (highScore s) "A"}
 keysGanhouJogo _ s = s
+
+
+
+--função que adiciona uma letra ao highScore
+escreve :: [(Int,String)] -> String -> [(Int,String)]
+escreve l a = init l ++ [(fst (last l), snd (last l) ++ a)]
 
 
 keysPerdeuJogo :: Event -> Estado -> Estado
 keysPerdeuJogo _ s = s
-
+--funcao que carrega no enter e volta para menu
 
 
 -- EventKey Key KeyState Modifiers (Float, Float)

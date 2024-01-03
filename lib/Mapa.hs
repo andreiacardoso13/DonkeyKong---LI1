@@ -143,7 +143,7 @@ jOpcoes = Jogo {mapa = mapaOpcoes
 
 j1 :: Jogo
 j1 = Jogo {mapa = mapaInicial
-          ,inimigos = [Personagem {velocidade=(1,0)
+          ,inimigos = [Personagem {velocidade=(1.5,0)
                                   ,tipo=Fantasma
                                   ,posicao=(10.5,4.5)
                                   ,direcao = Este
@@ -154,7 +154,7 @@ j1 = Jogo {mapa = mapaInicial
                                   ,pontos=0
                                   ,aplicaDano=(False,0)
                                    },
-                        Personagem {velocidade=(1,0)
+                        Personagem {velocidade=(1.5,0)
                                   ,tipo=Fantasma
                                   ,posicao=(10.5,16.5)
                                   ,direcao = Este

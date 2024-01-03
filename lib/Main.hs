@@ -60,9 +60,10 @@ desenhaEstado s | menu s == Inicio = Pictures(desenhaInicio s)
                 | menu s == ModoPausa Continuar = Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa4 (imagens s))])
                 | menu s == ModoPausa Reiniciar = Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa1 (imagens s))]) 
                 | menu s == ModoPausa Home = Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa2 (imagens s))])
+                | menu s == ModoPausa Home = Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa3 (imagens s))])
                 | menu s == ModoHighScore = Pictures [getImagem PalavraHighScore (imagens s)]
                 | menu s == GanhouJogo = Pictures (desenhaGanhouJogo s)
-                | menu s == PerdeuJogo = Pictures [getImagem MarioDefeatedFinal (imagens s)]
+                | menu s == PerdeuJogo = Pictures (desenhaPerdeuJogo s (tempo s))
                 | otherwise = Pictures(desenhaOpcoes s)
 
 desenhaInicio :: Estado -> [Picture]
@@ -108,6 +109,14 @@ desenhaJogador est | direcao (jogador (jogo est)) == Este = desenhaJogEste est
                    | direcao (jogador (jogo est)) == Oeste = desenhaJogOeste est
                    | otherwise = desenhaJogNorteSul est
                   
+{-
+desenhaJogDerrotado :: Estado -> [Picture]
+desenhaJogDerrotado s | direcao (jogador(jogo s)) == Norte = [desenhaJogadorAux s MarioDefeated1]
+                      | direcao (jogador(jogo s)) == Oeste = [desenhaJogadorAux s MarioDefeated2]
+                      | direcao (jogador(jogo s)) == Sul = [desenhaJogadorAux s MarioDefeated3]
+                      | otherwise = [desenhaJogadorAux s MarioDefeated4]
+-}
+
 -- | Fornece uma lista com um único elemento, sendo esse elemento uma picture do jogador (é chamada apenas quando o jogador tem direção igual a Norte ou Sul, a imagem fornecida depende do tempo atual do estado)
 desenhaJogNorteSul :: Estado -> [Picture]
 desenhaJogNorteSul est | emEscada (jogador (jogo est)) == True && velocidadeJog /= (0,0) = if alteraImagem (realToFrac(tempo est))
@@ -387,7 +396,8 @@ desenhaParabens s | tempo s >= 3 = [Translate 0 250 (Scale 0.5 0.5 (getImagem Pl
                   | otherwise = []
 
 desenhaScoreFinal :: Estado -> [Picture]
-desenhaScoreFinal s | tempo s > 10 =[Translate (-160) 80 (getImagem PlTeuScore (imagens s)), Translate (-97) 40 (getImagem PlHighScoreAtual (imagens s)), Translate (-76) (0) (getImagem PlEscreveNome (imagens s)),color white( line [(115,(-15)),(330,(-15))])] ++ map (Translate 680 (-317)) (desenhaPontosNum s) ++ map (Translate 795 (-357)) (desenhaHighScore s)
+desenhaScoreFinal s | tempo s > 11 =[Translate (-160) 80 (getImagem PlTeuScore (imagens s)), Translate (-97) 40 (getImagem PlHighScoreAtual (imagens s)), Translate (-76) (0) (getImagem PlEscreveNome (imagens s)),color white( line [(115,(-15)),(330,(-15))])] ++ map (Translate 680 (-317)) (desenhaPontosNum s) ++ map (Translate 795 (-357)) (desenhaHighScore s) ++ [Translate 0 (-50) (Scale 0.5 0.5 (getImagem PlPressEnter2 (imagens s)))]
+                    | tempo s > 10 =[Translate (-160) 80 (getImagem PlTeuScore (imagens s)), Translate (-97) 40 (getImagem PlHighScoreAtual (imagens s)), Translate (-76) (0) (getImagem PlEscreveNome (imagens s)),color white( line [(115,(-15)),(330,(-15))])] ++ map (Translate 680 (-317)) (desenhaPontosNum s) ++ map (Translate 795 (-357)) (desenhaHighScore s)
                     | tempo s > 9 = [Translate (-160) 80 (getImagem PlTeuScore (imagens s)), Translate (-97) 40 (getImagem PlHighScoreAtual (imagens s))] ++ map (Translate 680 (-317)) (desenhaPontosNum s) ++ map (Translate 795 (-357)) (desenhaHighScore s)
                     | tempo s > 8 = [Translate (-160) 80 (getImagem PlTeuScore (imagens s)), Translate (-97) 40 (getImagem PlHighScoreAtual (imagens s))] ++ map (Translate 680 (-317)) (desenhaPontosNum s)
                     | tempo s > 7 = [Translate (-160) 80 (getImagem PlTeuScore (imagens s))] ++ map (Translate 680 (-317)) (desenhaPontosNum s)
@@ -417,32 +427,45 @@ desenhaHighScoreNum5 est = map (Translate 120 0) (desenhaPontosAux est Num0)
 
 desenhaNome :: String -> Imagens -> Float -> [Picture] 
 desenhaNome [] _ _ = []
-desenhaNome (h:t) i n | h == 'A' = (Translate n 0 (getImagem A i)) :  desenhaNome t i (n+27)
-                      | h == 'B' = (Translate n 0 (getImagem B i)) :  (desenhaNome t i (n+27))
-                      | h == 'C' = (Translate n 0 (getImagem C i)) :  (desenhaNome t i (n+27))
-                      | h == 'D' = (Translate n 0 (getImagem D i)) :  (desenhaNome t i (n+27))
-                      | h == 'E' = (Translate n 0 (getImagem E i)) :  (desenhaNome t i (n+27))
-                      | h == 'F' = (Translate n 0 (getImagem F i)) :  (desenhaNome t i (n+27))
-                      | h == 'G' = (Translate n 0 (getImagem G i)) :  (desenhaNome t i (n+27))
-                      | h == 'H' = (Translate n 0 (getImagem H i)) :  (desenhaNome t i (n+27))
-                      | h == 'I' = (Translate n 0 (getImagem I i)) :  (desenhaNome t i (n+27))
-                      | h == 'J' = (Translate n 0 (getImagem J i)) :  (desenhaNome t i (n+27))
-                      | h == 'K' = (Translate n 0 (getImagem K i)) :  (desenhaNome t i (n+27))
-                      | h == 'L' = (Translate n 0 (getImagem L i)) :  (desenhaNome t i (n+27))
-                      | h == 'M' = (Translate n 0 (getImagem M i)) :  (desenhaNome t i (n+27))
-                      | h == 'N' = (Translate n 0 (getImagem N i)) :  (desenhaNome t i (n+27))
-                      | h == 'O' = (Translate n 0 (getImagem O i)) :  (desenhaNome t i (n+27))
-                      | h == 'P' = (Translate n 0 (getImagem P i)) :  (desenhaNome t i (n+27))
-                      | h == 'Q' = (Translate n 0 (getImagem Q i)) :  (desenhaNome t i (n+27))
-                      | h == 'R' = (Translate n 0 (getImagem R i)) :  (desenhaNome t i (n+27))
-                      | h == 'S' = (Translate n 0 (getImagem S i)) :  (desenhaNome t i (n+27))
-                      | h == 'T' = (Translate n 0 (getImagem T i)) :  (desenhaNome t i (n+27))
-                      | h == 'U' = (Translate n 0 (getImagem U i)) :  (desenhaNome t i (n+27))
-                      | h == 'V' = (Translate n 0 (getImagem V i)) :  (desenhaNome t i (n+27))
-                      | h == 'W' = (Translate n 0 (getImagem W i)) :  (desenhaNome t i (n+27))
-                      | h == 'X' = (Translate n 0 (getImagem X i)) :  (desenhaNome t i (n+27))
-                      | h == 'Y' = (Translate n 0 (getImagem Y i)) :  (desenhaNome t i (n+27))
-                      | h == 'Z' = (Translate n 0 (getImagem Z i)) :  (desenhaNome t i (n+27))
+desenhaNome (h:t) i n | h == 'A' = Translate n 0 (getImagem A i) :  desenhaNome t i (n+27)
+                      | h == 'B' = Translate n 0 (getImagem B i) :  (desenhaNome t i (n+27))
+                      | h == 'C' = Translate n 0 (getImagem C i) :  (desenhaNome t i (n+27))
+                      | h == 'D' = Translate n 0 (getImagem D i) :  (desenhaNome t i (n+27))
+                      | h == 'E' = Translate n 0 (getImagem E i) :  (desenhaNome t i (n+27))
+                      | h == 'F' = Translate n 0 (getImagem F i) :  (desenhaNome t i (n+27))
+                      | h == 'G' = Translate n 0 (getImagem G i) :  (desenhaNome t i (n+27))
+                      | h == 'H' = Translate n 0 (getImagem H i) :  (desenhaNome t i (n+27))
+                      | h == 'I' = Translate n 0 (getImagem I i) :  (desenhaNome t i (n+27))
+                      | h == 'J' = Translate n 0 (getImagem J i) :  (desenhaNome t i (n+27))
+                      | h == 'K' = Translate n 0 (getImagem K i) :  (desenhaNome t i (n+27))
+                      | h == 'L' = Translate n 0 (getImagem L i) :  (desenhaNome t i (n+27))
+                      | h == 'M' = Translate n 0 (getImagem M i) :  (desenhaNome t i (n+27))
+                      | h == 'N' = Translate n 0 (getImagem N i) :  (desenhaNome t i (n+27))
+                      | h == 'O' = Translate n 0 (getImagem O i) :  (desenhaNome t i (n+27))
+                      | h == 'P' = Translate n 0 (getImagem P i) :  (desenhaNome t i (n+27))
+                      | h == 'Q' = Translate n 0 (getImagem Q i) :  (desenhaNome t i (n+27))
+                      | h == 'R' = Translate n 0 (getImagem R i) :  (desenhaNome t i (n+27))
+                      | h == 'S' = Translate n 0 (getImagem S i) :  (desenhaNome t i (n+27))
+                      | h == 'T' = Translate n 0 (getImagem T i) :  (desenhaNome t i (n+27))
+                      | h == 'U' = Translate n 0 (getImagem U i) :  (desenhaNome t i (n+27))
+                      | h == 'V' = Translate n 0 (getImagem V i) :  (desenhaNome t i (n+27))
+                      | h == 'W' = Translate n 0 (getImagem W i) :  (desenhaNome t i (n+27))
+                      | h == 'X' = Translate n 0 (getImagem X i) :  (desenhaNome t i (n+27))
+                      | h == 'Y' = Translate n 0 (getImagem Y i) :  (desenhaNome t i (n+27))
+                      | h == 'Z' = Translate n 0 (getImagem Z i) :  (desenhaNome t i (n+27))
+
+desenhaPerdeuJogo :: Estado -> Double -> [Picture]
+desenhaPerdeuJogo s n | n >= 2.4 = [Translate 0 (-70) (Scale 2 2 (getImagem MarioDefeatedFinal (imagens s))), Translate 0 270 (getImagem Gameover (imagens s)), Translate 0 (-300) (getImagem PlPressEnter2 (imagens s))]
+                      | n >= 2.1 = ((desenhaMapa1 (-715.5,450.5) s) ++ [desenhaJogadorAux s MarioDefeated4] ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s)
+                      | n >= 1.8 = ((desenhaMapa1 (-715.5,450.5) s) ++ [desenhaJogadorAux s MarioDefeated3] ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s)
+                      | n >= 1.5 = ((desenhaMapa1 (-715.5,450.5) s) ++ [desenhaJogadorAux s MarioDefeated2] ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s)
+                      | n >= 1.2 = ((desenhaMapa1 (-715.5,450.5) s) ++ [desenhaJogadorAux s MarioDefeated1] ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s)
+                      | n >= 0.9 = ((desenhaMapa1 (-715.5,450.5) s) ++ [desenhaJogadorAux s MarioDefeated4] ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s)
+                      | n >= 0.6 = ((desenhaMapa1 (-715.5,450.5) s) ++ [desenhaJogadorAux s MarioDefeated3] ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s)
+                      | n >= 0.3 = ((desenhaMapa1 (-715.5,450.5) s) ++ [desenhaJogadorAux s MarioDefeated2] ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s)
+                      | n >= 0 = ((desenhaMapa1 (-715.5,450.5) s) ++ [desenhaJogadorAux s MarioDefeated1] ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s)
+                      | otherwise = []
+
 
 
 
@@ -468,15 +491,32 @@ reageEvento _ s = s
 reageTempo :: Float -> Estado -> Estado
 reageTempo t s | menu s == GanhouJogo = s {jogo = Jogo {mapa = mapa (jogo s),inimigos = gravidadeMacaco (realToFrac t) (inimigos (jogo s)), colecionaveis = [], jogador = jogador (jogo s)}, tempo = tempo s + (realToFrac t)}
                | menu s == ModoPausa Continuar || menu s == ModoPausa Reiniciar || menu s == ModoPausa Home = s{jogo = jogo s, tempo = tempo s + (realToFrac t), bonus = bonus s}
-               | otherwise = ganhaJogo $ perdeJogo $ s {jogo = movimenta (truncate (tempo s)) (tempo s) (jogo s),tempo = tempo s + (realToFrac t), bonus = diminuiBonus (bonus s)}
+               | menu s == ModoJogo = ganhaJogo $ perdeJogo $ s {jogo = movimenta (truncate (tempo s)) (tempo s) (jogo s),tempo = tempo s + (realToFrac t), bonus = diminuiBonus (bonus s)}
+               | menu s == PerdeuJogo = s {tempo = tempo s + (realToFrac t), jogo = Jogo{mapa = mapa (jogo s),inimigos = inimigos (jogo s), colecionaveis = colecionaveis (jogo s), jogador = jogador (jogo s)}}
+               | otherwise = s {jogo = movimenta (truncate (tempo s)) (tempo s) (jogo s),tempo = tempo s + (realToFrac t)}
 
+
+
+
+{-
+alteraDirecao :: Personagem -> Double -> Personagem
+alteraDirecao p t | mod' t 1 == 0 && direcao p == Norte = p{direcao=Oeste}
+                  | mod' t 1 == 0 && direcao p == Oeste = p{direcao=Sul}
+                  | mod' t 1 == 0 && direcao p == Sul = p{direcao=Este}
+                  | mod' t 1 == 0 && direcao p == Este = p{direcao=Norte}
+                  | otherwise = p
+-}
 diminuiBonus :: Int -> Int
 diminuiBonus 0 = 0
 diminuiBonus n = n - 5
 
 perdeJogo :: Estado -> Estado
-perdeJogo s | vida (jogador (jogo s)) == 0 = s {menu = PerdeuJogo}
+perdeJogo s | vida (jogador (jogo s)) == 0 = s {menu = PerdeuJogo, tempo = 0 ,jogo = Jogo {mapa = mapa (jogo s), inimigos = map ficaParado (inimigos (jogo s)), colecionaveis = colecionaveis (jogo s), jogador = ficaParado(jogador(jogo s)) }}
             | otherwise = s
+
+
+ficaParado :: Personagem -> Personagem
+ficaParado p = p{velocidade = (0,0)}
 
 ganhaJogo :: Estado -> Estado
 ganhaJogo s | x > 13 && x < 15 && y == 1.5 && menu s== ModoJogo = s {menu = GanhouJogo, jogo = Jogo {mapa = mapaGanhou,inimigos = ganhouInimigos (inimigos (jogo s)),colecionaveis = [], jogador = jogGanhaJogo (jogador (jogo s)) (bonus s)},tempo=0,highScore = highScore s ++ [(pontos (jogador(jogo s)) + (bonus s),"")]}
