@@ -290,14 +290,16 @@ efeitoColisoesInimigos m (h:t) = map (efeitoColisoesPlataforma m) (map (efeitoCo
 
 efeitoColisoesPlataforma :: Mapa -> Personagem -> Personagem
 efeitoColisoesPlataforma (Mapa a b blocos) pers | platColisoes (Mapa a b blocos) pers && procuraBlocoInf blocos (posicao pers) == Plataforma = pers {velocidade = (fst (velocidade pers),0)}
-                                                   | platColisoes (Mapa a b blocos) pers && procuraBlocoSup blocos (posicao pers) == Plataforma = pers {velocidade = (fst (velocidade pers,-(snd(velocidade pers))))}
-                                                   | platColisoes (Mapa a b blocos) pers = pers {velocidade = (0,snd (velocidade pers))}
-                                                   | otherwise = pers
+                                                | platColisoes (Mapa a b blocos) pers && procuraBlocoSup blocos (posicao pers) == Plataforma = pers {velocidade = (fst (velocidade pers,-(snd(velocidade pers))))}
+                                                | platColisoes (Mapa a b blocos) pers && procuraBlocoDir blocos (posicao pers) == Plataforma = pers {velocidade = (0,snd(velocidade pers))}
+                                                | platColisoes (Mapa a b blocos) pers && procuraBlocoEsq blocos (posicao pers) == Plataforma = pers {velocidade = (0, snd (velocidade pers))}
+                                                | platColisoes (Mapa a b blocos) pers = pers {velocidade = (0,snd (velocidade pers))}
+                                                | otherwise = pers
 
 efeitoColisoesMapaJog :: Mapa -> Personagem -> Personagem
 efeitoColisoesMapaJog m jog | mapaLimites m jog = if fst(posicao jog) > 14 
-                                                    then jog {posicao = (fst (posicao jog) -0.1, snd (posicao jog))}
-                                                    else jog {posicao = (fst (posicao jog) +0.1, snd (posicao jog))}
+                                                    then jog {posicao = (fst (posicao jog) -0.2, snd (posicao jog))}
+                                                    else jog {posicao = (fst (posicao jog) +0.2, snd (posicao jog))}
                             | otherwise = jog
 
 efeitoColisoesMapaInim :: Mapa -> Personagem -> Personagem
@@ -374,8 +376,8 @@ movimentoMacaco t j = j {inimigos = movimentoMacacoAux t (inimigos j)}
 movimentoMacacoAux :: Tempo -> [Personagem] -> [Personagem]
 movimentoMacacoAux _ [] = []
 movimentoMacacoAux tmp (h:t) | tipo h == MacacoMalvado && tmp > 3 && vx == 0 = h{velocidade = (3,0)} : t
-                             | tipo h == MacacoMalvado && x > 23 = h{velocidade = (-vx,vy)} : t
-                             | tipo h == MacacoMalvado && x < 5 = h{velocidade = (-vx,vy)} : t
+                             | tipo h == MacacoMalvado && x > 18.5 = h{velocidade = (-vx,vy)} : t
+                             | tipo h == MacacoMalvado && x < 9.5 = h{velocidade = (-vx,vy)} : t
                              | otherwise = h : movimentoMacacoAux tmp t
   where (vx,vy) = velocidade h
         (x,y) = posicao h
