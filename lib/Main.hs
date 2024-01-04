@@ -49,7 +49,7 @@ fr = 20
 
 -- | Recebe as imagens e devolve o estado inicial do jogo
 estadoInicial :: Imagens -> Estado
-estadoInicial images = Estado {menu = Inicio,jogo = jOpcoes, imagens = images, tempo = 0 ,bonus = 15000, highScore = [(5000,"")]}
+estadoInicial images = Estado {menu = Inicio,jogo = jOpcoes, imagens = images, tempo = 0 ,bonus = 15000, highScore = [(5000,"JOAO"), (12000,"MARIA"),(8200,"MIGUEL")]}
 --estadoInicial images = Estado {menu = ModoJogo,jogo = j1, imagens = images, tempo = 0 ,bonus = 15000}
 
 
@@ -109,13 +109,6 @@ desenhaJogador est | direcao (jogador (jogo est)) == Este = desenhaJogEste est
                    | direcao (jogador (jogo est)) == Oeste = desenhaJogOeste est
                    | otherwise = desenhaJogNorteSul est
                   
-{-
-desenhaJogDerrotado :: Estado -> [Picture]
-desenhaJogDerrotado s | direcao (jogador(jogo s)) == Norte = [desenhaJogadorAux s MarioDefeated1]
-                      | direcao (jogador(jogo s)) == Oeste = [desenhaJogadorAux s MarioDefeated2]
-                      | direcao (jogador(jogo s)) == Sul = [desenhaJogadorAux s MarioDefeated3]
-                      | otherwise = [desenhaJogadorAux s MarioDefeated4]
--}
 
 -- | Fornece uma lista com um único elemento, sendo esse elemento uma picture do jogador (é chamada apenas quando o jogador tem direção igual a Norte ou Sul, a imagem fornecida depende do tempo atual do estado)
 desenhaJogNorteSul :: Estado -> [Picture]
@@ -453,6 +446,7 @@ desenhaNome (h:t) i n | h == 'A' = Translate n 0 (getImagem A i) :  desenhaNome 
                       | h == 'X' = Translate n 0 (getImagem X i) :  (desenhaNome t i (n+27))
                       | h == 'Y' = Translate n 0 (getImagem Y i) :  (desenhaNome t i (n+27))
                       | h == 'Z' = Translate n 0 (getImagem Z i) :  (desenhaNome t i (n+27))
+desenhaNome _ _ _ = []
 
 desenhaPerdeuJogo :: Estado -> Double -> [Picture]
 desenhaPerdeuJogo s n | n >= 2.4 = [Translate 0 (-70) (Scale 2 2 (getImagem MarioDefeatedFinal (imagens s))), Translate 0 270 (getImagem Gameover (imagens s)), Translate 0 (-300) (getImagem PlPressEnter2 (imagens s))]
@@ -467,7 +461,24 @@ desenhaPerdeuJogo s n | n >= 2.4 = [Translate 0 (-70) (Scale 2 2 (getImagem Mari
                       | otherwise = []
 
 desenhaModoHighScore :: Estado -> [Picture]
-desenhaModoHighScore s = [getImagem PalavraHighScore (imagens s)]
+desenhaModoHighScore s = map (Translate 230 (66)) (desenhaNome (snd (head (highScore s))) (imagens s) 0) ++ 
+                         map (Translate 350 (-330)) (desenhaHighScore s )++ 
+                         map (Translate 230 (-4)) ((desenhaNome  (snd (head(drop 1 (highScore s))))) (imagens s) 0 )++ 
+                         map (Translate 350 (-400)) (desenhaHighScore (retiraHighScore est))  ++ 
+                         map (Translate 230 (-74)) ((desenhaNome  (snd (head(drop 2 (highScore s))))) (imagens s) 0 )++ 
+                         map (Translate 350 (-470)) (desenhaHighScore (retiraHighScore (retiraHighScore est))) ++ 
+                         [Scale 0.8 0.8 (Translate 0 300 (getImagem AmareloHighScore (imagens s))),Translate (-390) 70 (getImagem Ouro (imagens s)),Translate (-390) (0) (getImagem Prata (imagens s)),Translate (-390) (-70) (getImagem Bronze (imagens s)), Scale 0.32 0.32 (Translate 0 (-265) (getImagem Pontos (imagens s))), Scale 0.32 0.32 (Translate 0 (-30) (getImagem Pontos (imagens s))),Scale 0.32 0.32 (Translate 0 190 (getImagem Pontos (imagens s))), Translate 0 (-400) (getImagem PlPressEnter2 (imagens s))]
+  where est = ordenaHighScore s
+
+
+
+ordenaHighScore :: Estado -> Estado
+ordenaHighScore s = s{highScore = reverse $ sort $ highScore s}
+
+
+
+retiraHighScore :: Estado -> Estado 
+retiraHighScore s = s {highScore = drop 1 (highScore s)}
 
 
 -- | Verifica se a parte decimal de um número está entre 0 e 25 ou 50 e 75, utilizada para alterar uma imagem de 0,25 em 0,24 segundos

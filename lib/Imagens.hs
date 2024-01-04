@@ -2,7 +2,7 @@ module Imagens where
 import Graphics.Gloss
 import Graphics.Gloss.Juicy
 
-data Imagem = Ladder | Trapdoor | Platform | Estrela | Coin | Hammer | GhostLeft1 | GhostLeft2 | GhostRight1 | GhostRight2 | MarioClimbing1 | MarioClimbing2 | MarioHammerLeft1 | MarioHammerLeft2 | MarioHammerLeft3 | MarioHammerLeft4 | MarioHammerRight1 | MarioHammerRight2 | MarioHammerRight3 | MarioHammerRight4 | MarioJumpingLeft1 | MarioJumpingRight1 | MarioStandingBack | MarioStandingLeft | MarioStandingRight | MarioWalkingLeft1 | MarioWalkingRight1 | MonkeyArmLeft | MonkeyArmRight | MonkeyDefeated | MonkeyFalling | MonkeyStanding | MonkeyWalkingLeft | MonkeyWalkingRight | VidaCheia | VidaVazia | ZeroVidas | UmaVida | DuasVidas | TresVidas | Num0 | Num1 | Num2 | Num3 | Num4 | Num5 | Num6 | Num7 | Num8 | Num9 | A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z |Firework1 | Firework2 | Firework3 | Firework4 | Firework5 | Firework6 | Firework7 | Firework8 | Firework9 | Firework10 | PlTeuScore | PlHighScoreAtual | PlDerrotasteOPrimateKong | Score | Pausa1 | Pausa2 | Pausa3 | Pausa4 | Bonus | PlPressEnter2 | PlParabens | PlEscreveNome | PrimateKong | PalavraJogar | PalavraHighScore | MarioDefeated1 | MarioDefeated2 | MarioDefeated3 | MarioDefeated4 | MarioDefeatedFinal | GhostDefeated1 | GhostDefeated2 | GhostDefeated3 | GhostDefeated4 | Congratulations | GhostBlueLeft1 | GhostBlueLeft2 | GhostBlueRight1 | GhostBlueRight2 | PlPressEnter | Gameover | PlPressP deriving (Eq)
+data Imagem = Ladder | Trapdoor | Platform | Estrela | Coin | Hammer | GhostLeft1 | GhostLeft2 | GhostRight1 | GhostRight2 | MarioClimbing1 | MarioClimbing2 | MarioHammerLeft1 | MarioHammerLeft2 | MarioHammerLeft3 | MarioHammerLeft4 | MarioHammerRight1 | MarioHammerRight2 | MarioHammerRight3 | MarioHammerRight4 | MarioJumpingLeft1 | MarioJumpingRight1 | MarioStandingBack | MarioStandingLeft | MarioStandingRight | MarioWalkingLeft1 | MarioWalkingRight1 | MonkeyArmLeft | MonkeyArmRight | MonkeyDefeated | MonkeyFalling | MonkeyStanding | MonkeyWalkingLeft | MonkeyWalkingRight | VidaCheia | VidaVazia | ZeroVidas | UmaVida | DuasVidas | TresVidas | Num0 | Num1 | Num2 | Num3 | Num4 | Num5 | Num6 | Num7 | Num8 | Num9 | A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z |Firework1 | Firework2 | Firework3 | Firework4 | Firework5 | Firework6 | Firework7 | Firework8 | Firework9 | Firework10 | PlTeuScore | PlHighScoreAtual | PlDerrotasteOPrimateKong | Score | Pausa1 | Pausa2 | Pausa3 | Pausa4 | Bonus | PlPressEnter2 | PlParabens | PlEscreveNome | PrimateKong | PalavraJogar | PalavraHighScore | MarioDefeated1 | MarioDefeated2 | MarioDefeated3 | MarioDefeated4 | MarioDefeatedFinal | GhostDefeated1 | GhostDefeated2 | GhostDefeated3 | GhostDefeated4 | Congratulations | GhostBlueLeft1 | GhostBlueLeft2 | GhostBlueRight1 | GhostBlueRight2 | PlPressEnter | Gameover | PlPressP | AmareloHighScore | Ouro | Prata | Bronze | Pontos deriving (Eq)
 
 type Imagens = [(Imagem, Picture)]
 
@@ -126,6 +126,11 @@ getImages = do
                Just ghostBlueRight2           <- loadJuicyPNG "lib/imagens/ghostBlueRight2.png"
                Just gameover                  <- loadJuicyPNG "lib/imagens/gameover.png"
                Just plPressP                  <- loadJuicyPNG "lib/imagens/PlPressP.png"
+               Just amareloHighScore          <- loadJuicyPNG "lib/imagens/AmareloHighScore.png"
+               Just ouro                      <- loadJuicyPNG "lib/imagens/ouro.png"
+               Just prata                     <- loadJuicyPNG "lib/imagens/prata.png"
+               Just bronze                    <- loadJuicyPNG "lib/imagens/bronze.png"
+               Just pontos                    <- loadJuicyPNG "lib/imagens/pontos.png"
 
                let images = [(Ladder,escada), (Trapdoor,alcapao), (Platform,plataforma), (Estrela,estrela),
                              (Coin,moeda), (Hammer,martelo), (GhostLeft1,ghostLeft1), (GhostLeft2,ghostLeft2),
@@ -156,5 +161,6 @@ getImages = do
                              (MarioDefeated4,marioDefeated4), (MarioDefeatedFinal,marioDefeatedFinal), (GhostDefeated1,ghostDefeated1),
                              (GhostDefeated2,ghostDefeated2), (GhostDefeated3,ghostDefeated3), (GhostDefeated4,ghostDefeated4),
                              (Congratulations,congratulations), (GhostBlueLeft1,ghostBlueLeft1), (GhostBlueLeft2,ghostBlueLeft2),
-                             (GhostBlueRight1,ghostBlueRight1), (GhostBlueRight2,ghostBlueRight2), (Gameover, gameover), (PlPressP,plPressP)]
+                             (GhostBlueRight1,ghostBlueRight1), (GhostBlueRight2,ghostBlueRight2), (Gameover, gameover), (PlPressP,plPressP), 
+                             (AmareloHighScore,amareloHighScore), (Ouro,ouro), (Prata,prata), (Bronze,bronze), (Pontos,pontos)]
                return images
