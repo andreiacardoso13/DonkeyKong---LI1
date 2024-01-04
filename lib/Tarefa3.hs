@@ -244,9 +244,9 @@ Faz o Alçapão desaparecer caso este esteja a ser pisado pela parte esquerda do
 removeAlcapaoEsquerda :: [[Bloco]] -> Hitbox -> [[Bloco]]
 removeAlcapaoEsquerda [] _ = []
 removeAlcapaoEsquerda (h:t) ((x1,y1),(x2,y2)) | eNatural y2 && y2 == 0 && estaEmAlcapao h (x1,y1) = blocoParaVazio h (x1,y1) :t
-                                          | eNatural y2 && y2 == 0 = (h:t)
-                                          | eNatural y2 = h : removeAlcapaoEsquerda t ((x1,y1-1),(x2,y2-1))
-                                          | otherwise = (h:t)
+                                              | eNatural y2 && y2 == 0 = (h:t)
+                                              | eNatural y2 = h : removeAlcapaoEsquerda t ((x1,y1-1),(x2,y2-1))
+                                              | otherwise = (h:t)
 
 {-|
 Verifica se o Bloco onde se localiza o x da posição recebida é um Alcapão
@@ -259,7 +259,7 @@ Verifica se o Bloco onde se localiza o x da posição recebida é um Alcapão
 estaEmAlcapao :: [Bloco] -> Posicao -> Bool
 estaEmAlcapao [] _ = False
 estaEmAlcapao (h:t) (x,y) | x > 0 && x <= 1 && h == Alcapao = True
-                             | otherwise = estaEmAlcapao t (x-1,y)
+                          | otherwise = estaEmAlcapao t (x-1,y)
 
 
 {-|
@@ -381,36 +381,3 @@ movimentoMacacoAux tmp (h:t) | tipo h == MacacoMalvado && tmp > 3 && vx == 0 = h
                              | otherwise = h : movimentoMacacoAux tmp t
   where (vx,vy) = velocidade h
         (x,y) = posicao h
-
-
-{-
-NOTAS 
-
-funcao que atualiza a posicao do jogador no Mapa
-
-utilizar a tarefa4 para se o tempo passar de 5 macaco começar a andar. E se chegar a certa posição ir para a esquerda
-
-fazer lista com os tamanhos de todas as entidades
-
-fazer com que o bonus seja dado ao jogador quando este ganha
-
-fazer uma hitbox especifica para quando o Mario está com o Martelo, e definir o seu tamanho apenas como o sitio onde tá o Mario
-
-Main: Tarefa2.hs:(410,1)-(412,45): Non-exhaustive patterns in function procuraBloco
-aconteceu isto quando estava numa plataforma e cliquei seta para baixo
-
-o jogo acaba quando a vidad do jogador é igual a 0 ou quando este chega à estrela
-
-em relação ao movimento aleatorio do inimigo, ele poderia fazer essa aleatoriadade pelo tempo, por exemplo se o tempo do estado for multiplo de 5 faz essa escolha...
-mas continuar a fazer essa aleatoriedade sempre que passa por uma escada e pode subir/descer
-
-por opção tentar novamente em game over
-
-
-
--}
-
---j1 :: Jogo
---j1 = 
-   --   (Jogo {mapa = mapaInicial,inimigos = [Personagem {velocidade=(1,0),tipo=Fantasma,posicao=(5.5,4.5),direcao = Este,tamanho = (1,1),emEscada=False,ressalta=True,vida=1,pontos=0,aplicaDano=(False,0)},Personagem {velocidade=(1,0),tipo=Fantasma,posicao=(8.5,7.5),direcao = Norte,tamanho = (1,1),emEscada=False,ressalta=True,vida=1,pontos=0,aplicaDano=(False,0)}],colecionaveis = [(Moeda,(17.5,7.5)),(Martelo, (8.5,10.5))],jogador = Personagem {velocidade=(1,0),tipo=Jogador,posicao=(0.5,16.5),direcao = Este,tamanho = (1,1),emEscada=False,ressalta= False,vida=3,pontos=0,aplicaDano=(False,0)}})
-   

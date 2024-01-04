@@ -161,7 +161,8 @@ keysModoHighScore _ s = s
 
 
 keysGanhouJogo :: Event -> Estado -> Estado
-keysGanhouJogo (EventKey (Char 'a') Down _ _) s = s {highScore = escreve (highScore s) "A"}
+keysGanhouJogo (EventKey (Char 'a') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "A"}
+                                                | otherwise = s
 keysGanhouJogo _ s = s
 
 

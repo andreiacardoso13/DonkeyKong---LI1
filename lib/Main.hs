@@ -61,7 +61,7 @@ desenhaEstado s | menu s == Inicio = Pictures(desenhaInicio s)
                 | menu s == ModoPausa Reiniciar = Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa1 (imagens s))]) 
                 | menu s == ModoPausa Home = Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa2 (imagens s))])
                 | menu s == ModoPausa Home = Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa3 (imagens s))])
-                | menu s == ModoHighScore = Pictures [getImagem PalavraHighScore (imagens s)]
+                | menu s == ModoHighScore = Pictures (desenhaModoHighScore s)
                 | menu s == GanhouJogo = Pictures (desenhaGanhouJogo s)
                 | menu s == PerdeuJogo = Pictures (desenhaPerdeuJogo s (tempo s))
                 | otherwise = Pictures(desenhaOpcoes s)
@@ -466,7 +466,8 @@ desenhaPerdeuJogo s n | n >= 2.4 = [Translate 0 (-70) (Scale 2 2 (getImagem Mari
                       | n >= 0 = ((desenhaMapa1 (-715.5,450.5) s) ++ [desenhaJogadorAux s MarioDefeated1] ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s)
                       | otherwise = []
 
-
+desenhaModoHighScore :: Estado -> [Picture]
+desenhaModoHighScore s = [getImagem PalavraHighScore (imagens s)]
 
 
 -- | Verifica se a parte decimal de um número está entre 0 e 25 ou 50 e 75, utilizada para alterar uma imagem de 0,25 em 0,24 segundos
