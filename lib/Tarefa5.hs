@@ -163,9 +163,65 @@ keysModoHighScore _ s = s
 keysGanhouJogo :: Event -> Estado -> Estado
 keysGanhouJogo (EventKey (Char 'a') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "A"}
                                                 | otherwise = s
+keysGanhouJogo (EventKey (Char 'b') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "B"}
+                                                | otherwise = s
+keysGanhouJogo (EventKey (Char 'c') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "C"}
+                                                | otherwise = s
+keysGanhouJogo (EventKey (Char 'd') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "D"}
+                                                | otherwise = s
+keysGanhouJogo (EventKey (Char 'e') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "E"}
+                                                | otherwise = s
+keysGanhouJogo (EventKey (Char 'f') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "F"}
+                                                | otherwise = s
+keysGanhouJogo (EventKey (Char 'g') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "G"}
+                                                | otherwise = s
+keysGanhouJogo (EventKey (Char 'h') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "H"}
+                                                | otherwise = s
+keysGanhouJogo (EventKey (Char 'i') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "I"}
+                                                | otherwise = s
+keysGanhouJogo (EventKey (Char 'j') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "J"}
+                                                | otherwise = s
+keysGanhouJogo (EventKey (Char 'k') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "K"}
+                                                | otherwise = s
+keysGanhouJogo (EventKey (Char 'l') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "L"}
+                                                | otherwise = s
+keysGanhouJogo (EventKey (Char 'm') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "M"}
+                                                | otherwise = s
+keysGanhouJogo (EventKey (Char 'n') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "N"}
+                                                | otherwise = s
+keysGanhouJogo (EventKey (Char 'o') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "O"}
+                                                | otherwise = s
+keysGanhouJogo (EventKey (Char 'p') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "P"}
+                                                | otherwise = s
+keysGanhouJogo (EventKey (Char 'q') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "Q"}
+                                                | otherwise = s
+keysGanhouJogo (EventKey (Char 'r') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "R"}
+                                                | otherwise = s
+keysGanhouJogo (EventKey (Char 's') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "S"}
+                                                | otherwise = s
+keysGanhouJogo (EventKey (Char 't') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "T"}
+                                                | otherwise = s
+keysGanhouJogo (EventKey (Char 'u') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "U"}
+                                                | otherwise = s
+keysGanhouJogo (EventKey (Char 'v') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "V"}
+                                                | otherwise = s
+keysGanhouJogo (EventKey (Char 'w') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "W"}
+                                                | otherwise = s
+keysGanhouJogo (EventKey (Char 'x') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "X"}
+                                                | otherwise = s
+keysGanhouJogo (EventKey (Char 'y') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "Y"}
+                                                | otherwise = s
+keysGanhouJogo (EventKey (Char 'z') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "Z"}
+                                                | otherwise = s
+keysGanhouJogo (EventKey (SpecialKey KeyDelete) Down _ _) s | null (snd (last (highScore s))) = s
+                                                            | otherwise = s {highScore = remove (highScore s)}
+keysGanhouJogo (EventKey (SpecialKey KeyEnter) Down _ _) s = s {menu = Opcoes Jogar, jogo = jOpcoes}
+
 keysGanhouJogo _ s = s
 
-
+remove :: [(Int,String)] -> [(Int,String)]
+remove [] = []
+remove l = init l ++ [(fst (last l), init (snd (last l)))]
 
 --função que adiciona uma letra ao highScore
 escreve :: [(Int,String)] -> String -> [(Int,String)]
