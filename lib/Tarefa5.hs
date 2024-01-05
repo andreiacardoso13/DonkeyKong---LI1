@@ -32,6 +32,7 @@ data Menu = Inicio
           | GanhouJogo
           | PerdeuJogo
           | ModoCreditos
+          | Editor
           deriving Eq
 
 data Opcao = Jogar
@@ -41,6 +42,7 @@ data Opcao = Jogar
            | Home
            | Controls
            | OpCreditos
+           | EditorMapas
           deriving Eq
 
 keys :: Event -> Estado -> Estado
@@ -58,6 +60,7 @@ keys evt s | menu s == Inicio = keysInicio evt s
            | menu s == PerdeuJogo = keysPerdeuJogo evt s
            | menu s == ModoControlos = keysControlos evt s
            | menu s == ModoCreditos = keysCreditos evt s
+           | menu s == Editor = keysEditor evt s
 
 keysInicio :: Event -> Estado -> Estado
 keysInicio (EventKey (SpecialKey KeyEnter) Down _ _) s = s {menu = Opcoes Jogar}
@@ -256,4 +259,25 @@ keysControlos _ s = s
 
 keysCreditos :: Event -> Estado -> Estado
 keysCreditos (EventKey (SpecialKey KeyEnter) Down _ _) s = s {menu = Opcoes Jogar}
-keysCreditos _ s = s
+keysCreditos _ s = s 
+
+keysEditor :: Event -> Estado -> Estado 
+{-
+keysEditor (EventKey (SpecialKey KeyRight) Down _ _) s = if x <27.5 then s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador {posicao = } (x+1,y)}}
+                                                                    else s
+    where (x,y) = posicao (jogador (jogo s))
+keysEditor (EventKey (SpecialKey KeyLeft) Down _ _) s = if x > 0.5 then s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = (x-1,y)}}
+                                                                   else s
+    where (x,y) = posicao (jogador (jogo s))
+keysEditor (EventKey (SpecialKey KeyUp) Down _ _) s = if y > 0.5 then s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = (x,y-1)}}
+                                                                 else s     
+    where (x,y) = posicao (jogador (jogo s))
+keysEditor (EventKey (SpecialKey KeyDown) Down _ _) s = if y<12.5 then s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = (x,y+1)}}
+                                                                  else s
+    where (x,y) = posicao (jogador (jogo s))-}
+keysEditor _ s = s
+
+
+
+--tarefa6
+
