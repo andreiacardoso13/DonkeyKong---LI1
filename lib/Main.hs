@@ -77,8 +77,9 @@ desenhaOpcoesFundo s = (desenhaMapa1 (-715.5,450.5) s ++ desenhaFantasmas s ++ d
 
 
 desenhaOpcoesOpcao :: Estado -> [Picture]
-desenhaOpcoesOpcao s | menu s == Opcoes Jogar = [Scale 1.4 1.4 (getImagem PalavraJogar (imagens s))] ++ [Translate 0 (-70) (getImagem PalavraHighScore (imagens s))] ++ [Translate (-150) 0 (getImagem MarioStandingRight (imagens s))] ++ [Translate 150 0 (getImagem MarioStandingLeft (imagens s))] 
-                     | menu s == Opcoes HighScore = [getImagem PalavraJogar (imagens s)] ++ [Translate 0 (-70) (Scale 1.2 1.2 (getImagem PalavraHighScore (imagens s)))] ++ [Translate (-210) (-65) (getImagem MarioStandingRight (imagens s))] ++ [Translate 210 (-70) (getImagem MarioStandingLeft (imagens s))] 
+desenhaOpcoesOpcao s | menu s == Opcoes Jogar = [Scale 1.4 1.4 (getImagem PalavraJogar (imagens s))] ++ [Translate 0 (-70) (getImagem PalavraHighScore (imagens s))] ++ [Translate (-150) 0 (getImagem MarioStandingRight (imagens s))] ++ [Translate 150 0 (getImagem MarioStandingLeft (imagens s))] ++ [Scale 0.7 0.7 (Translate 0 (-200) (getImagem Creditos (imagens s)))] 
+                     | menu s == Opcoes HighScore = [getImagem PalavraJogar (imagens s)] ++ [Translate 0 (-70) (Scale 1.2 1.2 (getImagem PalavraHighScore (imagens s)))] ++ [Translate (-210) (-65) (getImagem MarioStandingRight (imagens s))] ++ [Translate 210 (-70) (getImagem MarioStandingLeft (imagens s))] ++ [Scale 0.7 0.7 (Translate 0 (-200) (getImagem Creditos (imagens s)))] 
+                     | menu s == Opcoes OpCreditos = [(getImagem PalavraJogar (imagens s))] ++ [Translate 0 (-70) (getImagem PalavraHighScore (imagens s))] ++ [Translate (-210) (-150) (getImagem MarioStandingRight (imagens s))] ++ [Translate 210 (-150) (getImagem MarioStandingLeft (imagens s))] ++ [Scale 1 1 (Translate 0 (-140) (getImagem Creditos (imagens s)))]
                      | otherwise = [rectangleSolid 50 50]
 
 

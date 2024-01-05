@@ -31,6 +31,7 @@ data Menu = Inicio
           | ModoControlos
           | GanhouJogo
           | PerdeuJogo
+          | ModoCreditos
           deriving Eq
 
 data Opcao = Jogar
@@ -39,12 +40,14 @@ data Opcao = Jogar
            | Reiniciar
            | Home
            | Controls
+           | OpCreditos
           deriving Eq
 
 keys :: Event -> Estado -> Estado
 keys evt s | menu s == Inicio = keysInicio evt s
            | menu s == Opcoes Jogar = keysOpJogar evt s
            | menu s == Opcoes HighScore = keysOpHighScore evt s
+           | menu s == Opcoes OpCreditos = keysOpCreditos evt s
            | menu s == ModoJogo = keysModoJogo evt s
            | menu s == ModoPausa Continuar = keysModoPausa evt s
            | menu s == ModoPausa Reiniciar = keysModoPausa evt s
@@ -54,6 +57,7 @@ keys evt s | menu s == Inicio = keysInicio evt s
            | menu s == GanhouJogo = keysGanhouJogo evt s
            | menu s == PerdeuJogo = keysPerdeuJogo evt s
            | menu s == ModoControlos = keysControlos evt s
+           | menu s == ModoCreditos = keysCreditos evt s
 
 keysInicio :: Event -> Estado -> Estado
 keysInicio (EventKey (SpecialKey KeyEnter) Down _ _) s = s {menu = Opcoes Jogar}
@@ -68,8 +72,13 @@ keysOpJogar _ s = s
 keysOpHighScore :: Event -> Estado -> Estado
 keysOpHighScore (EventKey (SpecialKey KeyEnter) Down _ _) s = s {menu = ModoHighScore}
 keysOpHighScore (EventKey (SpecialKey KeyUp) Down _ _) s = s {menu = Opcoes Jogar}
+keysOpHighScore (EventKey (SpecialKey KeyDown) Down _ _) s = s {menu = Opcoes OpCreditos}
 keysOpHighScore _ s = s
 
+keysOpCreditos :: Event -> Estado -> Estado
+keysOpCreditos (EventKey (SpecialKey KeyEnter) Down _ _) s = s {menu = ModoCreditos}
+keysOpCreditos (EventKey (SpecialKey KeyUp) Down _ _) s = s {menu = Opcoes HighScore}
+keysOpCreditos _ s = s
 
 
 
@@ -243,3 +252,7 @@ keysPerdeuJogo _ s = s
 keysControlos :: Event -> Estado -> Estado
 keysControlos (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoControlos}) = e {menu = ModoPausa Controls}
 keysControlos _ s = s
+
+keysCreditos :: Event -> Estado -> Estado
+keysCreditos (EventKey (SpecialKey KeyEnter) Down _ _) s = s {menu = Opcoes Jogar}
+keysCreditos _ s = s
