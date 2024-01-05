@@ -60,10 +60,11 @@ desenhaEstado s | menu s == Inicio = Pictures(desenhaInicio s)
                 | menu s == ModoPausa Continuar = Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa4 (imagens s))])
                 | menu s == ModoPausa Reiniciar = Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa1 (imagens s))]) 
                 | menu s == ModoPausa Home = Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa2 (imagens s))])
-                | menu s == ModoPausa Home = Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa3 (imagens s))])
+                | menu s == ModoPausa Controls = Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa3 (imagens s))])
                 | menu s == ModoHighScore = Pictures (desenhaModoHighScore s)
                 | menu s == GanhouJogo = Pictures (desenhaGanhouJogo s)
                 | menu s == PerdeuJogo = Pictures (desenhaPerdeuJogo s (tempo s))
+                | menu s == ModoControlos = Pictures [getImagem MonkeyStanding (imagens s)]
                 | otherwise = Pictures(desenhaOpcoes s)
 
 desenhaInicio :: Estado -> [Picture]
