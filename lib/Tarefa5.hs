@@ -28,6 +28,7 @@ data Menu = Inicio
           | ModoJogo
           | ModoPausa Opcao
           | ModoHighScore
+          | ModoControlos
           | GanhouJogo
           | PerdeuJogo
           deriving Eq
@@ -47,10 +48,12 @@ keys evt s | menu s == Inicio = keysInicio evt s
            | menu s == ModoJogo = keysModoJogo evt s
            | menu s == ModoPausa Continuar = keysModoPausa evt s
            | menu s == ModoPausa Reiniciar = keysModoPausa evt s
+           | menu s == ModoPausa Controls = keysModoPausa evt s
            | menu s == ModoPausa Home = keysModoPausa evt s
            | menu s == ModoHighScore = keysModoHighScore evt s
            | menu s == GanhouJogo = keysGanhouJogo evt s
            | menu s == PerdeuJogo = keysPerdeuJogo evt s
+           | menu s == ModoControlos = keysControlos evt s
 
 keysInicio :: Event -> Estado -> Estado
 keysInicio (EventKey (SpecialKey KeyEnter) Down _ _) s = s {menu = Opcoes Jogar}
@@ -140,14 +143,19 @@ keysModoJogo _ e = e
 
 keysModoPausa :: Event -> Estado -> Estado
 keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Continuar}) = e {menu = ModoJogo}
-keysModoPausa (EventKey (SpecialKey KeyUp) Down _ _) e@(Estado {menu = ModoPausa Continuar}) = e {menu = ModoPausa Reiniciar}
-keysModoPausa (EventKey (SpecialKey KeyRight) Down _ _) e@(Estado {menu = ModoPausa Reiniciar}) = e {menu = ModoPausa Home}
 keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Reiniciar}) = e {menu = ModoJogo, jogo = j1, tempo = 0, bonus = 15000}
-keysModoPausa (EventKey (SpecialKey KeyLeft) Down _ _) e@(Estado {menu = ModoPausa Home}) = e {menu = ModoPausa Reiniciar}
-keysModoPausa (EventKey (SpecialKey KeyDown) Down _ _) e@(Estado {menu = ModoPausa Home}) = e {menu = ModoPausa Continuar}
+keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Home})      = e {menu = Opcoes Jogar, jogo = jOpcoes}
+keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Controls})  = e {menu = ModoControlos}
+
+keysModoPausa (EventKey (SpecialKey KeyUp) Down _ _)   e@(Estado {menu = ModoPausa Continuar}) = e {menu = ModoPausa Reiniciar}
+keysModoPausa (EventKey (SpecialKey KeyDown) Down _ _) e@(Estado {menu = ModoPausa Home})      = e {menu = ModoPausa Continuar}
 keysModoPausa (EventKey (SpecialKey KeyDown) Down _ _) e@(Estado {menu = ModoPausa Reiniciar}) = e {menu = ModoPausa Continuar}
-keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Home}) = e {menu = Opcoes Jogar, jogo = jOpcoes}
---falta keys para modoPausa Home right, e todos os de Controls
+keysModoPausa (EventKey (SpecialKey KeyDown) Down _ _) e@(Estado {menu = ModoPausa Controls})  = e {menu = ModoPausa Continuar}
+
+keysModoPausa (EventKey (SpecialKey KeyRight) Down _ _) e@(Estado {menu = ModoPausa Reiniciar}) = e {menu = ModoPausa Home}
+keysModoPausa (EventKey (SpecialKey KeyRight) Down _ _) e@(Estado {menu = ModoPausa Home})      = e {menu = ModoPausa Controls}
+keysModoPausa (EventKey (SpecialKey KeyLeft) Down _ _)  e@(Estado {menu = ModoPausa Controls})  = e {menu = ModoPausa Home}
+keysModoPausa (EventKey (SpecialKey KeyLeft) Down _ _)  e@(Estado {menu = ModoPausa Home})      = e {menu = ModoPausa Reiniciar}
 
 keysModoPausa _ s = s
 
@@ -155,8 +163,6 @@ keysModoPausa _ s = s
 keysModoHighScore :: Event -> Estado -> Estado
 keysModoHighScore (EventKey (SpecialKey KeyEnter) Down _ _) s = s {menu = Opcoes Jogar}
 keysModoHighScore _ s = s
---fazer key e delete e para cada letra
---pressionar enter para voltar para MenuOpcoes
 
 
 keysGanhouJogo :: Event -> Estado -> Estado
@@ -233,3 +239,7 @@ keysPerdeuJogo _ s = s
 
 
 -- EventKey Key KeyState Modifiers (Float, Float)
+
+keysControlos :: Event -> Estado -> Estado
+keysControlos (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoControlos}) = e {menu = ModoPausa Controls}
+keysControlos _ s = s
