@@ -17,7 +17,7 @@ import Data.Fixed
 import Data.List
 
 movimenta :: Semente -> Tempo -> Jogo -> Jogo
-movimenta s t j = movimentoMacaco t $ aleatoriedadeFantasmas s t $ movimentoPers $ alteraVidaFantasma $ tempoAplicaDano $ efeitoColisoes $ removeAlcapao $ recolheColecionavel $ ataqueDoInimigo $ efeitoGravidade $ ataqueDoJogador j
+movimenta s t j = ressaltoFantasma $ movimentoMacaco t $ aleatoriedadeFantasmas s t $ movimentoPers $ alteraVidaFantasma $ tempoAplicaDano $ efeitoColisoes $ removeAlcapao $ recolheColecionavel $ ataqueDoInimigo $ efeitoGravidade $ ataqueDoJogador j
       
 {-|
 Se o jogador tiver a componente aplicaDano activa e com tempo restante e a 
@@ -381,3 +381,14 @@ movimentoMacacoAux tmp (h:t) | tipo h == MacacoMalvado && tmp > 3 && vx == 0 = h
                              | otherwise = h : movimentoMacacoAux tmp t
   where (vx,vy) = velocidade h
         (x,y) = posicao h
+
+ressaltoFantasma :: Jogo -> Jogo 
+ressaltoFantasma j = j {inimigos = map (ressaltaFantAux blocos) (inimigos j)}
+  where Mapa a b blocos = mapa j
+
+ressaltaFantAux :: [[Bloco]] -> Personagem -> Personagem
+ressaltaFantAux blocos inim | procuraBlocoInf blocos (x+1,y) == Vazio && tipo inim == Fantasma= inim {velocidade = (-vx,vy)}
+                            | procuraBlocoInf blocos (x-1,y) == Vazio && tipo inim == Fantasma = inim {velocidade = (-vx,vy)}
+                            | otherwise = inim
+  where (vx,vy) = velocidade inim
+        (x,y) = posicao inim
