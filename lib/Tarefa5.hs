@@ -243,6 +243,7 @@ escreve l a = init l ++ [(fst (last l), snd (last l) ++ a)]
 
 
 keysPerdeuJogo :: Event -> Estado -> Estado
+keysPerdeuJogo (EventKey (SpecialKey KeyEnter) Down _ _) s = s {menu = Opcoes Jogar, jogo = jOpcoes}
 keysPerdeuJogo _ s = s
 --funcao que carrega no enter e volta para menu
 

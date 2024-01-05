@@ -141,7 +141,7 @@ ataqueDoInimigo (Jogo {mapa = m
                       ,inimigos = listaInimigos
                       ,colecionaveis = listaColecionaveis
                       ,jogador = jog}) = (Jogo {mapa = m 
-                                               ,inimigos = listaInimigos
+                                               ,inimigos = ataqueDoInimigo2 listaInimigos jog 0
                                                ,colecionaveis = listaColecionaveis
                                                ,jogador = ataqueDoInimigoAux listaInimigos jog})
 
@@ -156,9 +156,20 @@ Se o jogador colidir com um inimigo retira-lhe uma vida e altera a sua posição
 -}
 ataqueDoInimigoAux :: [Personagem] -> Personagem -> Personagem 
 ataqueDoInimigoAux [] p = p
-ataqueDoInimigoAux (inim : t) jog | colisoesPersonagens inim jog && (vida inim == 1 ) && (vida jog <= 3) && (vida jog >1)= (jog {posicao = (10.5,1.5), vida = vida jog -1})
+ataqueDoInimigoAux (inim : t) jog | colisoesPersonagens inim jog && (vida inim == 1 ) && (vida jog <= 3) && (vida jog >1)= (jog {posicao = posicao (jogador j1), velocidade = (0,0),direcao = Este,emEscada = False, vida = vida jog -1})
                                   | colisoesPersonagens inim jog && (vida inim == 1 ) && (vida jog <= 3) && (vida jog >0)= (jog {vida = vida jog -1})
                                   | otherwise = ataqueDoInimigoAux t jog
+
+ataqueDoInimigo2 :: [Personagem] -> Personagem -> Int -> [Personagem]
+ataqueDoInimigo2 [] p n = []
+ataqueDoInimigo2 (inim:t) jog n | colisoesPersonagens inim jog && (vida inim == 1 ) && (vida jog <= 3) && (vida jog >1)= (inim {posicao = posicao (head (drop n (inimigos j1)))}) : ataqueDoInimigo2 t jog (n+1)
+                                | otherwise = inim : ataqueDoInimigo2 t jog (n+1)
+
+
+
+
+
+
 
 {-|
 Reflete as consequências de quando um colecionável é recolhido
@@ -392,3 +403,4 @@ ressaltaFantAux blocos inim | procuraBlocoInf blocos (x+1,y) == Vazio && tipo in
                             | otherwise = inim
   where (vx,vy) = velocidade inim
         (x,y) = posicao inim
+
