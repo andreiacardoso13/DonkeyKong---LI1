@@ -50,8 +50,6 @@ fr = 20
 -- | Recebe as imagens e devolve o estado inicial do jogo
 estadoInicial :: Imagens -> Estado
 estadoInicial images = Estado {menu = Inicio,jogo = jOpcoes, imagens = images, tempo = 0 ,bonus = 15000, highScore = [(5000,"JOAO"), (12000,"MARIA"),(8200,"MIGUEL")]}
---estadoInicial images = Estado {menu = ModoJogo,jogo = j1, imagens = images, tempo = 0 ,bonus = 15000}
-
 
 -- | Desenha no ecrã o que está a acontecer no jogo em cada momento
 desenhaEstado :: Estado -> Picture
@@ -170,17 +168,6 @@ desenhaFantasmasAux img t jog inim | tipo inim == Fantasma && vida inim == 1 = d
                                    | tipo inim == Fantasma && vida inim >6 && vida inim <= 8 = desenhaFantAux inim img GhostDefeated3
                                    | tipo inim == Fantasma && vida inim >8 && vida inim <= 10 = desenhaFantAux inim img GhostDefeated4
                                    | otherwise = rectangleSolid 0.1 0.1
-
---ESCREVER FUNÇÃO QUE QUANDO FANTASMA TEM OO VIDAS TIRAR VIDAS
-
-
---vida (head (inimigos jog)) > 0  && tipo (head (inimigos jog)) == Fantasma = desenhaFantasmaVivo (Estado {jogo = jog {inimigos = take 1 (inimigos jog)}, imagens = imgs, tempo = tp}) : (desenhaFantasmas (Estado {jogo = jog {inimigos = drop 1 (inimigos jog)}, imagens = imgs, tempo = tp}))
- -- | otherwise = desenhaFantasmas (Estado {jogo = jog {inimigos = drop 1 (inimigos jog)}, imagens = imgs, tempo = tp})
-
-
---desenhaFantasmaAtacado :: Estado -> Picture
---desenhaFantasmaAtacado est | vida head (inimigos (jog est)) == 0 = desenhaFantAux est GhostDefeated1 
-
 
 -- | Fornece uma picture do inimigo com as devidas translações para esta estar na posição atual do inimigo (a imagem fornecida depende o tempo atual do estado)
 desenhaFantasmaVivo :: Imagens -> Tempo -> Personagem -> Personagem -> Picture
@@ -462,11 +449,11 @@ desenhaPerdeuJogo s n | n >= 2.4 = [Translate 0 (-70) (Scale 2 2 (getImagem Mari
                       | otherwise = []
 
 desenhaModoHighScore :: Estado -> [Picture]
-desenhaModoHighScore s = map (Translate 230 (66)) (desenhaNome (snd (head (highScore s))) (imagens s) 0) ++ 
-                         map (Translate 350 (-330)) (desenhaHighScore s )++ 
-                         map (Translate 230 (-4)) ((desenhaNome  (snd (head(drop 1 (highScore s))))) (imagens s) 0 )++ 
+desenhaModoHighScore s = map (Translate 230 (66)) (desenhaNome (snd (head (highScore est))) (imagens s) 0) ++ 
+                         map (Translate 350 (-330)) (desenhaHighScore est )++ 
+                         map (Translate 230 (-4)) ((desenhaNome  (snd (head(drop 1 (highScore est))))) (imagens s) 0 )++ 
                          map (Translate 350 (-400)) (desenhaHighScore (retiraHighScore est))  ++ 
-                         map (Translate 230 (-74)) ((desenhaNome  (snd (head(drop 2 (highScore s))))) (imagens s) 0 )++ 
+                         map (Translate 230 (-74)) ((desenhaNome  (snd (head(drop 2 (highScore est))))) (imagens s) 0 )++ 
                          map (Translate 350 (-470)) (desenhaHighScore (retiraHighScore (retiraHighScore est))) ++ 
                          [Scale 0.8 0.8 (Translate 0 300 (getImagem AmareloHighScore (imagens s))),Translate (-390) 70 (getImagem Ouro (imagens s)),Translate (-390) (0) (getImagem Prata (imagens s)),Translate (-390) (-70) (getImagem Bronze (imagens s)), Scale 0.32 0.32 (Translate 0 (-265) (getImagem Pontos (imagens s))), Scale 0.32 0.32 (Translate 0 (-30) (getImagem Pontos (imagens s))),Scale 0.32 0.32 (Translate 0 190 (getImagem Pontos (imagens s))), Translate 0 (-400) (getImagem PlPressEnter2 (imagens s))]
   where est = ordenaHighScore s

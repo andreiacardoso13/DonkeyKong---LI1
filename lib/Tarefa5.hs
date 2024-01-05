@@ -124,8 +124,8 @@ keysModoJogo (EventKey (SpecialKey KeySpace) Down _ _) e@(Estado {jogo = j@(Jogo
                                                                                                      tempo = t})             | b = e
                                                                                                                              | not (colisoesParede m jgd)            = e{jogo = j {jogador = movePersonagem jgd Nothing}}
                                                                                                                              | not esc  && fst (velocidade jgd) == 0 = e{jogo = j {jogador = movePersonagem (jgd {posicao = (x, y-1)}) (Just Saltar)}}
-                                                                                                                             | not esc  && direcao jgd == Oeste      = e{jogo = j {jogador = movePersonagem (jgd {posicao = (x, y-1)}) (Just Saltar)}}
-                                                                                                                             | not esc  && direcao jgd == Este       = e{jogo = j {jogador = movePersonagem (jgd {posicao = (x, y-1)}) (Just Saltar)}}
+                                                                                                                             | not esc  && direcao jgd == Oeste      = e{jogo = j {jogador = movePersonagem (jgd {posicao = (x-1, y-1)}) (Just Saltar)}}
+                                                                                                                             | not esc  && direcao jgd == Este       = e{jogo = j {jogador = movePersonagem (jgd {posicao = (x+1, y-1)}) (Just Saltar)}}
                                                                                                                              | otherwise = e
 
 keysModoJogo (EventKey (SpecialKey KeySpace) Up _ _) e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos),
