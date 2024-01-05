@@ -370,8 +370,8 @@ CONDIÇOES DESCER
 
 aleatFantAndar :: Semente -> Tempo -> [Personagem] -> [Personagem]
 aleatFantAndar _ _ [] = []
-aleatFantAndar s tp (h:t) | alteraImagem3 (realToFrac tp) && (head(geraAleatorios s 1)) > 0 && tipo h == Fantasma = (h{velocidade = (-vx,vy)}) : aleatFantAndar (s+5) tp t
-                          | alteraImagem3 (realToFrac tp) && (head(geraAleatorios s 1)) < 0 && tipo h == Fantasma = (h{velocidade = (vx,vy)}) : aleatFantAndar (s+5) tp t
+aleatFantAndar s tp (h:t) | alteraImagem3 (realToFrac tp) && (head(geraAleatorios s 1)) > 0 && tipo h == Fantasma = (h{velocidade = (-1.5,vy)}) : aleatFantAndar (s+5) tp t
+                          | alteraImagem3 (realToFrac tp) && (head(geraAleatorios s 1)) < 0 && tipo h == Fantasma = (h{velocidade = (1.5,vy)}) : aleatFantAndar (s+5) tp t
                           | otherwise = h : aleatFantAndar (s+1) tp t
   where (vx,vy) = velocidade h
       
@@ -398,8 +398,8 @@ ressaltoFantasma j = j {inimigos = map (ressaltaFantAux blocos) (inimigos j)}
   where Mapa a b blocos = mapa j
 
 ressaltaFantAux :: [[Bloco]] -> Personagem -> Personagem
-ressaltaFantAux blocos inim | procuraBlocoInf blocos (x+1,y) == Vazio && tipo inim == Fantasma= inim {velocidade = (-vx,vy)}
-                            | procuraBlocoInf blocos (x-1,y) == Vazio && tipo inim == Fantasma = inim {velocidade = (-vx,vy)}
+ressaltaFantAux blocos inim | procuraBlocoInf blocos (x+0.52,y) == Vazio && tipo inim == Fantasma= inim {velocidade = (-vx,vy)}
+                            | procuraBlocoInf blocos (x-0.52,y) == Vazio && tipo inim == Fantasma = inim {velocidade = (-vx,vy)}
                             | otherwise = inim
   where (vx,vy) = velocidade inim
         (x,y) = posicao inim

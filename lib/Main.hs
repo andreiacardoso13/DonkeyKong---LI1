@@ -494,7 +494,7 @@ reageTempo t s | menu s == GanhouJogo = s {jogo = Jogo {mapa = mapa (jogo s),ini
                | menu s == ModoPausa Continuar || menu s == ModoPausa Reiniciar || menu s == ModoPausa Home = s{jogo = jogo s, tempo = tempo s + (realToFrac t), bonus = bonus s}
                | menu s == ModoJogo = ganhaJogo $ perdeJogo $ s {jogo = movimenta (truncate (tempo s)) (tempo s) (jogo s),tempo = tempo s + (realToFrac t), bonus = diminuiBonus (bonus s)}
                | menu s == PerdeuJogo = s {tempo = tempo s + (realToFrac t), jogo = Jogo{mapa = mapa (jogo s),inimigos = inimigos (jogo s), colecionaveis = colecionaveis (jogo s), jogador = jogador (jogo s)}}
-               | otherwise = s {jogo = movimenta (truncate (tempo s)) (tempo s) (jogo s),tempo = tempo s + (realToFrac t)}
+               | otherwise = analisaHighScore $ s {jogo = movimenta (truncate (tempo s)) (tempo s) (jogo s),tempo = tempo s + (realToFrac t)}
 
 
 
@@ -532,3 +532,20 @@ ganhouInimigos (h:t) = h {vida=11} : ganhouInimigos t
 
 jogGanhaJogo :: Personagem -> Int -> Personagem
 jogGanhaJogo jog b = jog {pontos = (pontos jog) + ((div b 100)*100), velocidade = (0,0)}
+
+analisaHighScore :: Estado -> Estado
+analisaHighScore s = s {highScore = analisaHighScoreAux (highScore s)}
+  -- where hs = highScore s
+
+
+
+
+analisaHighScoreAux :: [(Int,String)] -> [(Int,String)]
+analisaHighScoreAux [] = []
+analisaHighScoreAux [a] = [a]
+analisaHighScoreAux ((h1,h2):(h3,h4):t) | elem h2 (map snd ((h3,h4):t)) && (h2 == h4) = if h1 > h3 
+                                                                                          then (h1,h2) : analisaHighScoreAux t 
+                                                                                          else (h3,h4) : analisaHighScoreAux t 
+                                        | elem h2 (map snd ((h3,h4):t)) = analisaHighScoreAux ([(h1,h2)] ++ t ++ [(h3,h4)])
+                                        | otherwise = (h1,h2) : analisaHighScoreAux ((h3,h4):t)
+
