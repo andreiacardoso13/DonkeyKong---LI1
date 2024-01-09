@@ -17,9 +17,11 @@ import Tarefa4
 import Music
 
 import Data.Fixed
+import System.Exit
 
 import Graphics.Gloss
 import Graphics.Gloss.Interface.Pure.Game
+import Graphics.Gloss.Interface.IO.Game
 
 data Estado = Estado {menu :: Menu, jogo :: Jogo, imagens :: Imagens, tempo :: Tempo, bonus :: Int, highScore :: [(Int,String)]}
 
@@ -46,208 +48,233 @@ data Opcao = Jogar
            | EditorMapas
           deriving Eq
 
-keys :: Event -> Estado -> Estado
-keys evt s | menu s == Inicio = keysInicio evt s
-           | menu s == Opcoes Jogar = keysOpJogar evt s
-           | menu s == Opcoes HighScore = keysOpHighScore evt s
-           | menu s == Opcoes OpCreditos = keysOpCreditos evt s
-           | menu s == Opcoes EditorMapas = keysOpEditorMapas evt s
-           | menu s == ModoJogo = keysModoJogo evt s
+keys :: Event -> Estado -> IO Estado
+keys evt s | menu s == Inicio              = keysInicio evt s
+           | menu s == Opcoes Jogar        = keysOpJogar evt s
+           | menu s == Opcoes HighScore    = keysOpHighScore evt s
+           | menu s == Opcoes OpCreditos   = keysOpCreditos evt s
+           | menu s == Opcoes EditorMapas  = keysOpEditorMapas evt s
+           | menu s == ModoJogo            = keysModoJogo evt s
            | menu s == ModoPausa Continuar = keysModoPausa evt s
            | menu s == ModoPausa Reiniciar = keysModoPausa evt s
-           | menu s == ModoPausa Controls = keysModoPausa evt s
-           | menu s == ModoPausa Home = keysModoPausa evt s
-           | menu s == ModoHighScore = keysModoHighScore evt s
-           | menu s == GanhouJogo = keysGanhouJogo evt s
-           | menu s == PerdeuJogo = keysPerdeuJogo evt s
-           | menu s == ModoControlos = keysControlos evt s
-           | menu s == ModoCreditos = keysCreditos evt s
-           | menu s == Editor = keysEditor evt s
-           | menu s == Exit = keysExit evt s
+           | menu s == ModoPausa Controls  = keysModoPausa evt s
+           | menu s == ModoPausa Home      = keysModoPausa evt s
+           | menu s == ModoHighScore       = keysModoHighScore evt s
+           | menu s == GanhouJogo          = keysGanhouJogo evt s
+           | menu s == PerdeuJogo          = keysPerdeuJogo evt s
+           | menu s == ModoControlos       = keysControlos evt s
+           | menu s == ModoCreditos        = keysCreditos evt s
+           | menu s == Editor              = keysEditor evt s
+           | menu s == Exit                = keysExit evt s
 
-keysInicio :: Event -> Estado -> Estado
-keysInicio (EventKey (SpecialKey KeyEnter) Down _ _) s = s {menu = Opcoes Jogar}
-keysInicio _ s = s
+keysInicio :: Event -> Estado -> IO Estado
+keysInicio (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = Opcoes Jogar}
+keysInicio (EventKey (SpecialKey KeyEsc) Down _ _) s   = do musicaParar
+                                                            exitSuccess
+keysInicio _ s = return s
 
-keysOpJogar :: Event -> Estado -> Estado
-keysOpJogar (EventKey (SpecialKey KeyEnter) Down _ _) s = s {menu = ModoJogo, jogo = j1, tempo = 0, bonus = 15000}
-keysOpJogar (EventKey (SpecialKey KeyDown) Down _ _) s = s {menu = Opcoes HighScore}
---keysOpJogar (EventKey (Char 'a') Down _ _)
-keysOpJogar _ s = s
+keysOpJogar :: Event -> Estado -> IO Estado
+keysOpJogar (EventKey (SpecialKey KeyEnter) Down _ _) s = do musicaParar
+                                                             musicaJogo
+                                                             return s {menu = ModoJogo, jogo = j1, tempo = 0, bonus = 15000}
+keysOpJogar (EventKey (SpecialKey KeyDown) Down _ _) s  = return s {menu = Opcoes HighScore}
+keysOpJogar (EventKey (SpecialKey KeyEsc) Down _ _) s   = do musicaParar
+                                                             exitSuccess
+keysOpJogar _ s = return s
 
-keysOpHighScore :: Event -> Estado -> Estado
-keysOpHighScore (EventKey (SpecialKey KeyEnter) Down _ _) s = s {menu = ModoHighScore}
-keysOpHighScore (EventKey (SpecialKey KeyUp) Down _ _) s = s {menu = Opcoes Jogar}
-keysOpHighScore (EventKey (SpecialKey KeyDown) Down _ _) s = s {menu = Opcoes OpCreditos}
-keysOpHighScore _ s = s
+keysOpHighScore :: Event -> Estado -> IO Estado
+keysOpHighScore (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = ModoHighScore}
+keysOpHighScore (EventKey (SpecialKey KeyUp) Down _ _) s    = return s {menu = Opcoes Jogar}
+keysOpHighScore (EventKey (SpecialKey KeyDown) Down _ _) s  = return s {menu = Opcoes OpCreditos}
+keysOpHighScore (EventKey (SpecialKey KeyEsc) Down _ _) s   = do musicaParar
+                                                                 exitSuccess
+keysOpHighScore _ s = return s
 
-keysOpCreditos :: Event -> Estado -> Estado
-keysOpCreditos (EventKey (SpecialKey KeyEnter) Down _ _) s = s {menu = ModoCreditos}
-keysOpCreditos (EventKey (SpecialKey KeyUp) Down _ _) s = s {menu = Opcoes HighScore}
-keysOpCreditos (EventKey (SpecialKey KeyDown) Down _ _) s = s {menu = Opcoes EditorMapas}
-keysOpCreditos _ s = s
+keysOpCreditos :: Event -> Estado -> IO Estado
+keysOpCreditos (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = ModoCreditos}
+keysOpCreditos (EventKey (SpecialKey KeyUp) Down _ _) s    = return s {menu = Opcoes HighScore}
+keysOpCreditos (EventKey (SpecialKey KeyDown) Down _ _) s  = return s {menu = Opcoes EditorMapas}
+keysOpCreditos (EventKey (SpecialKey KeyEsc) Down _ _) s   = do musicaParar
+                                                                exitSuccess
+keysOpCreditos _ s = return s
 
-keysOpEditorMapas :: Event -> Estado -> Estado
-keysOpEditorMapas (EventKey (SpecialKey KeyEnter) Down _ _) s = s {menu = Editor, jogo = jEditor}
-keysOpEditorMapas (EventKey (SpecialKey KeyUp) Down _ _) s = s {menu = Opcoes OpCreditos}
-keysOpEditorMapas _ s = s
-
-
-keysExit :: Event -> Estado -> Estado
-keysExit (EventKey (SpecialKey KeyUp) Down _ _) s = s {menu = Opcoes OpCreditos}
-keysExit (EventKey (SpecialKey KeyEnter) Down _ _) s = undefined
-keysExit _ s = s
+keysOpEditorMapas :: Event -> Estado -> IO Estado
+keysOpEditorMapas (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = Editor, jogo = jEditor}
+keysOpEditorMapas (EventKey (SpecialKey KeyUp) Down _ _) s    = return s {menu = Opcoes OpCreditos}
+keysOpEditorMapas (EventKey (SpecialKey KeyEsc) Down _ _) s   = do musicaParar
+                                                                   exitSuccess
+keysOpEditorMapas _ s = return s
 
 
+keysExit :: Event -> Estado -> IO Estado
+keysExit (EventKey (SpecialKey KeyUp) Down _ _) s    = return s {menu = Opcoes OpCreditos}
+keysExit (EventKey (SpecialKey KeyEnter) Down _ _) s = do musicaParar
+                                                          exitSuccess
+keysExit (EventKey (SpecialKey KeyEsc) Down _ _) s   = do musicaParar
+                                                          exitSuccess
+keysExit _ s = return s
 
-keysModoJogo :: Event -> Estado -> Estado
+
+
+keysModoJogo :: Event -> Estado -> IO Estado
 keysModoJogo (EventKey (SpecialKey KeyRight) Down _ _) e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos),
                                                                           jogador = jgd@(Personagem {posicao = pos@(x,y),
-                                                                                                     emEscada = esc})})}) | not esc   = e{jogo = j {jogador = movePersonagem (jgd {posicao = (min x 27.5, y)}) (Just AndarDireita)}}
-                                                                                                                          | otherwise = e
+                                                                                                     emEscada = esc})})}) | not esc   = return e{jogo = j {jogador = movePersonagem (jgd {posicao = (min x 27.5, y)}) (Just AndarDireita)}}
+                                                                                                                          | otherwise = return e
 
 keysModoJogo (EventKey (SpecialKey KeyLeft)  Down _ _) e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos),
                                                                          jogador = jgd@(Personagem {posicao = pos@(x,y),
-                                                                                                    emEscada = esc})})}) | not esc   = e{jogo = j {jogador = movePersonagem (jgd {posicao = (max x 0.5, y)}) (Just AndarEsquerda)}}
-                                                                                                                         | otherwise = e
+                                                                                                    emEscada = esc})})}) | not esc   = return e{jogo = j {jogador = movePersonagem (jgd {posicao = (max x 0.5, y)}) (Just AndarEsquerda)}}
+                                                                                                                         | otherwise = return e
 
 keysModoJogo (EventKey (SpecialKey KeyUp)    Down _ _) e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos),
                                                                           jogador = jgd@(Personagem {posicao = pos@(x,y),
                                                                                                      emEscada = esc,
-                                                                                                     aplicaDano = (b,_)})})}) | b = e
-                                                                                                                              |     esc && procuraBloco blocos pos == Vazio && procuraBlocoInf blocos pos == Plataforma && colisoesParede m jgd = e{jogo = j {jogador = movePersonagem (jgd {emEscada = False}) (Just Parar)}}
-                                                                                                                              | not esc && procuraBloco blocos pos == Escada && mod' x 1 <= 0.6 && mod' x 1 >= 0.3                              = e{jogo = j {jogador = movePersonagem jgd (Just Subir)}}
-                                                                                                                              | esc                                                                                                             = e{jogo = j {jogador = movePersonagem (jgd {posicao = (x, max (y-0.5) 0.5)}) (Just Subir)}}
-                                                                                                                              | otherwise = e
+                                                                                                     aplicaDano = (b,_)})})}) | b = return e
+                                                                                                                              |     esc && procuraBloco blocos pos == Vazio && procuraBlocoInf blocos pos == Plataforma && colisoesParede m jgd = return e{jogo = j {jogador = movePersonagem (jgd {emEscada = False}) (Just Parar)}}
+                                                                                                                              | not esc && procuraBloco blocos pos == Escada && mod' x 1 <= 0.6 && mod' x 1 >= 0.3                              = return e{jogo = j {jogador = movePersonagem jgd (Just Subir)}}
+                                                                                                                              | esc                                                                                                             = return e{jogo = j {jogador = movePersonagem (jgd {posicao = (x, max (y-0.5) 0.5)}) (Just Subir)}}
+                                                                                                                              | otherwise = return e
 
 keysModoJogo (EventKey (SpecialKey KeyDown)  Down _ _) e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos),
                                                                           jogador = jgd@(Personagem {posicao = pos@(x,y),
                                                                                                      emEscada = esc,
-                                                                                                     aplicaDano = (b,_)})})}) | b = e
-                                                                                                                              |    esc  && procuraBlocoInf blocos pos == Escada                                                                                    = e{jogo = j {jogador = movePersonagem (jgd {posicao = (x, min (y+0.5) 16.5)}) (Just Descer)}}
-                                                                                                                              |    esc  && procuraBlocoInf blocos pos == Plataforma && procuraBloco blocos pos     == Escada && colisoesParede m jgd               = e{jogo = j {jogador = movePersonagem (jgd {emEscada = False}) (Just Parar)}}
-                                                                                                                              |            procuraBlocoInf blocos pos == Plataforma && procuraBloco blocos (x,y+2) == Escada && mod' x 1 <= 0.6 && mod' x 1 >= 0.3 = e{jogo = j {jogador = movePersonagem (jgd {posicao = (x, min (y+0.5) 16.5)}) (Just Descer)}}
-                                                                                                                              |            procuraBlocoInf blocos pos == Escada     && procuraBloco blocos pos     == Plataforma                                   = e{jogo = j {jogador = movePersonagem jgd (Just Descer)}}
+                                                                                                     aplicaDano = (b,_)})})}) | b = return e
+                                                                                                                              |    esc  && procuraBlocoInf blocos pos == Escada                                                                                    = return e{jogo = j {jogador = movePersonagem (jgd {posicao = (x, min (y+0.5) 16.5)}) (Just Descer)}}
+                                                                                                                              |    esc  && procuraBlocoInf blocos pos == Plataforma && procuraBloco blocos pos     == Escada && colisoesParede m jgd               = return e{jogo = j {jogador = movePersonagem (jgd {emEscada = False}) (Just Parar)}}
+                                                                                                                              |            procuraBlocoInf blocos pos == Plataforma && procuraBloco blocos (x,y+2) == Escada && mod' x 1 <= 0.6 && mod' x 1 >= 0.3 = return e{jogo = j {jogador = movePersonagem (jgd {posicao = (x, min (y+0.5) 16.5)}) (Just Descer)}}
+                                                                                                                              |            procuraBlocoInf blocos pos == Escada     && procuraBloco blocos pos     == Plataforma                                   = return e{jogo = j {jogador = movePersonagem jgd (Just Descer)}}
 
 keysModoJogo (EventKey (SpecialKey KeyUp) Up _ _) e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos),
                                                                           jogador = jgd@(Personagem {posicao = pos@(x,y),
-                                                                                                     emEscada = esc})})}) | esc && procuraBloco blocos pos == Vazio && procuraBlocoInf blocos pos == Plataforma && colisoesParede m jgd = e{jogo = j {jogador = movePersonagem (jgd {emEscada = False}) (Just Parar)}}
-                                                                                                                          | otherwise = e {jogo = j {jogador = movePersonagem jgd (Just Parar)}}
+                                                                                                     emEscada = esc})})}) | esc && procuraBloco blocos pos == Vazio && procuraBlocoInf blocos pos == Plataforma && colisoesParede m jgd = return e{jogo = j {jogador = movePersonagem (jgd {emEscada = False}) (Just Parar)}}
+                                                                                                                          | otherwise = return e {jogo = j {jogador = movePersonagem jgd (Just Parar)}}
 
 
 keysModoJogo (EventKey (SpecialKey k) Up _ _) e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos),
                                                                           jogador = jgd@(Personagem {posicao = pos@(x,y),
                                                                                                      emEscada = esc})})}) = if k == KeyRight || k == KeyLeft || k == KeyUp || k == KeyDown
-                                                                                                                               then e{jogo = j {jogador = movePersonagem jgd (Just Parar)}}
-                                                                                                                               else e
+                                                                                                                               then return e{jogo = j {jogador = movePersonagem jgd (Just Parar)}}
+                                                                                                                               else return e
 
 
 keysModoJogo (EventKey (SpecialKey KeySpace) Down _ _) e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos),
                                                                           jogador = jgd@(Personagem {posicao = pos@(x,y),
                                                                                                      emEscada = esc,
                                                                                                      aplicaDano = (b,_)})}),
-                                                                                                     tempo = t})             | b = e
-                                                                                                                             | not (colisoesParede m jgd)            = e{jogo = j {jogador = movePersonagem jgd Nothing}}
-                                                                                                                             | not esc  && fst (velocidade jgd) == 0 = e{jogo = j {jogador = movePersonagem (jgd {posicao = (x, y-1)}) (Just Saltar)}}
-                                                                                                                             | not esc  && direcao jgd == Oeste      = e{jogo = j {jogador = movePersonagem (jgd {posicao = (x-1, y-1)}) (Just Saltar)}}
-                                                                                                                             | not esc  && direcao jgd == Este       = e{jogo = j {jogador = movePersonagem (jgd {posicao = (x+1, y-1)}) (Just Saltar)}}
-                                                                                                                             | otherwise = e
+                                                                                                     tempo = t})             | b = return e
+                                                                                                                             | not (colisoesParede m jgd)            = return e{jogo = j {jogador = movePersonagem jgd Nothing}}
+                                                                                                                             | not esc  && fst (velocidade jgd) == 0 = return e{jogo = j {jogador = movePersonagem (jgd {posicao = (x, y-1)}) (Just Saltar)}}
+                                                                                                                             | not esc  && direcao jgd == Oeste      = return e{jogo = j {jogador = movePersonagem (jgd {posicao = (x-1, y-1)}) (Just Saltar)}}
+                                                                                                                             | not esc  && direcao jgd == Este       = return e{jogo = j {jogador = movePersonagem (jgd {posicao = (x+1, y-1)}) (Just Saltar)}}
+                                                                                                                             | otherwise = return e
 
 keysModoJogo (EventKey (SpecialKey KeySpace) Up _ _) e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos),
                                                                           jogador = jgd@(Personagem {posicao = pos@(x,y),
                                                                                                      emEscada = esc,
                                                                                                      aplicaDano = (b,_)})}),
-                                                                                                     tempo = t})             | b = e
-                                                                                                                             | otherwise = e{jogo = j {jogador = movePersonagem jgd Nothing}}
+                                                                                                     tempo = t})             | b = return e
+                                                                                                                             | otherwise = return e{jogo = j {jogador = movePersonagem jgd Nothing}}
 
 
-keysModoJogo (EventKey (Char 'p') Down _ _) e@(Estado {menu = ModoJogo}) = e {menu = ModoPausa Continuar}
-
-keysModoJogo _ e = e
-
-
-keysModoPausa :: Event -> Estado -> Estado
-keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Continuar}) = e {menu = ModoJogo}
-keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Reiniciar}) = e {menu = ModoJogo, jogo = j1, tempo = 0, bonus = 15000}
-keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Home})      = e {menu = Opcoes Jogar, jogo = jOpcoes}
-keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Controls})  = e {menu = ModoControlos}
-
-keysModoPausa (EventKey (SpecialKey KeyUp) Down _ _)   e@(Estado {menu = ModoPausa Continuar}) = e {menu = ModoPausa Reiniciar}
-keysModoPausa (EventKey (SpecialKey KeyDown) Down _ _) e@(Estado {menu = ModoPausa Home})      = e {menu = ModoPausa Continuar}
-keysModoPausa (EventKey (SpecialKey KeyDown) Down _ _) e@(Estado {menu = ModoPausa Reiniciar}) = e {menu = ModoPausa Continuar}
-keysModoPausa (EventKey (SpecialKey KeyDown) Down _ _) e@(Estado {menu = ModoPausa Controls})  = e {menu = ModoPausa Continuar}
-
-keysModoPausa (EventKey (SpecialKey KeyRight) Down _ _) e@(Estado {menu = ModoPausa Reiniciar}) = e {menu = ModoPausa Home}
-keysModoPausa (EventKey (SpecialKey KeyRight) Down _ _) e@(Estado {menu = ModoPausa Home})      = e {menu = ModoPausa Controls}
-keysModoPausa (EventKey (SpecialKey KeyLeft) Down _ _)  e@(Estado {menu = ModoPausa Controls})  = e {menu = ModoPausa Home}
-keysModoPausa (EventKey (SpecialKey KeyLeft) Down _ _)  e@(Estado {menu = ModoPausa Home})      = e {menu = ModoPausa Reiniciar}
-
-keysModoPausa _ s = s
+keysModoJogo (EventKey (Char 'p') Down _ _) e@(Estado {menu = ModoJogo}) = return e {menu = ModoPausa Continuar}
+keysModoJogo (EventKey (SpecialKey KeyEsc) Down _ _) s = do musicaParar
+                                                            exitSuccess
+keysModoJogo _ e = return e
 
 
-keysModoHighScore :: Event -> Estado -> Estado
-keysModoHighScore (EventKey (SpecialKey KeyEnter) Down _ _) s = s {menu = Opcoes Jogar}
-keysModoHighScore _ s = s
+keysModoPausa :: Event -> Estado -> IO Estado
+keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Continuar}) = return e {menu = ModoJogo}
+keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Reiniciar}) = return e {menu = ModoJogo, jogo = j1, tempo = 0, bonus = 15000}
+keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Home})      = do musicaParar
+                                                                                                     musicaMenu
+                                                                                                     return e {menu = Opcoes Jogar, jogo = jOpcoes}
+keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Controls})  = return e {menu = ModoControlos}
+
+keysModoPausa (EventKey (SpecialKey KeyUp) Down _ _)   e@(Estado {menu = ModoPausa Continuar}) = return e {menu = ModoPausa Reiniciar}
+keysModoPausa (EventKey (SpecialKey KeyDown) Down _ _) e@(Estado {menu = ModoPausa Home})      = return e {menu = ModoPausa Continuar}
+keysModoPausa (EventKey (SpecialKey KeyDown) Down _ _) e@(Estado {menu = ModoPausa Reiniciar}) = return e {menu = ModoPausa Continuar}
+keysModoPausa (EventKey (SpecialKey KeyDown) Down _ _) e@(Estado {menu = ModoPausa Controls})  = return e {menu = ModoPausa Continuar}
+
+keysModoPausa (EventKey (SpecialKey KeyRight) Down _ _) e@(Estado {menu = ModoPausa Reiniciar}) = return e {menu = ModoPausa Home}
+keysModoPausa (EventKey (SpecialKey KeyRight) Down _ _) e@(Estado {menu = ModoPausa Home})      = return e {menu = ModoPausa Controls}
+keysModoPausa (EventKey (SpecialKey KeyLeft) Down _ _)  e@(Estado {menu = ModoPausa Controls})  = return e {menu = ModoPausa Home}
+keysModoPausa (EventKey (SpecialKey KeyLeft) Down _ _)  e@(Estado {menu = ModoPausa Home})      = return e {menu = ModoPausa Reiniciar}
+
+keysModoPausa (EventKey (SpecialKey KeyEsc) Down _ _) s = do musicaParar
+                                                             exitSuccess
+
+keysModoPausa _ s = return s
 
 
-keysGanhouJogo :: Event -> Estado -> Estado
-keysGanhouJogo (EventKey (Char 'a') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "A"}
-                                                | otherwise = s
-keysGanhouJogo (EventKey (Char 'b') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "B"}
-                                                | otherwise = s
-keysGanhouJogo (EventKey (Char 'c') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "C"}
-                                                | otherwise = s
-keysGanhouJogo (EventKey (Char 'd') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "D"}
-                                                | otherwise = s
-keysGanhouJogo (EventKey (Char 'e') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "E"}
-                                                | otherwise = s
-keysGanhouJogo (EventKey (Char 'f') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "F"}
-                                                | otherwise = s
-keysGanhouJogo (EventKey (Char 'g') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "G"}
-                                                | otherwise = s
-keysGanhouJogo (EventKey (Char 'h') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "H"}
-                                                | otherwise = s
-keysGanhouJogo (EventKey (Char 'i') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "I"}
-                                                | otherwise = s
-keysGanhouJogo (EventKey (Char 'j') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "J"}
-                                                | otherwise = s
-keysGanhouJogo (EventKey (Char 'k') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "K"}
-                                                | otherwise = s
-keysGanhouJogo (EventKey (Char 'l') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "L"}
-                                                | otherwise = s
-keysGanhouJogo (EventKey (Char 'm') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "M"}
-                                                | otherwise = s
-keysGanhouJogo (EventKey (Char 'n') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "N"}
-                                                | otherwise = s
-keysGanhouJogo (EventKey (Char 'o') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "O"}
-                                                | otherwise = s
-keysGanhouJogo (EventKey (Char 'p') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "P"}
-                                                | otherwise = s
-keysGanhouJogo (EventKey (Char 'q') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "Q"}
-                                                | otherwise = s
-keysGanhouJogo (EventKey (Char 'r') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "R"}
-                                                | otherwise = s
-keysGanhouJogo (EventKey (Char 's') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "S"}
-                                                | otherwise = s
-keysGanhouJogo (EventKey (Char 't') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "T"}
-                                                | otherwise = s
-keysGanhouJogo (EventKey (Char 'u') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "U"}
-                                                | otherwise = s
-keysGanhouJogo (EventKey (Char 'v') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "V"}
-                                                | otherwise = s
-keysGanhouJogo (EventKey (Char 'w') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "W"}
-                                                | otherwise = s
-keysGanhouJogo (EventKey (Char 'x') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "X"}
-                                                | otherwise = s
-keysGanhouJogo (EventKey (Char 'y') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "Y"}
-                                                | otherwise = s
-keysGanhouJogo (EventKey (Char 'z') Down _ _) s | length (snd (last (highScore s)))<= 8 = s {highScore = escreve (highScore s) "Z"}
-                                                | otherwise = s
-keysGanhouJogo (EventKey (SpecialKey KeyDelete) Down _ _) s | null (snd (last (highScore s))) = s
-                                                            | otherwise = s {highScore = remove (highScore s)}
-keysGanhouJogo (EventKey (SpecialKey KeyEnter) Down _ _) s = s {menu = Opcoes Jogar, jogo = jOpcoes}
+keysModoHighScore :: Event -> Estado -> IO Estado
+keysModoHighScore (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = Opcoes Jogar}
+keysModoHighScore (EventKey (SpecialKey KeyEsc) Down _ _) s   = do musicaParar
+                                                                   exitSuccess
+keysModoHighScore _ s = return s
 
-keysGanhouJogo _ s = s
+
+keysGanhouJogo :: Event -> Estado -> IO Estado
+keysGanhouJogo (EventKey (Char 'a') Down _ _) s | length (snd (last (highScore s)))<= 8 = return s {highScore = escreve (highScore s) "A"}
+                                                | otherwise = return s
+keysGanhouJogo (EventKey (Char 'b') Down _ _) s | length (snd (last (highScore s)))<= 8 = return s {highScore = escreve (highScore s) "B"}
+                                                | otherwise = return s
+keysGanhouJogo (EventKey (Char 'c') Down _ _) s | length (snd (last (highScore s)))<= 8 = return s {highScore = escreve (highScore s) "C"}
+                                                | otherwise = return s
+keysGanhouJogo (EventKey (Char 'd') Down _ _) s | length (snd (last (highScore s)))<= 8 = return s {highScore = escreve (highScore s) "D"}
+                                                | otherwise = return s
+keysGanhouJogo (EventKey (Char 'e') Down _ _) s | length (snd (last (highScore s)))<= 8 = return s {highScore = escreve (highScore s) "E"}
+                                                | otherwise = return s
+keysGanhouJogo (EventKey (Char 'f') Down _ _) s | length (snd (last (highScore s)))<= 8 = return s {highScore = escreve (highScore s) "F"}
+                                                | otherwise = return s
+keysGanhouJogo (EventKey (Char 'g') Down _ _) s | length (snd (last (highScore s)))<= 8 = return s {highScore = escreve (highScore s) "G"}
+                                                | otherwise = return s
+keysGanhouJogo (EventKey (Char 'h') Down _ _) s | length (snd (last (highScore s)))<= 8 = return s {highScore = escreve (highScore s) "H"}
+                                                | otherwise = return s
+keysGanhouJogo (EventKey (Char 'i') Down _ _) s | length (snd (last (highScore s)))<= 8 = return s {highScore = escreve (highScore s) "I"}
+                                                | otherwise = return s
+keysGanhouJogo (EventKey (Char 'j') Down _ _) s | length (snd (last (highScore s)))<= 8 = return s {highScore = escreve (highScore s) "J"}
+                                                | otherwise = return s
+keysGanhouJogo (EventKey (Char 'k') Down _ _) s | length (snd (last (highScore s)))<= 8 = return s {highScore = escreve (highScore s) "K"}
+                                                | otherwise = return s
+keysGanhouJogo (EventKey (Char 'l') Down _ _) s | length (snd (last (highScore s)))<= 8 = return s {highScore = escreve (highScore s) "L"}
+                                                | otherwise = return s
+keysGanhouJogo (EventKey (Char 'm') Down _ _) s | length (snd (last (highScore s)))<= 8 = return s {highScore = escreve (highScore s) "M"}
+                                                | otherwise = return s
+keysGanhouJogo (EventKey (Char 'n') Down _ _) s | length (snd (last (highScore s)))<= 8 = return s {highScore = escreve (highScore s) "N"}
+                                                | otherwise = return s
+keysGanhouJogo (EventKey (Char 'o') Down _ _) s | length (snd (last (highScore s)))<= 8 = return s {highScore = escreve (highScore s) "O"}
+                                                | otherwise = return s
+keysGanhouJogo (EventKey (Char 'p') Down _ _) s | length (snd (last (highScore s)))<= 8 = return s {highScore = escreve (highScore s) "P"}
+                                                | otherwise = return s
+keysGanhouJogo (EventKey (Char 'q') Down _ _) s | length (snd (last (highScore s)))<= 8 = return s {highScore = escreve (highScore s) "Q"}
+                                                | otherwise = return s
+keysGanhouJogo (EventKey (Char 'r') Down _ _) s | length (snd (last (highScore s)))<= 8 = return s {highScore = escreve (highScore s) "R"}
+                                                | otherwise = return s
+keysGanhouJogo (EventKey (Char 's') Down _ _) s | length (snd (last (highScore s)))<= 8 = return s {highScore = escreve (highScore s) "S"}
+                                                | otherwise = return s
+keysGanhouJogo (EventKey (Char 't') Down _ _) s | length (snd (last (highScore s)))<= 8 = return s {highScore = escreve (highScore s) "T"}
+                                                | otherwise = return s
+keysGanhouJogo (EventKey (Char 'u') Down _ _) s | length (snd (last (highScore s)))<= 8 = return s {highScore = escreve (highScore s) "U"}
+                                                | otherwise = return s
+keysGanhouJogo (EventKey (Char 'v') Down _ _) s | length (snd (last (highScore s)))<= 8 = return s {highScore = escreve (highScore s) "V"}
+                                                | otherwise = return s
+keysGanhouJogo (EventKey (Char 'w') Down _ _) s | length (snd (last (highScore s)))<= 8 = return s {highScore = escreve (highScore s) "W"}
+                                                | otherwise = return s
+keysGanhouJogo (EventKey (Char 'x') Down _ _) s | length (snd (last (highScore s)))<= 8 = return s {highScore = escreve (highScore s) "X"}
+                                                | otherwise = return s
+keysGanhouJogo (EventKey (Char 'y') Down _ _) s | length (snd (last (highScore s)))<= 8 = return s {highScore = escreve (highScore s) "Y"}
+                                                | otherwise = return s
+keysGanhouJogo (EventKey (Char 'z') Down _ _) s | length (snd (last (highScore s)))<= 8 = return s {highScore = escreve (highScore s) "Z"}
+                                                | otherwise = return s
+keysGanhouJogo (EventKey (SpecialKey KeyDelete) Down _ _) s | null (snd (last (highScore s))) = return s
+                                                            | otherwise = return s {highScore = remove (highScore s)}
+keysGanhouJogo (EventKey (SpecialKey KeyEnter) Down _ _) s = do musicaParar
+                                                                musicaMenu
+                                                                return s {menu = Opcoes Jogar, jogo = jOpcoes}
+keysGanhouJogo (EventKey (SpecialKey KeyEsc) Down _ _) s = do musicaParar
+                                                              exitSuccess
+keysGanhouJogo _ s = return s
 
 remove :: [(Int,String)] -> [(Int,String)]
 remove [] = []
@@ -258,44 +285,54 @@ escreve :: [(Int,String)] -> String -> [(Int,String)]
 escreve l a = init l ++ [(fst (last l), snd (last l) ++ a)]
 
 
-keysPerdeuJogo :: Event -> Estado -> Estado
-keysPerdeuJogo (EventKey (SpecialKey KeyEnter) Down _ _) s = s {menu = Opcoes Jogar, jogo = jOpcoes}
-keysPerdeuJogo _ s = s
+keysPerdeuJogo :: Event -> Estado -> IO Estado
+keysPerdeuJogo (EventKey (SpecialKey KeyEnter) Down _ _) s = do musicaParar
+                                                                musicaMenu
+                                                                return s {menu = Opcoes Jogar, jogo = jOpcoes}
+keysPerdeuJogo (EventKey (SpecialKey KeyEsc) Down _ _) s = do musicaParar
+                                                              exitSuccess
+keysPerdeuJogo _ s = return s
 --funcao que carrega no enter e volta para menu
 
 
 -- EventKey Key KeyState Modifiers (Float, Float)
 
-keysControlos :: Event -> Estado -> Estado
-keysControlos (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoControlos}) = e {menu = ModoPausa Controls}
-keysControlos _ s = s
+keysControlos :: Event -> Estado -> IO Estado
+keysControlos (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoControlos}) = return e {menu = ModoPausa Controls}
+keysControlos (EventKey (SpecialKey KeyEsc) Down _ _) s = do musicaParar
+                                                             exitSuccess
+keysControlos _ s = return s
 
-keysCreditos :: Event -> Estado -> Estado
-keysCreditos (EventKey (SpecialKey KeyEnter) Down _ _) s = s {menu = Opcoes Jogar}
-keysCreditos _ s = s 
+keysCreditos :: Event -> Estado -> IO Estado
+keysCreditos (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = Opcoes Jogar}
+keysCreditos (EventKey (SpecialKey KeyEsc) Down _ _) s = do musicaParar
+                                                            exitSuccess
+keysCreditos _ s = return s 
 
-keysEditor :: Event -> Estado -> Estado 
-keysEditor (EventKey (SpecialKey KeyRight) Down _ _) s = if x <27.5 then s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = Personagem {posicao =(x+1,y), aplicaDano = (False,0)}}}
-                                                                    else s
+keysEditor :: Event -> Estado -> IO Estado 
+keysEditor (EventKey (SpecialKey KeyRight) Down _ _) s = if x <27.5 then return s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = Personagem {posicao =(x+1,y), aplicaDano = (False,0)}}}
+                                                                    else return s
     where (x,y) = posicao (jogador (jogo s))
-keysEditor (EventKey (SpecialKey KeyLeft) Down _ _) s = if x >0.5 then s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = Personagem {posicao =(x-1,y), aplicaDano = (False,0)}}}
-                                                                    else s
+keysEditor (EventKey (SpecialKey KeyLeft) Down _ _) s = if x >0.5 then return s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = Personagem {posicao =(x-1,y), aplicaDano = (False,0)}}}
+                                                                    else return s
     where (x,y) = posicao (jogador (jogo s))
-keysEditor (EventKey (SpecialKey KeyRight) Down _ _) s = if x <27.5 then s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = Personagem {posicao =(x+1,y), aplicaDano = (False,0)}}}
-                                                                    else s
+keysEditor (EventKey (SpecialKey KeyRight) Down _ _) s = if x <27.5 then return s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = Personagem {posicao =(x+1,y), aplicaDano = (False,0)}}}
+                                                                    else return s
     where (x,y) = posicao (jogador (jogo s))
-keysEditor (EventKey (SpecialKey KeyUp) Down _ _) s = if y >0.5 then s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = Personagem {posicao =(x,y-1),aplicaDano = (False,0)}}}
-                                                                    else s
+keysEditor (EventKey (SpecialKey KeyUp) Down _ _) s = if y >0.5 then return s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = Personagem {posicao =(x,y-1),aplicaDano = (False,0)}}}
+                                                                    else return s
     where (x,y) = posicao (jogador (jogo s))
-keysEditor (EventKey (SpecialKey KeyDown) Down _ _) s = if y <16.5 then s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = Personagem {posicao =(x,y+1), aplicaDano = (False,0)}}}
-                                                                    else s
+keysEditor (EventKey (SpecialKey KeyDown) Down _ _) s = if y <16.5 then return s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = Personagem {posicao =(x,y+1), aplicaDano = (False,0)}}}
+                                                                    else return s
     where (x,y) = posicao (jogador (jogo s))
-keysEditor (EventKey (SpecialKey KeySpace) Down _ _) s = s{jogo = Jogo {mapa = atualizaMapa (mapa (jogo s)) (posicao(jogador(jogo s))),inimigos = inimigos (jogo s),colecionaveis = colecionaveis (jogo s), jogador = jogador (jogo s)}}
-keysEditor (EventKey (Char 'f') Down _ _) s = s {jogo = Jogo {mapa = mapa (jogo s), inimigos = adicionaFantasma blocos (inimigos (jogo s)) (x,y), colecionaveis = colecionaveis (jogo s), jogador = jogador (jogo s)}}
+keysEditor (EventKey (SpecialKey KeySpace) Down _ _) s = return s{jogo = Jogo {mapa = atualizaMapa (mapa (jogo s)) (posicao(jogador(jogo s))),inimigos = inimigos (jogo s),colecionaveis = colecionaveis (jogo s), jogador = jogador (jogo s)}}
+keysEditor (EventKey (Char 'f') Down _ _) s = return s {jogo = Jogo {mapa = mapa (jogo s), inimigos = adicionaFantasma blocos (inimigos (jogo s)) (x,y), colecionaveis = colecionaveis (jogo s), jogador = jogador (jogo s)}}
   where Mapa a b blocos = mapa (jogo s)
         (x,y) = posicao (jogador (jogo s))
-keysEditor (EventKey (Char 'm') Down _ _) s = s
-keysEditor _ s = s
+keysEditor (EventKey (Char 'm') Down _ _) s = return s
+keysEditor (EventKey (SpecialKey KeyEsc) Down _ _) s = do musicaParar
+                                                          exitSuccess
+keysEditor _ s = return s
 
 adicionaMacaco :: [[Bloco]] -> [Personagem] -> Posicao -> [Personagem]
 adicionaMacaco blocos l (x,y) | procuraBloco blocos (x,y) == Vazio = l ++ [Personagem {velocidade = (0,0), tipo = Fantasma, posicao = (x,y+1), direcao = Este, tamanho = (2.49,2), emEscada = False, ressalta = True, vida = 1, pontos = 0, aplicaDano = (False,0)}]

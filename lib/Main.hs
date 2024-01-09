@@ -1,6 +1,7 @@
 module Main where
 import Graphics.Gloss
 import Graphics.Gloss.Interface.Pure.Game
+import Graphics.Gloss.Interface.IO.Game
 import LI12324
 import Tarefa2
 import Tarefa3
@@ -26,13 +27,13 @@ main :: IO ()
 main = do
   musicaMenu
   images <- getImages
-  play janela
-       bg
-       fr
-       (estadoInicial images)
-       desenhaEstado
-       keys
-       reageTempo
+  playIO janela
+         bg
+         fr
+         (estadoInicial images)
+         desenhaEstado
+         keys
+         reageTempo
 
 -- | Define as propriedades de tamanho o localização da janela do jogo
 janela :: Display
@@ -54,19 +55,19 @@ estadoInicial :: Imagens -> Estado
 estadoInicial images = Estado {menu = Inicio,jogo = jOpcoes, imagens = images, tempo = 0 ,bonus = 15000, highScore = [(5000,"JOAO"), (12000,"MARIA"),(8200,"MIGUEL")]}
 
 -- | Desenha no ecrã o que está a acontecer no jogo em cada momento
-desenhaEstado :: Estado -> Picture
-desenhaEstado s | menu s == Inicio = Pictures(desenhaInicio s)
-                | menu s == ModoJogo = Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s++[Translate 0 460 (Scale 0.5 0.5 (getImagem PlPressP (imagens s)))])
-                | menu s == ModoPausa Continuar = Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa4 (imagens s)), Translate 0 (-270) (getImagem DicasPausa (imagens s)), Translate 0 (-300) (getImagem ImEditorMapas (imagens s))])
-                | menu s == ModoPausa Reiniciar = Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa1 (imagens s)), Translate 0 (-270) (getImagem DicasPausa (imagens s)), Translate 0 (-300) (getImagem ImEditorMapas (imagens s))]) 
-                | menu s == ModoPausa Home = Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa2 (imagens s)), Translate 0 (-270) (getImagem DicasPausa (imagens s)), Translate 0 (-300) (getImagem ImEditorMapas (imagens s))])
-                | menu s == ModoPausa Controls = Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa3 (imagens s)), Translate 0 (-270) (getImagem DicasPausa (imagens s)), Translate 0 (-300) (getImagem ImEditorMapas (imagens s))])
-                | menu s == ModoHighScore = Pictures (desenhaModoHighScore s)
-                | menu s == GanhouJogo = Pictures (desenhaGanhouJogo s)
-                | menu s == PerdeuJogo = Pictures (desenhaPerdeuJogo s (tempo s))
-                | menu s == ModoControlos = Pictures [getImagem MonkeyStanding (imagens s)]
-                | menu s == Editor = Pictures (desenhaEditor s)
-                | otherwise = Pictures(desenhaOpcoes s)
+desenhaEstado :: Estado -> IO Picture
+desenhaEstado s | menu s == Inicio              = return (Pictures(desenhaInicio s))
+                | menu s == ModoJogo            = return (Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s++[Translate 0 460 (Scale 0.5 0.5 (getImagem PlPressP (imagens s)))]))
+                | menu s == ModoPausa Continuar = return (Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa4 (imagens s)), Translate 0 (-270) (getImagem DicasPausa (imagens s)), Translate 0 (-300) (getImagem ImEditorMapas (imagens s))]))
+                | menu s == ModoPausa Reiniciar = return (Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa1 (imagens s)), Translate 0 (-270) (getImagem DicasPausa (imagens s)), Translate 0 (-300) (getImagem ImEditorMapas (imagens s))]))
+                | menu s == ModoPausa Home      = return (Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa2 (imagens s)), Translate 0 (-270) (getImagem DicasPausa (imagens s)), Translate 0 (-300) (getImagem ImEditorMapas (imagens s))]))
+                | menu s == ModoPausa Controls  = return (Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa3 (imagens s)), Translate 0 (-270) (getImagem DicasPausa (imagens s)), Translate 0 (-300) (getImagem ImEditorMapas (imagens s))]))
+                | menu s == ModoHighScore       = return (Pictures(desenhaModoHighScore s))
+                | menu s == GanhouJogo          = return (Pictures(desenhaGanhouJogo s))
+                | menu s == PerdeuJogo          = return (Pictures(desenhaPerdeuJogo s (tempo s)))
+                | menu s == ModoControlos       = return (Pictures[getImagem MonkeyStanding (imagens s)])
+                | menu s == Editor              = return (Pictures(desenhaEditor s))
+                | otherwise                     = return (Pictures(desenhaOpcoes s))
 
 desenhaInicio :: Estado -> [Picture]
 desenhaInicio s | alteraImagem2 (realToFrac (tempo s)) = [Translate 0 (-200) (Scale 0.3 0.3 (getImagem PlPressEnter (imagens s))),getImagem PrimateKong (imagens s)]
@@ -504,13 +505,13 @@ alteraImagem2Aux n = (n>=0 && n<=1.5) || (n>=2 && n<=3.5) || (n>= 4 && n<=5.5) |
 reageEvento :: Event -> Estado -> Estado
 reageEvento _ s = s
 
-reageTempo :: Float -> Estado -> Estado
-reageTempo t s | menu s == GanhouJogo = s {jogo = Jogo {mapa = mapa (jogo s),inimigos = gravidadeMacaco (realToFrac t) (inimigos (jogo s)), colecionaveis = [], jogador = jogador (jogo s)}, tempo = tempo s + (realToFrac t)}
-               | menu s == ModoPausa Continuar || menu s == ModoPausa Reiniciar || menu s == ModoPausa Home = s{jogo = jogo s, tempo = tempo s + (realToFrac t), bonus = bonus s}
-               | menu s == ModoJogo = ganhaJogo $ perdeJogo $ s {jogo = movimenta (truncate (tempo s)) (tempo s) (jogo s),tempo = tempo s + (realToFrac t), bonus = diminuiBonus (bonus s)}
-               | menu s == PerdeuJogo = s {tempo = tempo s + (realToFrac t), jogo = Jogo{mapa = mapa (jogo s),inimigos = inimigos (jogo s), colecionaveis = colecionaveis (jogo s), jogador = jogador (jogo s)}}
-               | menu s == Editor = s {jogo = Jogo {mapa = mapa (jogo s), inimigos = verificaInimigo (inimigos (jogo s)) blocos, colecionaveis = colecionaveis (jogo s), jogador = jogador (jogo s)}}
-               | otherwise = analisaHighScore $ s {jogo = movimenta (truncate (tempo s)) (tempo s) (jogo s),tempo = tempo s + (realToFrac t)}
+--reageTempo :: Float -> Estado -> IO Estado
+reageTempo t s | menu s == GanhouJogo                                                                       = return (s {jogo = Jogo {mapa = mapa (jogo s),inimigos = gravidadeMacaco (realToFrac t) (inimigos (jogo s)), colecionaveis = [], jogador = jogador (jogo s)}, tempo = tempo s + (realToFrac t)})
+               | menu s == ModoPausa Continuar || menu s == ModoPausa Reiniciar || menu s == ModoPausa Home = return (s{jogo = jogo s, tempo = tempo s + (realToFrac t), bonus = bonus s})
+               | menu s == ModoJogo                                                                         = return (ganhaJogo $ perdeJogo $ s {jogo = movimenta (truncate (tempo s)) (tempo s) (jogo s),tempo = tempo s + (realToFrac t), bonus = diminuiBonus (bonus s)})
+               | menu s == PerdeuJogo                                                                       = return (s {tempo = tempo s + (realToFrac t), jogo = Jogo{mapa = mapa (jogo s),inimigos = inimigos (jogo s), colecionaveis = colecionaveis (jogo s), jogador = jogador (jogo s)}})
+               | menu s == Editor                                                                           = return (s {jogo = Jogo {mapa = mapa (jogo s), inimigos = verificaInimigo (inimigos (jogo s)) blocos, colecionaveis = colecionaveis (jogo s), jogador = jogador (jogo s)}})
+               | otherwise                                                                                  = return (analisaHighScore $ s {jogo = movimenta (truncate (tempo s)) (tempo s) (jogo s),tempo = tempo s + (realToFrac t)})
    where Mapa a b blocos = mapa (jogo s)
 
 
