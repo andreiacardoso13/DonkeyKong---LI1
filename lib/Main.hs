@@ -7,6 +7,7 @@ import Tarefa3
 import Tarefa5
 import Imagens
 import Mapa
+import Music
 import Data.Fixed
 import Data.List
 
@@ -23,6 +24,7 @@ main = do
 -- | Função principal, responsável por carregar os elementos visuais presentes no ambiente gŕafico do jogo
 main :: IO ()
 main = do
+  musicaMenu
   images <- getImages
   play janela
        bg
