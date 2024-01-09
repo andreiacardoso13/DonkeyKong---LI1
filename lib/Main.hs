@@ -462,7 +462,7 @@ desenhaModoHighScore s = map (Translate 230 (66)) (desenhaNome (snd (head (highS
   where est = ordenaHighScore s
 
 desenhaEditor :: Estado -> [Picture]
-desenhaEditor s = desenhaMapa1 (-715.5,450.5) s ++ desenhaQuadrado s 
+desenhaEditor s = desenhaMapa1 (-715.5,450.5) s ++ desenhaQuadrado s ++ desenhaFantasmas s
 
 desenhaQuadrado :: Estado -> [Picture]
 desenhaQuadrado s = [Translate (x-742) (477 - y) (getImagem Quadrado (imagens s))]
@@ -507,11 +507,17 @@ reageTempo t s | menu s == GanhouJogo = s {jogo = Jogo {mapa = mapa (jogo s),ini
                | menu s == ModoPausa Continuar || menu s == ModoPausa Reiniciar || menu s == ModoPausa Home = s{jogo = jogo s, tempo = tempo s + (realToFrac t), bonus = bonus s}
                | menu s == ModoJogo = ganhaJogo $ perdeJogo $ s {jogo = movimenta (truncate (tempo s)) (tempo s) (jogo s),tempo = tempo s + (realToFrac t), bonus = diminuiBonus (bonus s)}
                | menu s == PerdeuJogo = s {tempo = tempo s + (realToFrac t), jogo = Jogo{mapa = mapa (jogo s),inimigos = inimigos (jogo s), colecionaveis = colecionaveis (jogo s), jogador = jogador (jogo s)}}
-               | menu s == Editor = s 
+               | menu s == Editor = s {jogo = Jogo {mapa = mapa (jogo s), inimigos = verificaInimigo (inimigos (jogo s)) blocos, colecionaveis = colecionaveis (jogo s), jogador = jogador (jogo s)}}
                | otherwise = analisaHighScore $ s {jogo = movimenta (truncate (tempo s)) (tempo s) (jogo s),tempo = tempo s + (realToFrac t)}
+   where Mapa a b blocos = mapa (jogo s)
 
 
+--tira um inimigo se ele estiver em cima dum bloco que nao seja vazio
 
+verificaInimigo :: [Personagem] -> [[Bloco]] -> [Personagem]
+verificaInimigo [] _ = []
+verificaInimigo (h:t) blocos | procuraBloco blocos (posicao h) == Vazio = h : verificaInimigo t blocos
+                             | otherwise = verificaInimigo t blocos
 
 {-
 alteraDirecao :: Personagem -> Double -> Personagem
