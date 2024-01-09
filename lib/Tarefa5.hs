@@ -50,6 +50,7 @@ keys evt s | menu s == Inicio = keysInicio evt s
            | menu s == Opcoes Jogar = keysOpJogar evt s
            | menu s == Opcoes HighScore = keysOpHighScore evt s
            | menu s == Opcoes OpCreditos = keysOpCreditos evt s
+           | menu s == Opcoes EditorMapas = keysOpEditorMapas evt s
            | menu s == ModoJogo = keysModoJogo evt s
            | menu s == ModoPausa Continuar = keysModoPausa evt s
            | menu s == ModoPausa Reiniciar = keysModoPausa evt s
@@ -81,8 +82,13 @@ keysOpHighScore _ s = s
 keysOpCreditos :: Event -> Estado -> Estado
 keysOpCreditos (EventKey (SpecialKey KeyEnter) Down _ _) s = s {menu = ModoCreditos}
 keysOpCreditos (EventKey (SpecialKey KeyUp) Down _ _) s = s {menu = Opcoes HighScore}
+keysOpCreditos (EventKey (SpecialKey KeyDown) Down _ _) s = s {menu = Opcoes EditorMapas}
 keysOpCreditos _ s = s
 
+keysOpEditorMapas :: Event -> Estado -> Estado
+keysOpEditorMapas (EventKey (SpecialKey KeyEnter) Down _ _) s = s {menu = Editor, jogo = jEditor}
+keysOpEditorMapas (EventKey (SpecialKey KeyUp) Down _ _) s = s {menu = Opcoes OpCreditos}
+keysOpEditorMapas _ s = s
 
 
 
@@ -262,22 +268,22 @@ keysCreditos (EventKey (SpecialKey KeyEnter) Down _ _) s = s {menu = Opcoes Joga
 keysCreditos _ s = s 
 
 keysEditor :: Event -> Estado -> Estado 
-{-
-keysEditor (EventKey (SpecialKey KeyRight) Down _ _) s = if x <27.5 then s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador {posicao = } (x+1,y)}}
+keysEditor (EventKey (SpecialKey KeyRight) Down _ _) s = if x <27.5 then s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = Personagem {posicao =(x+1,y)}}}
                                                                     else s
     where (x,y) = posicao (jogador (jogo s))
-keysEditor (EventKey (SpecialKey KeyLeft) Down _ _) s = if x > 0.5 then s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = (x-1,y)}}
-                                                                   else s
+keysEditor (EventKey (SpecialKey KeyLeft) Down _ _) s = if x >0.5 then s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = Personagem {posicao =(x-1,y)}}}
+                                                                    else s
     where (x,y) = posicao (jogador (jogo s))
-keysEditor (EventKey (SpecialKey KeyUp) Down _ _) s = if y > 0.5 then s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = (x,y-1)}}
-                                                                 else s     
+keysEditor (EventKey (SpecialKey KeyRight) Down _ _) s = if x <27.5 then s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = Personagem {posicao =(x+1,y)}}}
+                                                                    else s
     where (x,y) = posicao (jogador (jogo s))
-keysEditor (EventKey (SpecialKey KeyDown) Down _ _) s = if y<12.5 then s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = (x,y+1)}}
-                                                                  else s
-    where (x,y) = posicao (jogador (jogo s))-}
+keysEditor (EventKey (SpecialKey KeyUp) Down _ _) s = if y >0.5 then s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = Personagem {posicao =(x,y-1)}}}
+                                                                    else s
+    where (x,y) = posicao (jogador (jogo s))
+keysEditor (EventKey (SpecialKey KeyDown) Down _ _) s = if y <16.5 then s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = Personagem {posicao =(x,y+1)}}}
+                                                                    else s
+    where (x,y) = posicao (jogador (jogo s))
+    
 keysEditor _ s = s
 
-
-
---tarefa6
 

@@ -63,6 +63,7 @@ desenhaEstado s | menu s == Inicio = Pictures(desenhaInicio s)
                 | menu s == GanhouJogo = Pictures (desenhaGanhouJogo s)
                 | menu s == PerdeuJogo = Pictures (desenhaPerdeuJogo s (tempo s))
                 | menu s == ModoControlos = Pictures [getImagem MonkeyStanding (imagens s)]
+                | menu s == Editor = Pictures (desenhaEditor s)
                 | otherwise = Pictures(desenhaOpcoes s)
 
 desenhaInicio :: Estado -> [Picture]
@@ -77,9 +78,10 @@ desenhaOpcoesFundo s = (desenhaMapa1 (-715.5,450.5) s ++ desenhaFantasmas s ++ d
 
 
 desenhaOpcoesOpcao :: Estado -> [Picture]
-desenhaOpcoesOpcao s | menu s == Opcoes Jogar = [Scale 1.4 1.4 (getImagem PalavraJogar (imagens s))] ++ [Translate 0 (-80) (getImagem PalavraHighScore (imagens s))] ++ [Translate (-150) 0 (getImagem MarioStandingRight (imagens s))] ++ [Translate 150 0 (getImagem MarioStandingLeft (imagens s))] ++ [Scale 0.7 0.7 (Translate 0 (-200) (getImagem Creditos (imagens s)))] 
-                     | menu s == Opcoes HighScore = [getImagem PalavraJogar (imagens s)] ++ [Translate 0 (-70) (Scale 1.2 1.2 (getImagem PalavraHighScore (imagens s)))] ++ [Translate (-210) (-65) (getImagem MarioStandingRight (imagens s))] ++ [Translate 210 (-70) (getImagem MarioStandingLeft (imagens s))] ++ [Scale 0.7 0.7 (Translate 0 (-200) (getImagem Creditos (imagens s)))] 
-                     | menu s == Opcoes OpCreditos = [(getImagem PalavraJogar (imagens s))] ++ [Translate 0 (-80) (getImagem PalavraHighScore (imagens s))] ++ [Translate (-210) (-150) (getImagem MarioStandingRight (imagens s))] ++ [Translate 210 (-150) (getImagem MarioStandingLeft (imagens s))] ++ [Scale 1 1 (Translate 0 (-140) (getImagem Creditos (imagens s)))]
+desenhaOpcoesOpcao s | menu s == Opcoes Jogar = [Scale 1.4 1.4 (getImagem PalavraJogar (imagens s))] ++ [Translate 0 (-80) (getImagem PalavraHighScore (imagens s))] ++ [Translate (-150) 0 (getImagem MarioStandingRight (imagens s))] ++ [Translate 150 0 (getImagem MarioStandingLeft (imagens s))] ++ [Scale 0.7 0.7 (Translate 0 (-200) (getImagem Creditos (imagens s)))] ++ [Translate 0 (-205) (getImagem PlCriaMapa (imagens s))] 
+                     | menu s == Opcoes HighScore = [getImagem PalavraJogar (imagens s)] ++ [Translate 0 (-70) (Scale 1.2 1.2 (getImagem PalavraHighScore (imagens s)))] ++ [Translate (-210) (-65) (getImagem MarioStandingRight (imagens s))] ++ [Translate 210 (-70) (getImagem MarioStandingLeft (imagens s))] ++ [Scale 0.7 0.7 (Translate 0 (-200) (getImagem Creditos (imagens s)))] ++ [Translate 0 (-205) (getImagem PlCriaMapa (imagens s))] 
+                     | menu s == Opcoes OpCreditos = [(getImagem PalavraJogar (imagens s))] ++ [Translate 0 (-80) (getImagem PalavraHighScore (imagens s))] ++ [Translate (-210) (-150) (getImagem MarioStandingRight (imagens s))] ++ [Translate 210 (-150) (getImagem MarioStandingLeft (imagens s))] ++ [Scale 1 1 (Translate 0 (-140) (getImagem Creditos (imagens s)))] ++ [Translate 0 (-205) (getImagem PlCriaMapa (imagens s))] 
+                     | menu s == Opcoes EditorMapas =[getImagem PalavraJogar (imagens s)] ++ [Translate 0 (-80) (getImagem PalavraHighScore (imagens s))] ++ [Translate (-300) (-200) (getImagem MarioStandingRight (imagens s))] ++ [Translate 300 (-200) (getImagem MarioStandingLeft (imagens s))] ++ [Scale 0.7 0.7 (Translate 0 (-200) (getImagem Creditos (imagens s)))] ++ [Scale 1.15 1.15 (Translate 0 (-180) (getImagem PlCriaMapa (imagens s)))] 
                      | otherwise = [rectangleSolid 50 50]
 
 
@@ -459,6 +461,17 @@ desenhaModoHighScore s = map (Translate 230 (66)) (desenhaNome (snd (head (highS
                          [Scale 0.8 0.8 (Translate 0 300 (getImagem AmareloHighScore (imagens s))),Translate (-390) 70 (getImagem Ouro (imagens s)),Translate (-390) (0) (getImagem Prata (imagens s)),Translate (-390) (-70) (getImagem Bronze (imagens s)), Scale 0.32 0.32 (Translate 0 (-265) (getImagem Pontos (imagens s))), Scale 0.32 0.32 (Translate 0 (-30) (getImagem Pontos (imagens s))),Scale 0.32 0.32 (Translate 0 190 (getImagem Pontos (imagens s))), Translate 0 (-400) (getImagem PlPressEnter2 (imagens s))]
   where est = ordenaHighScore s
 
+desenhaEditor :: Estado -> [Picture]
+desenhaEditor s = desenhaMapa1 (-715.5,450.5) s ++ desenhaQuadrado s 
+
+desenhaQuadrado :: Estado -> [Picture]
+desenhaQuadrado s = [Translate (x-742) (477 - y) (getImagem Quadrado (imagens s))]
+    where x = realToFrac $ (fst (posicao (jogador (jogo s)))) * 53
+          y = realToFrac $ (snd (posicao (jogador (jogo s)))) * 53
+
+
+
+
 
 
 ordenaHighScore :: Estado -> Estado
@@ -494,6 +507,7 @@ reageTempo t s | menu s == GanhouJogo = s {jogo = Jogo {mapa = mapa (jogo s),ini
                | menu s == ModoPausa Continuar || menu s == ModoPausa Reiniciar || menu s == ModoPausa Home = s{jogo = jogo s, tempo = tempo s + (realToFrac t), bonus = bonus s}
                | menu s == ModoJogo = ganhaJogo $ perdeJogo $ s {jogo = movimenta (truncate (tempo s)) (tempo s) (jogo s),tempo = tempo s + (realToFrac t), bonus = diminuiBonus (bonus s)}
                | menu s == PerdeuJogo = s {tempo = tempo s + (realToFrac t), jogo = Jogo{mapa = mapa (jogo s),inimigos = inimigos (jogo s), colecionaveis = colecionaveis (jogo s), jogador = jogador (jogo s)}}
+               | menu s == Editor = s 
                | otherwise = analisaHighScore $ s {jogo = movimenta (truncate (tempo s)) (tempo s) (jogo s),tempo = tempo s + (realToFrac t)}
 
 
