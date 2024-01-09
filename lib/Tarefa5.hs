@@ -11,17 +11,17 @@ module Tarefa5 where
 import LI12324
 import Imagens
 import Mapa
--- import Main
 import Tarefa1
 import Tarefa2
 import Tarefa4
+import Music
 
 import Data.Fixed
 
 import Graphics.Gloss
 import Graphics.Gloss.Interface.Pure.Game
 
-data Estado = Estado {menu :: Menu, jogo :: Jogo, imagens :: Imagens, tempo :: Tempo, bonus :: Int, highScore :: [(Int,String)] }
+data Estado = Estado {menu :: Menu, jogo :: Jogo, imagens :: Imagens, tempo :: Tempo, bonus :: Int, highScore :: [(Int,String)]}
 
 data Menu = Inicio
           | Opcoes Opcao
@@ -33,6 +33,7 @@ data Menu = Inicio
           | PerdeuJogo
           | ModoCreditos
           | Editor
+          | Exit
           deriving Eq
 
 data Opcao = Jogar
@@ -62,6 +63,7 @@ keys evt s | menu s == Inicio = keysInicio evt s
            | menu s == ModoControlos = keysControlos evt s
            | menu s == ModoCreditos = keysCreditos evt s
            | menu s == Editor = keysEditor evt s
+           | menu s == Exit = keysExit evt s
 
 keysInicio :: Event -> Estado -> Estado
 keysInicio (EventKey (SpecialKey KeyEnter) Down _ _) s = s {menu = Opcoes Jogar}
@@ -90,6 +92,11 @@ keysOpEditorMapas (EventKey (SpecialKey KeyEnter) Down _ _) s = s {menu = Editor
 keysOpEditorMapas (EventKey (SpecialKey KeyUp) Down _ _) s = s {menu = Opcoes OpCreditos}
 keysOpEditorMapas _ s = s
 
+
+keysExit :: Event -> Estado -> Estado
+keysExit (EventKey (SpecialKey KeyUp) Down _ _) s = s {menu = Opcoes OpCreditos}
+keysExit (EventKey (SpecialKey KeyEnter) Down _ _) s = undefined
+keysExit _ s = s
 
 
 
