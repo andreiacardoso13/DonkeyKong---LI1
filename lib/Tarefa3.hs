@@ -137,13 +137,8 @@ Se o jogador colidir com o inimigo retira-lhe uma vida e altera a sua posição 
               =Jogo {mapa = Mapa ((2.5,1.0),Oeste) (2.5,1.0) [[Escada,Alcapao,Vazio],[Escada,Vazio,Plataforma],[Plataforma,Plataforma,Plataforma]], inimigos = [Personagem {velocidade = (1.0,2.0), tipo = Fantasma, posicao = (1.0,1.0), direcao = Oeste, tamanho = (2.0,2.0), emEscada = False, ressalta = True, vida = 1, pontos = 0, aplicaDano = (False,0.0)}], colecionaveis = [(Martelo,(1.0,1.0)),(Moeda,(2.0,0.0))], jogador = Personagem {velocidade = (1.0,2.0), tipo = Jogador, posicao = (2.0,2.0), direcao = Oeste, tamanho = (2.0,2.0), emEscada = False, ressalta = False, vida = 2, pontos = 0, aplicaDano = (True,5.0)}}
 -}
 ataqueDoInimigo :: Jogo -> Jogo
-ataqueDoInimigo (Jogo {mapa = m 
-                      ,inimigos = listaInimigos
-                      ,colecionaveis = listaColecionaveis
-                      ,jogador = jog}) = (Jogo {mapa = m 
-                                               ,inimigos = ataqueDoInimigo2 listaInimigos jog 0
-                                               ,colecionaveis = listaColecionaveis
-                                               ,jogador = ataqueDoInimigoAux listaInimigos jog})
+ataqueDoInimigo j = j {jogador = ataqueDoInimigoAux j}
+
 
 {-|
 Se o jogador colidir com um inimigo retira-lhe uma vida e altera a sua posição para a inicial
@@ -154,11 +149,14 @@ Se o jogador colidir com um inimigo retira-lhe uma vida e altera a sua posição
                    = 
                    Personagem {velocidade = (1.0,2.0),tipo = Jogador,posicao = (1.0,1.0),direcao = Este,tamanho = (2.0,2.0),emEscada = False,ressalta = True,vida = 0,pontos = 0,aplicaDano = (False,0.0)}
 -}
-ataqueDoInimigoAux :: [Personagem] -> Personagem -> Personagem 
-ataqueDoInimigoAux [] p = p
-ataqueDoInimigoAux (inim : t) jog | colisoesPersonagens inim jog && (vida inim == 1 ) && (vida jog <= 3) && (vida jog >1)= (jog {posicao = posicao (jogador j1), velocidade = (0,0),direcao = Este,emEscada = False, vida = vida jog -1})
-                                  | colisoesPersonagens inim jog && (vida inim == 1 ) && (vida jog <= 3) && (vida jog >0)= (jog {vida = vida jog -1})
-                                  | otherwise = ataqueDoInimigoAux t jog
+ataqueDoInimigoAux :: Jogo -> Personagem 
+ataqueDoInimigoAux j | inimigos j == [] = jogador j
+                     | colisoesPersonagens inim jog && (vida inim == 1 ) && (vida jog <= 3) && (vida jog >1)= (jog {posicao = pos , velocidade = (0,0),direcao = Este,emEscada = False, vida = vida jog -1})
+                     | colisoesPersonagens inim jog && (vida inim == 1 ) && (vida jog <= 3) && (vida jog >0)= (jog {vida = vida jog -1})
+                     | otherwise = ataqueDoInimigoAux j{inimigos = drop 1 (inimigos j)}
+  where (inim:t) = inimigos j 
+        jog = jogador j
+        Mapa (pos,dir) a b = mapa j
 
 ataqueDoInimigo2 :: [Personagem] -> Personagem -> Int -> [Personagem]
 ataqueDoInimigo2 [] p n = []

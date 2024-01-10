@@ -23,7 +23,7 @@ import Graphics.Gloss
 import Graphics.Gloss.Interface.Pure.Game
 import Graphics.Gloss.Interface.IO.Game
 
-data Estado = Estado {menu :: Menu, jogo :: Jogo, imagens :: Imagens, tempo :: Tempo, bonus :: Int, highScore :: [(Int,String)], saltar :: Tempo}
+data Estado = Estado {menu :: Menu, jogo :: Jogo, imagens :: Imagens, tempo :: Tempo, bonus :: Int, highScore :: [(Int,String)], saltar :: Tempo, editor :: Bool}
 
 data Menu = Inicio
           | Opcoes Opcao
@@ -32,6 +32,7 @@ data Menu = Inicio
           | ModoHighScore
           | ModoControlos
           | GanhouJogo
+          | GanhouJogoEditor
           | PerdeuJogo
           | ModoCreditos
           | Editor1
@@ -62,6 +63,7 @@ keys evt s | menu s == Inicio              = keysInicio evt s
            | menu s == ModoPausa Home      = keysModoPausa evt s
            | menu s == ModoHighScore       = keysModoHighScore evt s
            | menu s == GanhouJogo          = keysGanhouJogo evt s
+           | menu s == GanhouJogoEditor    = keysGanhouJogoEditor evt s
            | menu s == PerdeuJogo          = keysPerdeuJogo evt s
            | menu s == ModoControlos       = keysControlos evt s
            | menu s == ModoCreditos        = keysCreditos evt s
@@ -101,7 +103,7 @@ keysOpCreditos (EventKey (SpecialKey KeyEsc) Down _ _) s   = do musicaParar
 keysOpCreditos _ s = return s
 
 keysOpEditorMapas :: Event -> Estado -> IO Estado
-keysOpEditorMapas (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = Editor1, jogo = jEditor}
+keysOpEditorMapas (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = Editor1, jogo = jEditor, editor = True}
 keysOpEditorMapas (EventKey (SpecialKey KeyUp) Down _ _) s    = return s {menu = Opcoes OpCreditos}
 keysOpEditorMapas (EventKey (SpecialKey KeyEsc) Down _ _) s   = do musicaParar
                                                                    exitSuccess
@@ -278,6 +280,11 @@ keysGanhouJogo (EventKey (SpecialKey KeyEsc) Down _ _) s = do musicaParar
                                                               exitSuccess
 keysGanhouJogo _ s = return s
 
+
+keysGanhouJogoEditor :: Event -> Estado -> IO Estado
+keysGanhouJogoEditor (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = Opcoes Jogar, jogo = jOpcoes}
+keysGanhouJogoEditor _ s =  return s
+
 remove :: [(Int,String)] -> [(Int,String)]
 remove [] = []
 remove l = init l ++ [(fst (last l), init (snd (last l)))]
@@ -356,12 +363,13 @@ keysEditor2 (EventKey (SpecialKey KeyDown) Down _ _) s = if y <16.5 then return 
                                                                     else return s
     where (x,y) = posicao (jogador (jogo s))
 keysEditor2 (EventKey (SpecialKey KeyEnter) Down _ _) s = if valida (jogo s) 
-                                                              then return s {menu = ModoJogo}
+                                                              then return s {menu = ModoJogo, jogo = atualizaPosicaoInicial (jogo s)}
                                                               else return s
 keysEditor2 _ s = return s
 
-
-
+atualizaPosicaoInicial :: Jogo -> Jogo
+atualizaPosicaoInicial j = j {mapa = Mapa (posicao (jogador j), direcao (jogador j)) b c}
+   where Mapa a b c = mapa j
 
 adicionaMacaco :: [[Bloco]] -> [Personagem] -> Posicao -> [Personagem]
 adicionaMacaco blocos [] (x,y) = [Personagem {velocidade = (0,0), tipo = MacacoMalvado, posicao = (x,y-0.5), direcao = Este, tamanho = (2.49,2), emEscada = False, ressalta = True, vida = 1, pontos = 0, aplicaDano = (False,0)}]

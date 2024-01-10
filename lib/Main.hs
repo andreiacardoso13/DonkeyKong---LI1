@@ -47,13 +47,15 @@ janela = InWindow
 bg :: Color
 bg = black
 
+
+
 -- | Define o número de frames por segundo, ou seja o número de vezes que o programa é atualizado por segundo
 fr :: Int
 fr = 20
 
 -- | Recebe as imagens e devolve o estado inicial do jogo
 estadoInicial :: Imagens -> Estado
-estadoInicial images = Estado {menu = Inicio,jogo = jOpcoes, imagens = images, tempo = 0 ,bonus = 15000, highScore = [(5000,"JOAO"), (12000,"MARIA"),(8200,"MIGUEL")], saltar = 2}
+estadoInicial images = Estado {menu = Inicio,jogo = jOpcoes, imagens = images, tempo = 0 ,bonus = 15000, highScore = [(0,"XXXXX"), (0,"XXXXX"),(0,"XXXXX")], saltar = 2, editor = False}
 
 -- | Desenha no ecrã o que está a acontecer no jogo em cada momento
 desenhaEstado :: Estado -> IO Picture
@@ -65,6 +67,7 @@ desenhaEstado s | menu s == Inicio              = return (Pictures(desenhaInicio
                 | menu s == ModoPausa Controls  = return (Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa3 (imagens s)), Translate 0 (-270) (getImagem DicasPausa (imagens s))]))
                 | menu s == ModoHighScore       = return (Pictures(desenhaModoHighScore s))
                 | menu s == GanhouJogo          = return (Pictures(desenhaGanhouJogo s))
+                | menu s == GanhouJogoEditor    = return (Pictures([Translate 0 (-30) (Scale 2.5 2.5 (getImagem MonkeyDefeated (imagens s))), Translate 0 300 (getImagem PlParabens (imagens s)),  Translate 0 180 (getImagem PlDerrotasteOPrimateKong (imagens s))] ++ map (Translate 0 (-150)) (map (Scale 2 2) (desenhaFogo s)) ++ map (Translate 80 (-260)) (desenhaScoreFinal s) ++ [Translate 70 (-275) (rectangleSolid 700 150)]))
                 | menu s == PerdeuJogo          = return (Pictures(desenhaPerdeuJogo s (tempo s)))
                 | menu s == ModoControlos       = return (Pictures[getImagem MonkeyStanding (imagens s)])
                 | menu s == Editor1             = return (Pictures(desenhaEditor1 s))
@@ -561,7 +564,8 @@ ficaParado :: Personagem -> Personagem
 ficaParado p = p{velocidade = (0,0)}
 
 ganhaJogo :: Estado -> Estado
-ganhaJogo s | colisaoHitbox (hitboxColecionavel star) (hitbox (jogador (jogo s))) = s {menu = GanhouJogo, jogo = Jogo {mapa = mapaGanhou,inimigos = ganhouInimigos (inimigos (jogo s)),colecionaveis = [], jogador = jogGanhaJogo (jogador (jogo s)) (bonus s)},tempo=0,highScore = highScore s ++ [(pontos (jogador(jogo s)) + (bonus s),"")]}
+ganhaJogo s | colisaoHitbox (hitboxColecionavel star) (hitbox (jogador (jogo s))) = if editor s == False then s {menu = GanhouJogo, jogo = Jogo {mapa = mapaGanhou,inimigos = ganhouInimigos (inimigos (jogo s)),colecionaveis = [], jogador = jogGanhaJogo (jogador (jogo s)) (bonus s)},tempo=0,highScore = highScore s ++ [(pontos (jogador(jogo s)) + (bonus s),"")]}
+                                                                                                         else s {menu = GanhouJogoEditor, jogo = Jogo {mapa = mapa (jogo s),inimigos = ganhouInimigos (inimigos (jogo s)),colecionaveis = [], jogador = jogGanhaJogo (jogador (jogo s)) (bonus s)},tempo = 3,highScore = highScore s}
             | otherwise = s 
    where Mapa a star b = mapa (jogo s)
 
@@ -585,6 +589,8 @@ analisaHighScore s = s {highScore = analisaHighScoreAux (highScore s)}
 analisaHighScoreAux :: [(Int,String)] -> [(Int,String)]
 analisaHighScoreAux [] = []
 analisaHighScoreAux [a] = [a]
+analisaHighScoreAux ((h1,""):(h3,""):t) = (h1,"") : analisaHighScoreAux ((h3,""):t)
+analisaHighScoreAux ((h1,"XXXXX"):(h3,"XXXXX"):t) = (h1,"XXXXX") : analisaHighScoreAux ((h3,"XXXXX"):t)
 analisaHighScoreAux ((h1,h2):(h3,h4):t) | elem h2 (map snd ((h3,h4):t)) && (h2 == h4) = if h1 > h3 
                                                                                           then (h1,h2) : analisaHighScoreAux t 
                                                                                           else (h3,h4) : analisaHighScoreAux t 
