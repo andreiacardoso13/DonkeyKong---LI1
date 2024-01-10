@@ -332,9 +332,9 @@ Recebe um jogo e verifica se existem personagens ou colecionáveis "dentro" de p
 -}
 
 validaPosicaoMapa :: Jogo -> Bool
-validaPosicaoMapa jogo' = validaPosicaoMapaJogador jogo' &&
-                          validaPosicaoMapaInimigos jogo' &&
-                          validaPosicaoMapaColecionaveis jogo'
+validaPosicaoMapa jogo' = validaPosicaoMapaJogador jogo' 
+                          --validaPosicaoMapaInimigos jogo' &&
+                          --validaPosicaoMapaColecionaveis jogo'
 
 {-|
 Recebe um Jogo e verifica se a posição do jogador é válida
@@ -346,7 +346,9 @@ Recebe um Jogo e verifica se a posição do jogador é válida
 -}
 
 validaPosicaoMapaJogador :: Jogo -> Bool
-validaPosicaoMapaJogador (Jogo {mapa = Mapa ((x,y),_) _ matriz}) = procuraBloco matriz (x,y) == Vazio || procuraBloco matriz (x,y) == Escada
+validaPosicaoMapaJogador j = procuraBloco matriz (x,y) == Vazio || procuraBloco matriz (x,y) == Escada
+  where (x,y) = posicao (jogador j)
+        Mapa a b matriz = mapa j
 
 {-
 Recebe um Jogo e verifica se a posição dos inimigos é válida
@@ -365,13 +367,11 @@ Recebe um Jogo e verifica se a posição dos inimigos é válida
 
 validaPosicaoMapaInimigos :: Jogo -> Bool
 validaPosicaoMapaInimigos (Jogo {mapa = Mapa _ _ matriz,inimigos = []}) = True
-validaPosicaoMapaInimigos (Jogo {mapa = Mapa ((xJogador,yJogador), dir) (a,b) matriz
-                                ,inimigos = ((Personagem {posicao = (xInimigo, yInimigo)}): tInimigo)}) 
-      | procuraBloco matriz (xInimigo,yInimigo) == Vazio  
-           || procuraBloco matriz (xInimigo,yInimigo) == Escada
-                = validaPosicaoMapaInimigos (Jogo {mapa = Mapa ((xJogador,yJogador), dir) (a,b) matriz
-                                                  ,inimigos = tInimigo})
-      | otherwise = False
+validaPosicaoMapaInimigos j | procuraBloco matriz (xInimigo,yInimigo) == Vazio || procuraBloco matriz (xInimigo,yInimigo) == Escada
+                                  = validaPosicaoMapaInimigos j{inimigos = drop 1 (inimigos j)}
+                            | otherwise = False
+  where (xInimigo,yInimigo) = posicao (head (inimigos j))
+        Mapa a b matriz = mapa j
 
 {-|
 
@@ -391,12 +391,11 @@ Recebe um Jogo e verifica se a posição dos colecionáveis é válida
 
 validaPosicaoMapaColecionaveis :: Jogo -> Bool
 validaPosicaoMapaColecionaveis (Jogo {mapa = Mapa _ _ matriz,colecionaveis = []}) = True
-validaPosicaoMapaColecionaveis (Jogo {mapa = Mapa ((xJogador,yJogador), dir) (a,b) matriz
-                                      ,colecionaveis = ((col,(xColecionavel,yColecionavel)):tColecionavel)}) 
-      | procuraBloco matriz (xColecionavel,yColecionavel) == Vazio || procuraBloco matriz (xColecionavel,yColecionavel) == Escada
-        = validaPosicaoMapaColecionaveis (Jogo {mapa = Mapa ((xJogador,yJogador), dir) (a,b) matriz
-                                                ,colecionaveis = (tColecionavel)})
-      | otherwise = False
+validaPosicaoMapaColecionaveis j | procuraBloco matriz (xColecionavel,yColecionavel) == Vazio || procuraBloco matriz (xColecionavel,yColecionavel) == Escada
+                                       = validaPosicaoMapaColecionaveis j{colecionaveis = drop 1 (colecionaveis j)}
+                                 | otherwise = False
+  where Mapa a b matriz = mapa j 
+        (xColecionavel,yColecionavel) = snd (head(colecionaveis j))
 
 {-| Indica o tipo de Bloco situado numa dada posição
 

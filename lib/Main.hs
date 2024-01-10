@@ -469,7 +469,7 @@ desenhaEditor1 :: Estado -> [Picture]
 desenhaEditor1 s = desenhaMapa1 (-715.5,450.5) s ++ desenhaQuadrado s ++ desenhaFantasmas s ++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s
 
 desenhaEditor2 :: Estado -> [Picture]
-desenhaEditor2 s = desenhaMapa1 (-715.5,450.5) s ++ desenhaJogador s ++ desenhaFantasmas s ++ desenhaMacacoMalvado s 
+desenhaEditor2 s = desenhaMapa1 (-715.5,450.5) s ++ desenhaJogador s ++ desenhaFantasmas s ++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s
 
 desenhaQuadrado :: Estado -> [Picture]
 desenhaQuadrado s = [Translate (x-742) (477 - y) (getImagem Quadrado (imagens s))]
