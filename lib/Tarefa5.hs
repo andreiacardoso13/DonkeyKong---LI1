@@ -325,13 +325,17 @@ keysEditor1 (EventKey (SpecialKey KeyDown) Down _ _) s = if y <16.5 then return 
                                                                     else return s
     where (x,y) = posicao (jogador (jogo s))
 keysEditor1 (EventKey (SpecialKey KeySpace) Down _ _) s = return s{jogo = Jogo {mapa = atualizaMapa (mapa (jogo s)) (posicao(jogador(jogo s))),inimigos = inimigos (jogo s),colecionaveis = colecionaveis (jogo s), jogador = jogador (jogo s)}}
-keysEditor1 (EventKey (Char 'f') Down _ _) s = return s {jogo = Jogo {mapa = mapa (jogo s), inimigos = adicionaFantasma blocos (inimigos (jogo s)) (x,y), colecionaveis = colecionaveis (jogo s), jogador = jogador (jogo s)}}
+keysEditor1 (EventKey (Char 'q') Down _ _) s = return s {jogo = Jogo {mapa = mapa (jogo s), inimigos = adicionaFantasma blocos (inimigos (jogo s)) (x,y), colecionaveis = colecionaveis (jogo s), jogador = jogador (jogo s)}}
   where Mapa a b blocos = mapa (jogo s)
         (x,y) = posicao (jogador (jogo s))
-keysEditor1 (EventKey (Char 'm') Down _ _) s = return s {jogo = Jogo {mapa = mapa (jogo s), inimigos = adicionaMacaco blocos (inimigos (jogo s)) (x,y), colecionaveis = colecionaveis (jogo s), jogador = jogador (jogo s)}}
+keysEditor1 (EventKey (Char 'w') Down _ _) s = return s {jogo = Jogo {mapa = mapa (jogo s), inimigos = adicionaMacaco blocos (inimigos (jogo s)) (x,y), colecionaveis = colecionaveis (jogo s), jogador = jogador (jogo s)}}
  where Mapa a b blocos = mapa (jogo s)
        (x,y) = posicao (jogador (jogo s))
-keysEditor1 (EventKey (SpecialKey KeyDelete) Down _ _) s = return s {jogo = Jogo {mapa = mapa (jogo s), inimigos = [],colecionaveis = colecionaveis (jogo s), jogador = jogador (jogo s)}}
+keysEditor1 (EventKey (Char 'e') Down _ _) s = return s {jogo = Jogo {mapa = mapa (jogo s), inimigos = inimigos (jogo s), colecionaveis = colecionaveis (jogo s) ++ [(Moeda,posicao (jogador (jogo s)))], jogador = jogador (jogo s)}}
+keysEditor1 (EventKey (Char 'r') Down _ _) s = return s {jogo = Jogo {mapa = mapa (jogo s), inimigos = inimigos (jogo s), colecionaveis = colecionaveis (jogo s) ++ [(Martelo,posicao (jogador (jogo s)))], jogador = jogador (jogo s)}}
+keysEditor1 (EventKey (Char 't') Down _ _) s = return s {jogo = Jogo {mapa = Mapa a (posicao (jogador (jogo s))) b, inimigos = inimigos (jogo s), colecionaveis = colecionaveis (jogo s), jogador = jogador (jogo s)}}
+  where Mapa a star b = mapa (jogo s)
+keysEditor1 (EventKey (SpecialKey KeyDelete) Down _ _) s = return s {jogo = Jogo {mapa = mapa (jogo s), inimigos = [],colecionaveis = [], jogador = jogador (jogo s)}}
 keysEditor1 (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu=Editor2}
 keysEditor1 (EventKey (SpecialKey KeyEsc) Down _ _) s = do
     musicaParar
@@ -357,8 +361,11 @@ keysEditor2 _ s = return s
 
 
 adicionaMacaco :: [[Bloco]] -> [Personagem] -> Posicao -> [Personagem]
-adicionaMacaco blocos l (x,y) | verificaMacaco l == False && procuraBloco blocos (x,y) == Vazio && procuraBloco blocos (x+1,y) == Vazio && procuraBloco blocos (x+1,y-1) == Vazio && procuraBloco blocos (x-1,y) == Vazio && procuraBloco blocos (x-1,y-1) == Vazio = l ++ [Personagem {velocidade = (0,0), tipo = MacacoMalvado, posicao = (x,y-0.5), direcao = Este, tamanho = (2.49,2), emEscada = False, ressalta = True, vida = 1, pontos = 0, aplicaDano = (False,0)}]
-                              | otherwise = l
+adicionaMacaco blocos [] (x,y) = [Personagem {velocidade = (0,0), tipo = MacacoMalvado, posicao = (x,y-0.5), direcao = Este, tamanho = (2.49,2), emEscada = False, ressalta = True, vida = 1, pontos = 0, aplicaDano = (False,0)}]
+adicionaMacaco blocos (h:t) (x,y) | verificaMacaco (h:t) == False = (h:t) ++ [Personagem {velocidade = (0,0), tipo = MacacoMalvado, posicao = (x,y-0.5), direcao = Este, tamanho = (2.49,2), emEscada = False, ressalta = True, vida = 1, pontos = 0, aplicaDano = (False,0)}]
+                                  | otherwise = if tipo h == MacacoMalvado 
+                                                  then h {posicao = (x,y-0.5)} :t 
+                                                  else h : adicionaMacaco blocos t (x,y)
 
 verificaMacaco :: [Personagem] -> Bool
 verificaMacaco [] = False

@@ -398,8 +398,8 @@ ressaltoFantasma j = j {inimigos = map (ressaltaFantAux blocos) (inimigos j)}
   where Mapa a b blocos = mapa j
 
 ressaltaFantAux :: [[Bloco]] -> Personagem -> Personagem
-ressaltaFantAux blocos inim | procuraBlocoInf blocos (x+0.52,y) == Vazio && tipo inim == Fantasma= inim {velocidade = (-vx,vy)}
-                            | procuraBlocoInf blocos (x-0.52,y) == Vazio && tipo inim == Fantasma = inim {velocidade = (-vx,vy)}
+ressaltaFantAux blocos inim | procuraBlocoInf blocos (x+0.55,y) == Vazio && tipo inim == Fantasma= inim {velocidade = (-vx,vy)}
+                            | procuraBlocoInf blocos (x-0.55,y) == Vazio && tipo inim == Fantasma = inim {velocidade = (-vx,vy)}
                             | otherwise = inim
   where (vx,vy) = velocidade inim
         (x,y) = posicao inim

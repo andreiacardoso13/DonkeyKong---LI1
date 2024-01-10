@@ -3,6 +3,7 @@ import Graphics.Gloss
 import Graphics.Gloss.Interface.Pure.Game
 import Graphics.Gloss.Interface.IO.Game
 import LI12324
+import Tarefa1
 import Tarefa2
 import Tarefa3
 import Tarefa5
@@ -58,10 +59,10 @@ estadoInicial images = Estado {menu = Inicio,jogo = jOpcoes, imagens = images, t
 desenhaEstado :: Estado -> IO Picture
 desenhaEstado s | menu s == Inicio              = return (Pictures(desenhaInicio s))
                 | menu s == ModoJogo            = return (Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s++[Translate 0 460 (Scale 0.5 0.5 (getImagem PlPressP (imagens s)))]))
-                | menu s == ModoPausa Continuar = return (Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa4 (imagens s)), Translate 0 (-270) (getImagem DicasPausa (imagens s)), Translate 0 (-300) (getImagem ImEditorMapas (imagens s))]))
-                | menu s == ModoPausa Reiniciar = return (Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa1 (imagens s)), Translate 0 (-270) (getImagem DicasPausa (imagens s)), Translate 0 (-300) (getImagem ImEditorMapas (imagens s))]))
-                | menu s == ModoPausa Home      = return (Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa2 (imagens s)), Translate 0 (-270) (getImagem DicasPausa (imagens s)), Translate 0 (-300) (getImagem ImEditorMapas (imagens s))]))
-                | menu s == ModoPausa Controls  = return (Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa3 (imagens s)), Translate 0 (-270) (getImagem DicasPausa (imagens s)), Translate 0 (-300) (getImagem ImEditorMapas (imagens s))]))
+                | menu s == ModoPausa Continuar = return (Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa4 (imagens s)), Translate 0 (-270) (getImagem DicasPausa (imagens s))]))
+                | menu s == ModoPausa Reiniciar = return (Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa1 (imagens s)), Translate 0 (-270) (getImagem DicasPausa (imagens s))]))
+                | menu s == ModoPausa Home      = return (Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa2 (imagens s)), Translate 0 (-270) (getImagem DicasPausa (imagens s))]))
+                | menu s == ModoPausa Controls  = return (Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa3 (imagens s)), Translate 0 (-270) (getImagem DicasPausa (imagens s))]))
                 | menu s == ModoHighScore       = return (Pictures(desenhaModoHighScore s))
                 | menu s == GanhouJogo          = return (Pictures(desenhaGanhouJogo s))
                 | menu s == PerdeuJogo          = return (Pictures(desenhaPerdeuJogo s (tempo s)))
@@ -237,9 +238,8 @@ desenhaColecAux est img = Translate (x - 742) (477 - y) (getImagem img (imagens 
 
 -- | Fornece uma lista de um elemento, sendo esse elemento uma picture da estrela, ponto de chegada do jogo
 desenhaEstrela :: Estado -> [Picture]
-desenhaEstrela s = [Translate (x - 742) (477 - y) (getImagem Estrela (imagens s))]
-  where x = 14 * 53
-        y = 1.5 * 53
+desenhaEstrela s = [Translate (realToFrac (x*53 - 742)) (realToFrac (477 - y*53)) (getImagem Estrela (imagens s))]
+  where Mapa a (x,y) b = mapa(jogo s)
 
 -- | Fornece uma lista de um elemento, sendo esse elemento uma picture dos corações (número de vidas) que o jogador tem
 desenhaVida :: Estado -> [Picture] 
@@ -466,7 +466,7 @@ desenhaModoHighScore s = map (Translate 230 (66)) (desenhaNome (snd (head (highS
   where est = ordenaHighScore s
 
 desenhaEditor1 :: Estado -> [Picture]
-desenhaEditor1 s = desenhaMapa1 (-715.5,450.5) s ++ desenhaQuadrado s ++ desenhaFantasmas s ++ desenhaMacacoMalvado s 
+desenhaEditor1 s = desenhaMapa1 (-715.5,450.5) s ++ desenhaQuadrado s ++ desenhaFantasmas s ++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s
 
 desenhaEditor2 :: Estado -> [Picture]
 desenhaEditor2 s = desenhaMapa1 (-715.5,450.5) s ++ desenhaJogador s ++ desenhaFantasmas s ++ desenhaMacacoMalvado s 
@@ -522,9 +522,23 @@ reageTempo t s | menu s == GanhouJogo                                           
 --tira um inimigo se ele estiver em cima dum bloco que nao seja vazio
 
 verificaInimigo :: [Personagem] -> [[Bloco]] -> [Personagem]
-verificaInimigo [] _ = []
-verificaInimigo (h:t) blocos | procuraBloco blocos (posicao h) == Vazio = h : verificaInimigo t blocos
-                             | otherwise = verificaInimigo t blocos
+verificaInimigo l blocos = verificaInimigoFant (verificaInimigoMac l blocos) blocos
+
+verificaInimigoFant :: [Personagem] -> [[Bloco]] -> [Personagem]
+verificaInimigoFant [] _ = []
+verificaInimigoFant (h:t) blocos | tipo h == Fantasma = if procuraBloco blocos (posicao h) == Vazio 
+                                                          then h : verificaInimigoFant t blocos
+                                                          else verificaInimigoFant t blocos
+                                 | otherwise = h : verificaInimigoFant t blocos
+
+
+verificaInimigoMac :: [Personagem] -> [[Bloco]] -> [Personagem]
+verificaInimigoMac [] _ = []
+verificaInimigoMac (h:t) blocos | tipo h == MacacoMalvado = if procuraBloco blocos (x,y) == Vazio && procuraBloco blocos (x,y+1) == Vazio && procuraBloco blocos (x+1,y) == Vazio && procuraBloco blocos (x+1,y+1) == Vazio && procuraBloco blocos (x-1,y) == Vazio && procuraBloco blocos (x-1,y+1) == Vazio
+                                                              then (h:t)
+                                                              else h{posicao = (50,50)} : t
+                                | otherwise = h : verificaInimigoMac t blocos
+  where (x,y) = posicao h
 
 {-
 alteraDirecao :: Personagem -> Double -> Personagem
@@ -547,10 +561,11 @@ ficaParado :: Personagem -> Personagem
 ficaParado p = p{velocidade = (0,0)}
 
 ganhaJogo :: Estado -> Estado
-ganhaJogo s | x > 13 && x < 15 && y == 1.5 && menu s== ModoJogo = s {menu = GanhouJogo, jogo = Jogo {mapa = mapaGanhou,inimigos = ganhouInimigos (inimigos (jogo s)),colecionaveis = [], jogador = jogGanhaJogo (jogador (jogo s)) (bonus s)},tempo=0,highScore = highScore s ++ [(pontos (jogador(jogo s)) + (bonus s),"")]}
-            | otherwise = s
-   where x = fst(posicao(jogador(jogo s)))
-         y = snd(posicao(jogador(jogo s)))
+ganhaJogo s | colisaoHitbox (hitboxColecionavel star) (hitbox (jogador (jogo s))) = s {menu = GanhouJogo, jogo = Jogo {mapa = mapaGanhou,inimigos = ganhouInimigos (inimigos (jogo s)),colecionaveis = [], jogador = jogGanhaJogo (jogador (jogo s)) (bonus s)},tempo=0,highScore = highScore s ++ [(pontos (jogador(jogo s)) + (bonus s),"")]}
+            | otherwise = s 
+   where Mapa a star b = mapa (jogo s)
+
+
 
 ganhouInimigos :: [Personagem] -> [Personagem]
 ganhouInimigos [] = []
