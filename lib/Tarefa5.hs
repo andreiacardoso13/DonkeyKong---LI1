@@ -355,6 +355,9 @@ keysEditor2 (EventKey (SpecialKey KeyUp) Down _ _) s = if y >0.5 then return s {
 keysEditor2 (EventKey (SpecialKey KeyDown) Down _ _) s = if y <16.5 then return s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = Personagem {velocidade = (0,0), tipo = Jogador, posicao =(x,y+1), direcao = Este, tamanho = (1,1), emEscada = False, ressalta = False, vida = 3, pontos = 0, aplicaDano = (False,0)}}}
                                                                     else return s
     where (x,y) = posicao (jogador (jogo s))
+keysEditor2 (EventKey (SpecialKey KeyEnter) Down _ _) s = if valida (jogo s) 
+                                                              then return s {menu = ModoJogo}
+                                                              else return s
 keysEditor2 _ s = return s
 
 
