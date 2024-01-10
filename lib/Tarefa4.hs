@@ -31,7 +31,7 @@ import LI12324
 -}
 
 atualiza :: [Maybe Acao] -> Maybe Acao -> Jogo -> Jogo
-atualiza (ai:ais) aj j@(Jogo {inimigos = (i:is), jogador = jgd}) = (j {inimigos = atualizaInimigos (i:is) (ai:ais), jogador = movePersonagem jgd aj})
+atualiza (ai:ais) aj j@(Jogo {inimigos = (i:is), jogador = jgd}) = (j {inimigos = atualizaInimigos (i:is) (ai:ais), jogador = atualizaPersonagem jgd aj})
 
 {-| Recebe a lista dos inimigos de um jogo e a lista das ações a aplicar-lhes, devolvendo a lista de inimigos com as respetivas direções e velocidades atualizadas.
 
@@ -45,7 +45,7 @@ atualiza (ai:ais) aj j@(Jogo {inimigos = (i:is), jogador = jgd}) = (j {inimigos 
 
 atualizaInimigos :: [Personagem] -> [Maybe Acao] -> [Personagem]
 atualizaInimigos [] [] = []
-atualizaInimigos (i:is) (ai:ais) =  movePersonagem i ai : atualizaInimigos is ais
+atualizaInimigos (i:is) (ai:ais) =  atualizaPersonagem i ai : atualizaInimigos is ais
 
 {-| Recebe uma personagem e a ação a aplicar-lhe, devolvendo a personagem com a velocidade e direção atualizadas.
 
@@ -58,8 +58,8 @@ Personagem {velocidade = (0.0,0.0), tipo = Fantasma, posicao = (3.0,2.0), direca
 Personagem {velocidade = (10.0,0.0), tipo = Fantasma, posicao = (3.0,2.0), direcao = Este, tamanho = (1.0,1.0), emEscada = False, ressalta = False, vida = 2, pontos = 0, aplicaDano = (False,0.0)}
 -}
 
-movePersonagem :: Personagem -> Maybe Acao -> Personagem
-movePersonagem p a = case a of
+atualizaPersonagem :: Personagem -> Maybe Acao -> Personagem
+atualizaPersonagem p a = case a of
                         Just Subir -> usaEscada p Subir
                         Just Descer -> usaEscada p Descer
                         Just AndarDireita -> moveDireita p AndarDireita
@@ -71,7 +71,7 @@ movePersonagem p a = case a of
 {-| Atualiza a velocidade e direção de uma personagem ao aplicar a ação 'Subir' ou 'Descer'. -}
 
 usaEscada :: Personagem -> Acao -> Personagem
-usaEscada p a | a == Subir =  (p {velocidade = (0,-5), direcao = Norte,  emEscada = True})
+usaEscada p a | a == Subir  = (p {velocidade = (0,-5), direcao = Norte,  emEscada = True})
               | a == Descer = (p {velocidade = (0, 5), direcao = Norte,  emEscada = True})
 
 {-| Atualiza a velocidade e direção de uma personagem ao aplicar a ação 'AndarDireita'. -}
@@ -94,3 +94,7 @@ salta p@(Personagem {velocidade = (h,v)}) Saltar = (p {velocidade = (h,-5)})
 para :: Personagem -> Acao -> Personagem
 para p Parar = (p {velocidade = (0,0)})
 
+
+{-
+movePers :: Tempo -> Personagem -> Personagem
+movePers t p = -}

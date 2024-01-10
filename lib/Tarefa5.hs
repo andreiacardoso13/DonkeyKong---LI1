@@ -121,42 +121,42 @@ keysExit _ s = return s
 keysModoJogo :: Event -> Estado -> IO Estado
 keysModoJogo (EventKey (SpecialKey KeyRight) Down _ _) e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos),
                                                                           jogador = jgd@(Personagem {posicao = pos@(x,y),
-                                                                                                     emEscada = esc})})}) | not esc   = return e{jogo = j {jogador = movePersonagem (jgd {posicao = (min x 27.5, y)}) (Just AndarDireita)}}
+                                                                                                     emEscada = esc})})}) | not esc   = return e{jogo = j {jogador = atualizaPersonagem (jgd {posicao = (min x 27.5, y)}) (Just AndarDireita)}}
                                                                                                                           | otherwise = return e
 
 keysModoJogo (EventKey (SpecialKey KeyLeft)  Down _ _) e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos),
                                                                          jogador = jgd@(Personagem {posicao = pos@(x,y),
-                                                                                                    emEscada = esc})})}) | not esc   = return e{jogo = j {jogador = movePersonagem (jgd {posicao = (max x 0.5, y)}) (Just AndarEsquerda)}}
+                                                                                                    emEscada = esc})})}) | not esc   = return e{jogo = j {jogador = atualizaPersonagem (jgd {posicao = (max x 0.5, y)}) (Just AndarEsquerda)}}
                                                                                                                          | otherwise = return e
 
 keysModoJogo (EventKey (SpecialKey KeyUp)    Down _ _) e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos),
                                                                           jogador = jgd@(Personagem {posicao = pos@(x,y),
                                                                                                      emEscada = esc,
                                                                                                      aplicaDano = (b,_)})})}) | b = return e
-                                                                                                                              |     esc && procuraBloco blocos pos == Vazio && procuraBlocoInf blocos pos == Plataforma && colisoesParede m jgd = return e{jogo = j {jogador = movePersonagem (jgd {emEscada = False}) (Just Parar)}}
-                                                                                                                              | not esc && procuraBloco blocos pos == Escada && mod' x 1 <= 0.6 && mod' x 1 >= 0.3                              = return e{jogo = j {jogador = movePersonagem jgd (Just Subir)}}
-                                                                                                                              | esc                                                                                                             = return e{jogo = j {jogador = movePersonagem (jgd {posicao = (x, max (y-0.5) 0.5)}) (Just Subir)}}
+                                                                                                                              |     esc && procuraBloco blocos pos == Vazio && procuraBlocoInf blocos pos == Plataforma && colisoesParede m jgd = return e{jogo = j {jogador = atualizaPersonagem (jgd {emEscada = False}) (Just Parar)}}
+                                                                                                                              | not esc && procuraBloco blocos pos == Escada && mod' x 1 <= 0.6 && mod' x 1 >= 0.3                              = return e{jogo = j {jogador = atualizaPersonagem jgd (Just Subir)}}
+                                                                                                                              | esc                                                                                                             = return e{jogo = j {jogador = atualizaPersonagem (jgd {posicao = (x, max (y-0.5) 0.5)}) (Just Subir)}}
                                                                                                                               | otherwise = return e
 
 keysModoJogo (EventKey (SpecialKey KeyDown)  Down _ _) e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos),
                                                                           jogador = jgd@(Personagem {posicao = pos@(x,y),
                                                                                                      emEscada = esc,
                                                                                                      aplicaDano = (b,_)})})}) | b = return e
-                                                                                                                              |    esc  && procuraBlocoInf blocos pos == Escada                                                                                    = return e{jogo = j {jogador = movePersonagem (jgd {posicao = (x, min (y+0.5) 16.5)}) (Just Descer)}}
-                                                                                                                              |    esc  && procuraBlocoInf blocos pos == Plataforma && procuraBloco blocos pos     == Escada && colisoesParede m jgd               = return e{jogo = j {jogador = movePersonagem (jgd {emEscada = False}) (Just Parar)}}
-                                                                                                                              |            procuraBlocoInf blocos pos == Plataforma && procuraBloco blocos (x,y+2) == Escada && mod' x 1 <= 0.6 && mod' x 1 >= 0.3 = return e{jogo = j {jogador = movePersonagem (jgd {posicao = (x, min (y+0.5) 16.5)}) (Just Descer)}}
-                                                                                                                              |            procuraBlocoInf blocos pos == Escada     && procuraBloco blocos pos     == Plataforma                                   = return e{jogo = j {jogador = movePersonagem jgd (Just Descer)}}
+                                                                                                                              |    esc  && procuraBlocoInf blocos pos == Escada                                                                                    = return e{jogo = j {jogador = atualizaPersonagem (jgd {posicao = (x, min (y+0.5) 16.5)}) (Just Descer)}}
+                                                                                                                              |    esc  && procuraBlocoInf blocos pos == Plataforma && procuraBloco blocos pos     == Escada && colisoesParede m jgd               = return e{jogo = j {jogador = atualizaPersonagem (jgd {emEscada = False}) (Just Parar)}}
+                                                                                                                              |            procuraBlocoInf blocos pos == Plataforma && procuraBloco blocos (x,y+2) == Escada && mod' x 1 <= 0.6 && mod' x 1 >= 0.3 = return e{jogo = j {jogador = atualizaPersonagem (jgd {posicao = (x, min (y+0.5) 16.5)}) (Just Descer)}}
+                                                                                                                              |            procuraBlocoInf blocos pos == Escada     && procuraBloco blocos pos     == Plataforma                                   = return e{jogo = j {jogador = atualizaPersonagem jgd (Just Descer)}}
 
 keysModoJogo (EventKey (SpecialKey KeyUp) Up _ _) e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos),
                                                                           jogador = jgd@(Personagem {posicao = pos@(x,y),
-                                                                                                     emEscada = esc})})}) | esc && procuraBloco blocos pos == Vazio && procuraBlocoInf blocos pos == Plataforma && colisoesParede m jgd = return e{jogo = j {jogador = movePersonagem (jgd {emEscada = False}) (Just Parar)}}
-                                                                                                                          | otherwise = return e {jogo = j {jogador = movePersonagem jgd (Just Parar)}}
+                                                                                                     emEscada = esc})})}) | esc && procuraBloco blocos pos == Vazio && procuraBlocoInf blocos pos == Plataforma && colisoesParede m jgd = return e{jogo = j {jogador = atualizaPersonagem (jgd {emEscada = False}) (Just Parar)}}
+                                                                                                                          | otherwise = return e {jogo = j {jogador = atualizaPersonagem jgd (Just Parar)}}
 
 
 keysModoJogo (EventKey (SpecialKey k) Up _ _) e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos),
                                                                           jogador = jgd@(Personagem {posicao = pos@(x,y),
                                                                                                      emEscada = esc})})}) = if k == KeyRight || k == KeyLeft || k == KeyUp || k == KeyDown
-                                                                                                                               then return e{jogo = j {jogador = movePersonagem jgd (Just Parar)}}
+                                                                                                                               then return e{jogo = j {jogador = atualizaPersonagem jgd (Just Parar)}}
                                                                                                                                else return e
 
 
@@ -165,10 +165,10 @@ keysModoJogo (EventKey (SpecialKey KeySpace) Down _ _) e@(Estado {jogo = j@(Jogo
                                                                                                      emEscada = esc,
                                                                                                      aplicaDano = (b,_)})}),
                                                                                                      tempo = t})             | b = return e
-                                                                                                                             | not (colisoesParede m jgd)            = return e{jogo = j {jogador = movePersonagem jgd Nothing}}
-                                                                                                                             | not esc  && fst (velocidade jgd) == 0 = return e{jogo = j {jogador = movePersonagem (jgd {posicao = (x, y-1)}) (Just Saltar)}}
-                                                                                                                             | not esc  && direcao jgd == Oeste      = return e{jogo = j {jogador = movePersonagem (jgd {posicao = (x-1, y-1)}) (Just Saltar)}}
-                                                                                                                             | not esc  && direcao jgd == Este       = return e{jogo = j {jogador = movePersonagem (jgd {posicao = (x+1, y-1)}) (Just Saltar)}}
+                                                                                                                             | not (colisoesParede m jgd)            = return e{jogo = j {jogador = atualizaPersonagem jgd Nothing}}
+                                                                                                                             | not esc  && fst (velocidade jgd) == 0 = return e{jogo = j {jogador = atualizaPersonagem (jgd {posicao = (x, y-1)}) (Just Saltar)}}
+                                                                                                                             | not esc  && direcao jgd == Oeste      = return e{jogo = j {jogador = atualizaPersonagem (jgd {posicao = (x-1, y-1)}) (Just Saltar)}}
+                                                                                                                             | not esc  && direcao jgd == Este       = return e{jogo = j {jogador = atualizaPersonagem (jgd {posicao = (x+1, y-1)}) (Just Saltar)}}
                                                                                                                              | otherwise = return e
 
 keysModoJogo (EventKey (SpecialKey KeySpace) Up _ _) e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos),
@@ -176,7 +176,7 @@ keysModoJogo (EventKey (SpecialKey KeySpace) Up _ _) e@(Estado {jogo = j@(Jogo {
                                                                                                      emEscada = esc,
                                                                                                      aplicaDano = (b,_)})}),
                                                                                                      tempo = t})             | b = return e
-                                                                                                                             | otherwise = return e{jogo = j {jogador = movePersonagem jgd Nothing}}
+                                                                                                                             | otherwise = return e{jogo = j {jogador = atualizaPersonagem jgd Nothing}}
 
 
 keysModoJogo (EventKey (Char 'p') Down _ _) e@(Estado {menu = ModoJogo}) = return e {menu = ModoPausa Continuar}
