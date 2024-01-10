@@ -23,7 +23,7 @@ import Graphics.Gloss
 import Graphics.Gloss.Interface.Pure.Game
 import Graphics.Gloss.Interface.IO.Game
 
-data Estado = Estado {menu :: Menu, jogo :: Jogo, imagens :: Imagens, tempo :: Tempo, bonus :: Int, highScore :: [(Int,String)]}
+data Estado = Estado {menu :: Menu, jogo :: Jogo, imagens :: Imagens, tempo :: Tempo, bonus :: Int, highScore :: [(Int,String)], saltar :: Tempo}
 
 data Menu = Inicio
           | Opcoes Opcao
@@ -392,3 +392,9 @@ alteraBloco3 b | b == Plataforma = Alcapao
                | b == Alcapao = Escada
                | b == Escada = Vazio
                | otherwise = Plataforma
+
+
+{-| Atualiza a velocidade e direção de uma personagem ao aplicar a ação 'Saltar'. -}
+
+salta :: Personagem -> Acao -> Personagem
+salta p@(Personagem {velocidade = (h,v)}) Saltar = (p {velocidade = (h,-5)})
