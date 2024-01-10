@@ -66,7 +66,8 @@ desenhaEstado s | menu s == Inicio              = return (Pictures(desenhaInicio
                 | menu s == GanhouJogo          = return (Pictures(desenhaGanhouJogo s))
                 | menu s == PerdeuJogo          = return (Pictures(desenhaPerdeuJogo s (tempo s)))
                 | menu s == ModoControlos       = return (Pictures[getImagem MonkeyStanding (imagens s)])
-                | menu s == Editor              = return (Pictures(desenhaEditor s))
+                | menu s == Editor1             = return (Pictures(desenhaEditor1 s))
+                | menu s == Editor2             = return (Pictures(desenhaEditor2 s))
                 | otherwise                     = return (Pictures(desenhaOpcoes s))
 
 desenhaInicio :: Estado -> [Picture]
@@ -464,8 +465,11 @@ desenhaModoHighScore s = map (Translate 230 (66)) (desenhaNome (snd (head (highS
                          [Scale 0.8 0.8 (Translate 0 300 (getImagem AmareloHighScore (imagens s))),Translate (-390) 70 (getImagem Ouro (imagens s)),Translate (-390) (0) (getImagem Prata (imagens s)),Translate (-390) (-70) (getImagem Bronze (imagens s)), Scale 0.32 0.32 (Translate 0 (-265) (getImagem Pontos (imagens s))), Scale 0.32 0.32 (Translate 0 (-30) (getImagem Pontos (imagens s))),Scale 0.32 0.32 (Translate 0 190 (getImagem Pontos (imagens s))), Translate 0 (-400) (getImagem PlPressEnter2 (imagens s))]
   where est = ordenaHighScore s
 
-desenhaEditor :: Estado -> [Picture]
-desenhaEditor s = desenhaMapa1 (-715.5,450.5) s ++ desenhaQuadrado s ++ desenhaFantasmas s
+desenhaEditor1 :: Estado -> [Picture]
+desenhaEditor1 s = desenhaMapa1 (-715.5,450.5) s ++ desenhaQuadrado s ++ desenhaFantasmas s ++ desenhaMacacoMalvado s 
+
+desenhaEditor2 :: Estado -> [Picture]
+desenhaEditor2 s = desenhaMapa1 (-715.5,450.5) s ++ desenhaJogador s ++ desenhaFantasmas s ++ desenhaMacacoMalvado s 
 
 desenhaQuadrado :: Estado -> [Picture]
 desenhaQuadrado s = [Translate (x-742) (477 - y) (getImagem Quadrado (imagens s))]
@@ -510,7 +514,7 @@ reageTempo t s | menu s == GanhouJogo                                           
                | menu s == ModoPausa Continuar || menu s == ModoPausa Reiniciar || menu s == ModoPausa Home = return (s{jogo = jogo s, tempo = tempo s + (realToFrac t), bonus = bonus s})
                | menu s == ModoJogo                                                                         = return (ganhaJogo $ perdeJogo $ s {jogo = movimenta (truncate (tempo s)) (tempo s) (jogo s),tempo = tempo s + (realToFrac t), bonus = diminuiBonus (bonus s)})
                | menu s == PerdeuJogo                                                                       = return (s {tempo = tempo s + (realToFrac t), jogo = Jogo{mapa = mapa (jogo s),inimigos = inimigos (jogo s), colecionaveis = colecionaveis (jogo s), jogador = jogador (jogo s)}})
-               | menu s == Editor                                                                           = return (s {jogo = Jogo {mapa = mapa (jogo s), inimigos = verificaInimigo (inimigos (jogo s)) blocos, colecionaveis = colecionaveis (jogo s), jogador = jogador (jogo s)}})
+               | menu s == Editor1 || menu s == Editor2                                                     = return (s {jogo = Jogo {mapa = mapa (jogo s), inimigos = verificaInimigo (inimigos (jogo s)) blocos, colecionaveis = colecionaveis (jogo s), jogador = jogador (jogo s)}})
                | otherwise                                                                                  = return (analisaHighScore $ s {jogo = movimenta (truncate (tempo s)) (tempo s) (jogo s),tempo = tempo s + (realToFrac t)})
    where Mapa a b blocos = mapa (jogo s)
 

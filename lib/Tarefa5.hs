@@ -34,7 +34,8 @@ data Menu = Inicio
           | GanhouJogo
           | PerdeuJogo
           | ModoCreditos
-          | Editor
+          | Editor1
+          | Editor2
           | Exit
           deriving Eq
 
@@ -64,7 +65,8 @@ keys evt s | menu s == Inicio              = keysInicio evt s
            | menu s == PerdeuJogo          = keysPerdeuJogo evt s
            | menu s == ModoControlos       = keysControlos evt s
            | menu s == ModoCreditos        = keysCreditos evt s
-           | menu s == Editor              = keysEditor evt s
+           | menu s == Editor1             = keysEditor1 evt s
+           | menu s == Editor2             = keysEditor2 evt s
            | menu s == Exit                = keysExit evt s
 
 keysInicio :: Event -> Estado -> IO Estado
@@ -99,7 +101,7 @@ keysOpCreditos (EventKey (SpecialKey KeyEsc) Down _ _) s   = do musicaParar
 keysOpCreditos _ s = return s
 
 keysOpEditorMapas :: Event -> Estado -> IO Estado
-keysOpEditorMapas (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = Editor, jogo = jEditor}
+keysOpEditorMapas (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = Editor1, jogo = jEditor}
 keysOpEditorMapas (EventKey (SpecialKey KeyUp) Down _ _) s    = return s {menu = Opcoes OpCreditos}
 keysOpEditorMapas (EventKey (SpecialKey KeyEsc) Down _ _) s   = do musicaParar
                                                                    exitSuccess
@@ -309,37 +311,62 @@ keysCreditos (EventKey (SpecialKey KeyEsc) Down _ _) s = do musicaParar
                                                             exitSuccess
 keysCreditos _ s = return s 
 
-keysEditor :: Event -> Estado -> IO Estado 
-keysEditor (EventKey (SpecialKey KeyRight) Down _ _) s = if x <27.5 then return s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = Personagem {posicao =(x+1,y), aplicaDano = (False,0)}}}
+keysEditor1 :: Event -> Estado -> IO Estado 
+keysEditor1 (EventKey (SpecialKey KeyRight) Down _ _) s = if x <27.5 then return s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = Personagem {velocidade = (0,0), tipo = Jogador, posicao =(x+1,y), direcao = Este, tamanho = (1,1), emEscada = False, ressalta = False, vida = 3, pontos = 0, aplicaDano = (False,0)}}}
                                                                     else return s
     where (x,y) = posicao (jogador (jogo s))
-keysEditor (EventKey (SpecialKey KeyLeft) Down _ _) s = if x >0.5 then return s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = Personagem {posicao =(x-1,y), aplicaDano = (False,0)}}}
+keysEditor1 (EventKey (SpecialKey KeyLeft) Down _ _) s = if x >0.5 then return s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = Personagem {velocidade = (0,0), tipo = Jogador, posicao =(x-1,y), direcao = Este, tamanho = (1,1), emEscada = False, ressalta = False, vida = 3, pontos = 0, aplicaDano = (False,0)}}}
                                                                     else return s
     where (x,y) = posicao (jogador (jogo s))
-keysEditor (EventKey (SpecialKey KeyRight) Down _ _) s = if x <27.5 then return s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = Personagem {posicao =(x+1,y), aplicaDano = (False,0)}}}
+keysEditor1 (EventKey (SpecialKey KeyUp) Down _ _) s = if y >0.5 then return s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = Personagem {velocidade = (0,0), tipo = Jogador, posicao =(x,y-1), direcao = Este, tamanho = (1,1), emEscada = False, ressalta = False, vida = 3, pontos = 0, aplicaDano = (False,0)}}}
                                                                     else return s
     where (x,y) = posicao (jogador (jogo s))
-keysEditor (EventKey (SpecialKey KeyUp) Down _ _) s = if y >0.5 then return s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = Personagem {posicao =(x,y-1),aplicaDano = (False,0)}}}
+keysEditor1 (EventKey (SpecialKey KeyDown) Down _ _) s = if y <16.5 then return s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = Personagem {velocidade = (0,0), tipo = Jogador, posicao =(x,y+1), direcao = Este, tamanho = (1,1), emEscada = False, ressalta = False, vida = 3, pontos = 0, aplicaDano = (False,0)}}}
                                                                     else return s
     where (x,y) = posicao (jogador (jogo s))
-keysEditor (EventKey (SpecialKey KeyDown) Down _ _) s = if y <16.5 then return s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = Personagem {posicao =(x,y+1), aplicaDano = (False,0)}}}
-                                                                    else return s
-    where (x,y) = posicao (jogador (jogo s))
-keysEditor (EventKey (SpecialKey KeySpace) Down _ _) s = return s{jogo = Jogo {mapa = atualizaMapa (mapa (jogo s)) (posicao(jogador(jogo s))),inimigos = inimigos (jogo s),colecionaveis = colecionaveis (jogo s), jogador = jogador (jogo s)}}
-keysEditor (EventKey (Char 'f') Down _ _) s = return s {jogo = Jogo {mapa = mapa (jogo s), inimigos = adicionaFantasma blocos (inimigos (jogo s)) (x,y), colecionaveis = colecionaveis (jogo s), jogador = jogador (jogo s)}}
+keysEditor1 (EventKey (SpecialKey KeySpace) Down _ _) s = return s{jogo = Jogo {mapa = atualizaMapa (mapa (jogo s)) (posicao(jogador(jogo s))),inimigos = inimigos (jogo s),colecionaveis = colecionaveis (jogo s), jogador = jogador (jogo s)}}
+keysEditor1 (EventKey (Char 'f') Down _ _) s = return s {jogo = Jogo {mapa = mapa (jogo s), inimigos = adicionaFantasma blocos (inimigos (jogo s)) (x,y), colecionaveis = colecionaveis (jogo s), jogador = jogador (jogo s)}}
   where Mapa a b blocos = mapa (jogo s)
         (x,y) = posicao (jogador (jogo s))
-keysEditor (EventKey (Char 'm') Down _ _) s = return s
-keysEditor (EventKey (SpecialKey KeyEsc) Down _ _) s = do musicaParar
-                                                          exitSuccess
-keysEditor _ s = return s
+keysEditor1 (EventKey (Char 'm') Down _ _) s = return s {jogo = Jogo {mapa = mapa (jogo s), inimigos = adicionaMacaco blocos (inimigos (jogo s)) (x,y), colecionaveis = colecionaveis (jogo s), jogador = jogador (jogo s)}}
+ where Mapa a b blocos = mapa (jogo s)
+       (x,y) = posicao (jogador (jogo s))
+keysEditor1 (EventKey (SpecialKey KeyDelete) Down _ _) s = return s {jogo = Jogo {mapa = mapa (jogo s), inimigos = [],colecionaveis = colecionaveis (jogo s), jogador = jogador (jogo s)}}
+keysEditor1 (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu=Editor2}
+keysEditor1 (EventKey (SpecialKey KeyEsc) Down _ _) s = do
+    musicaParar
+    exitSuccess
+keysEditor1 _ s = return s
+
+keysEditor2 :: Event -> Estado -> IO Estado
+keysEditor2 (EventKey (SpecialKey KeyRight) Down _ _) s = if x <27.5 then return s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = Personagem {velocidade = (0,0), tipo = Jogador, posicao =(x+1,y), direcao = Este, tamanho = (1,1), emEscada = False, ressalta = False, vida = 3, pontos = 0, aplicaDano = (False,0)}}}
+                                                                    else return s
+    where (x,y) = posicao (jogador (jogo s))
+keysEditor2 (EventKey (SpecialKey KeyLeft) Down _ _) s = if x >0.5 then return s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = Personagem {velocidade = (0,0), tipo = Jogador, posicao =(x-1,y), direcao = Este, tamanho = (1,1), emEscada = False, ressalta = False, vida = 3, pontos = 0, aplicaDano = (False,0)}}}
+                                                                    else return s
+    where (x,y) = posicao (jogador (jogo s))
+keysEditor2 (EventKey (SpecialKey KeyUp) Down _ _) s = if y >0.5 then return s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = Personagem {velocidade = (0,0), tipo = Jogador, posicao =(x,y-1), direcao = Este, tamanho = (1,1), emEscada = False, ressalta = False, vida = 3, pontos = 0, aplicaDano = (False,0)}}}
+                                                                    else return s
+    where (x,y) = posicao (jogador (jogo s))
+keysEditor2 (EventKey (SpecialKey KeyDown) Down _ _) s = if y <16.5 then return s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = Personagem {velocidade = (0,0), tipo = Jogador, posicao =(x,y+1), direcao = Este, tamanho = (1,1), emEscada = False, ressalta = False, vida = 3, pontos = 0, aplicaDano = (False,0)}}}
+                                                                    else return s
+    where (x,y) = posicao (jogador (jogo s))
+keysEditor2 _ s = return s
+
+
+
 
 adicionaMacaco :: [[Bloco]] -> [Personagem] -> Posicao -> [Personagem]
-adicionaMacaco blocos l (x,y) | procuraBloco blocos (x,y) == Vazio = l ++ [Personagem {velocidade = (0,0), tipo = Fantasma, posicao = (x,y+1), direcao = Este, tamanho = (2.49,2), emEscada = False, ressalta = True, vida = 1, pontos = 0, aplicaDano = (False,0)}]
+adicionaMacaco blocos l (x,y) | verificaMacaco l == False && procuraBloco blocos (x,y) == Vazio && procuraBloco blocos (x+1,y) == Vazio && procuraBloco blocos (x+1,y-1) == Vazio && procuraBloco blocos (x-1,y) == Vazio && procuraBloco blocos (x-1,y-1) == Vazio = l ++ [Personagem {velocidade = (0,0), tipo = MacacoMalvado, posicao = (x,y-0.5), direcao = Este, tamanho = (2.49,2), emEscada = False, ressalta = True, vida = 1, pontos = 0, aplicaDano = (False,0)}]
+                              | otherwise = l
 
+verificaMacaco :: [Personagem] -> Bool
+verificaMacaco [] = False
+verificaMacaco (h:t) | tipo h == MacacoMalvado = True
+                     | otherwise = verificaMacaco t
 
 adicionaFantasma :: [[Bloco]] -> [Personagem] -> Posicao -> [Personagem]
-adicionaFantasma blocos l (x,y) | procuraBloco blocos (x,y) == Vazio = l ++ [Personagem {velocidade = (0,0), tipo = Fantasma, posicao = (x,y), direcao = Este, tamanho=(1,1),emEscada = False, ressalta = True,vida = 1,pontos = 0, aplicaDano = (False,0)}]
+adicionaFantasma blocos l (x,y) | procuraBloco blocos (x,y) == Vazio && procuraBloco blocos (x,y-1) == Vazio = l ++ [Personagem {velocidade = (0,0), tipo = Fantasma, posicao = (x,y), direcao = Este, tamanho=(1,1),emEscada = False, ressalta = True,vida = 1,pontos = 0, aplicaDano = (False,0)}]
                                 | otherwise = l
 
 atualizaMapa :: Mapa -> Posicao -> Mapa
