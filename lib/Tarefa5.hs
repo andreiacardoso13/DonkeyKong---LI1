@@ -343,7 +343,9 @@ keysEditor1 (EventKey (Char 'r') Down _ _) s = return s {jogo = Jogo {mapa = map
 keysEditor1 (EventKey (Char 't') Down _ _) s = return s {jogo = Jogo {mapa = Mapa a (posicao (jogador (jogo s))) b, inimigos = inimigos (jogo s), colecionaveis = colecionaveis (jogo s), jogador = jogador (jogo s)}}
   where Mapa a star b = mapa (jogo s)
 keysEditor1 (EventKey (SpecialKey KeyDelete) Down _ _) s = return s {jogo = Jogo {mapa = mapa (jogo s), inimigos = [],colecionaveis = [], jogador = jogador (jogo s)}}
-keysEditor1 (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu=Editor2}
+keysEditor1 (EventKey (SpecialKey KeyEnter) Down _ _) s = if valida (jogo s) 
+                                                             then return s {menu=Editor2}
+                                                             else return s
 keysEditor1 (EventKey (SpecialKey KeyEsc) Down _ _) s = do
     musicaParar
     exitSuccess

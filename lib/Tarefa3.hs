@@ -380,7 +380,9 @@ alteraImagem3Aux :: Float -> Bool
 alteraImagem3Aux n = (n >= 0 && n<2)
 
 movimentoMacaco :: Tempo -> Jogo -> Jogo
-movimentoMacaco t j = j {inimigos = movimentoMacacoAux t (inimigos j)}
+movimentoMacaco t j = if posI == ((14,16.5),Este) && posF == (14,1.5) then j {inimigos = movimentoMacacoAux t (inimigos j)}
+                        else j
+  where Mapa posI posF blocos = mapa j
 
 movimentoMacacoAux :: Tempo -> [Personagem] -> [Personagem]
 movimentoMacacoAux _ [] = []
@@ -398,6 +400,7 @@ ressaltoFantasma j = j {inimigos = map (ressaltaFantAux blocos) (inimigos j)}
 ressaltaFantAux :: [[Bloco]] -> Personagem -> Personagem
 ressaltaFantAux blocos inim | procuraBlocoInf blocos (x+0.55,y) == Vazio && tipo inim == Fantasma= inim {velocidade = (-vx,vy)}
                             | procuraBlocoInf blocos (x-0.55,y) == Vazio && tipo inim == Fantasma = inim {velocidade = (-vx,vy)}
+                            | (x >= 27.5 || x <= 0.5) && tipo inim == Fantasma = inim {velocidade = (-vx,vy)}
                             | otherwise = inim
   where (vx,vy) = velocidade inim
         (x,y) = posicao inim
