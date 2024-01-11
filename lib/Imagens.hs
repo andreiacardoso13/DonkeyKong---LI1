@@ -12,7 +12,7 @@ getImages = do
                Just alcapao                   <- loadJuicyPNG "lib/imagens/alcapao.png"
                Just plataforma                <- loadJuicyPNG "lib/imagens/plataforma.png"
                Just estrela                   <- loadJuicyPNG "lib/imagens/estrela.png"
-               Just moeda                     <- loadJuicyPNG "lib/imagens/moeda.png"
+               Just moeda                     <- loadJuicyPNG "lib/imagens/coin.png"
                Just martelo                   <- loadJuicyPNG "lib/imagens/hammer.png"
                Just ghostLeft1                <- loadJuicyPNG "lib/imagens/ghostLeft1.png"
                Just ghostLeft2                <- loadJuicyPNG "lib/imagens/ghostLeft2.png"

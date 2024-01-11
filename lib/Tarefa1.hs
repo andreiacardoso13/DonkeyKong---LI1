@@ -89,12 +89,22 @@ eNatural a | a < 0 = False
 -}
 
 mapaLimites :: Mapa -> Personagem -> Bool
-mapaLimites (Mapa _ _ blocos) p = eLim <= 0 || dLim >= fromIntegral mapaLargura || bLim <= 0 || tLim >= fromIntegral mapaAltura
+mapaLimites m@(Mapa _ _ blocos) p = limDireito m p || limEsquerdo m p || bLim <= 0 || tLim >= fromIntegral mapaAltura
   where (eLim, bLim) = fst (hitbox p)
         (dLim, tLim) = snd (hitbox p)
         mapaLargura = length (head blocos)
         mapaAltura = length blocos
   -- "fromIntegral" faz os valores mapaLargura e mapaAltura serem doubles como os valores das coords
+
+limDireito :: Mapa -> Personagem -> Bool
+limDireito (Mapa _ _ blocos) p = dLim >= fromIntegral mapaLargura
+      where (dLim, tLim) = snd (hitbox p)
+            mapaLargura = length (head blocos)
+
+limEsquerdo :: Mapa -> Personagem -> Bool
+limEsquerdo (Mapa _ _ blocos) p = eLim <= 0
+      where (eLim, bLim) = fst (hitbox p)
+
 
 {-| Testa se uma Personagem se encontra em colisão com alguma Plataforma.
 
