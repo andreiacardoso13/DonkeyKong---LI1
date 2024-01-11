@@ -105,7 +105,8 @@ desenhaMacacoOpcoes s | (t >= 0 && t<=3) || (t>=5 && t<=8) = [Translate 0 320 (S
 -- | Fornece a lista de pictures (com as devidas translações) utilizadas para desenhar o mapa do jogo
 desenhaMapa1 :: (Float,Float) -> Estado -> [Picture]
 desenhaMapa1 _ (Estado {jogo = (Jogo {mapa = Mapa a b []})}) = []
-desenhaMapa1 (x,y) (Estado {jogo = (Jogo {mapa = Mapa a b (h:t)}), imagens = imgs}) = (desenhaLinhas1 (x,y) imgs h) ++ (desenhaMapa1 (x,y-53) (Estado {jogo = (Jogo {mapa = Mapa a b t}), imagens = imgs}))
+desenhaMapa1 (x,y) s = (desenhaLinhas1 (x,y) (imagens s) h) ++ (desenhaMapa1 (x,y-53)) (s{jogo = Jogo {mapa = Mapa a b t, inimigos = inimigos (jogo s), colecionaveis = colecionaveis (jogo s), jogador = jogador (jogo s)}})
+  where Mapa a b (h:t) = mapa (jogo s)
 
 -- | Fornece a lista de pictures (com as devidas translações) utilizadas para desenhar um linha do mapa do jogo
 desenhaLinhas1 :: (Float,Float) -> Imagens -> [Bloco] -> [Picture] 
@@ -214,7 +215,7 @@ desenhaMacacoMalvado est | inimigos (jogo est) == [] = []
                                                                 else [desenhaMacacoAux est MonkeyArmLeft]
                          | entd == MacacoMalvado && vx > 0 = [desenhaMacacoAux est MonkeyWalkingRight]
                          | entd == MacacoMalvado && vx < 0 = [desenhaMacacoAux est MonkeyWalkingLeft]             
-                         | otherwise = desenhaMacacoMalvado $ est {jogo = Jogo {inimigos = drop 1 (inimigos (jogo est))}}
+                         | otherwise = desenhaMacacoMalvado $ est {jogo = Jogo {mapa = mapa (jogo est), inimigos = drop 1 (inimigos (jogo est)), colecionaveis = colecionaveis (jogo est), jogador = jogador (jogo est)}}
   where (vx,vy) = velocidade (head(inimigos(jogo(est))))
         entd = tipo(head(inimigos(jogo est)))
         vid = vida (head (inimigos (jogo est)))
@@ -229,8 +230,11 @@ desenhaMacacoAux est img = Translate (x - 742) (477 - y) (getImagem img (imagens
 
 -- | Fornece uma lista de pictures (com as devidas translações) utilizadas para desenhar o colecionáveis 
 desenhaColecionaveis :: Estado -> [Picture]
-desenhaColecionaveis (Estado {jogo = Jogo {colecionaveis= []}, imagens = imgs, tempo = tp}) = []
-desenhaColecionaveis (Estado {jogo = jog, imagens = imgs, tempo = tp}) = desenhaColecionaveisAux (Estado {jogo = jog {colecionaveis = take 1 (colecionaveis jog)}, imagens = imgs, tempo = tp}) : (desenhaColecionaveis (Estado {jogo = jog {colecionaveis = drop 1 (colecionaveis jog)}, imagens = imgs, tempo = tp}))
+desenhaColecionaveis (Estado {jogo = Jogo {colecionaveis= []}}) = []
+desenhaColecionaveis s = desenhaColecionaveisAux (s {jogo = jog {mapa = mapa (jogo s), inimigos = inimigos (jogo s), colecionaveis = take 1 (colecionaveis jog), jogador = jogador (jogo s)}}) : (desenhaColecionaveis (s {jogo = jog {mapa = mapa (jogo s), inimigos = inimigos (jogo s), colecionaveis = drop 1 (colecionaveis jog), jogador = jogador (jogo s)}}))
+  where jog = jogo s
+        imgs = imagens s
+        tp = tempo s
 
 -- | Fornece uma picture (com as devidas translações) utilizada para desenhar um colecionável
 desenhaColecionaveisAux :: Estado -> Picture
