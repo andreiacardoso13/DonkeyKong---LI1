@@ -55,6 +55,7 @@ library
         Imagens
         Music
 
+
     -- Modules included in this library but not exported.
     other-modules:
         Mapa
@@ -68,10 +69,12 @@ library
         random ^>=1.2.1.1,
         gloss ^>=1.13.2.2,
         gloss-juicy ^>=0.2.3,
-        process ^>= 1.6.16.0
+        process ^>= 1.6.16.0,
+       -- HUnit ^>= 1.6.2.0
+        
 
     -- Directories containing source files.
-    hs-source-dirs:   lib
+    hs-source-dirs:   lib test
 
     -- Base language which the package is written in.
     default-language: Haskell2010
@@ -93,7 +96,8 @@ executable primate-kong
         gloss ^>=1.13.2.2,
         gloss-juicy ^>=0.2.3,
         process ^>= 1.6.16.0,
-        primate-kong
+        primate-kong,
+        HUnit
 
     -- Directories containing source files.
     hs-source-dirs:   lib
@@ -114,5 +118,15 @@ test-suite primate-kong-test
     -- The entrypoint to the test suite.
     main-is:          Spec.hs
 
+    other-modules:
+        Tarefa1_202324li1g005_Spec
+        Tarefa1
+        Tarefa2
+        Tarefa2_202324li1g005_Spec
+        Tarefa3
+        Tarefa3_202324li1g005_Spec
+        Tarefa4
+        Tarefa4_202324li1g005_Spec
+
     -- Test dependencies.
-    build-depends:    base ^>=4.16.4.0, random ^>=1.2.1.1, HUnit
+    build-depends:    base ^>=4.16.4.0, random ^>=1.2.1.1, HUnit, Gloss ^>=1.13.2.2
