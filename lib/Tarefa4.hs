@@ -11,7 +11,6 @@ module Tarefa4 where
 import Data.Maybe
 import Tarefa1
 import Tarefa2
-import Tarefa3
 import LI12324
 
 {-| Recebe as ações a aplicar aos inimigos, a ação a aplicar ao jogador, e um jogo, devolvendo o jogo atualizado.
@@ -93,8 +92,3 @@ salta p@(Personagem {velocidade = (h,v)}) Saltar = (p {velocidade = (h,-5)})
 
 para :: Personagem -> Acao -> Personagem
 para p Parar = (p {velocidade = (0,0)})
-
-
-{-
-movePers :: Tempo -> Personagem -> Personagem
-movePers t p = -}
