@@ -94,9 +94,12 @@ Verifica se todos os inimigos têm a propriedade ressalta a True, enquanto que o
 
 validaRessalta :: Jogo -> Bool
 validaRessalta (Jogo {inimigos = [], jogador = (Personagem {ressalta = y})}) = True
-validaRessalta (Jogo {inimigos = ((Personagem {ressalta = x}): t ), jogador = (Personagem {ressalta = y})}) 
-      | x == True && y == False = validaRessalta (Jogo {inimigos = t, jogador = (Personagem {ressalta = y})}) 
-      | otherwise = False
+validaRessalta j | x == True && y == False = validaRessalta (j{inimigos = drop 1 (inimigos j)})
+                 | otherwise = False
+  where x = ressalta (head(inimigos j))
+        (h:t) = inimigos j 
+        y = ressalta (jogador j)
+
 
 {-|
 Recebe um jogo e verifica se a posição do jogador colide com a posição de algum outro personagem
@@ -118,9 +121,11 @@ Recebe um jogo e verifica se a posição do jogador colide com a posição de al
 
 validaPosicaoColisao :: Jogo -> Bool
 validaPosicaoColisao (Jogo {inimigos = [], jogador = Personagem {posicao = (x2,y2)}}) = True
-validaPosicaoColisao (Jogo {inimigos = ((Personagem {posicao = (x1,y1)}): t ), jogador = Personagem {posicao = (x2,y2)}}) 
-      | x1 == x2 && y1 == y2 = False
-      | otherwise = validaPosicaoColisao (Jogo {inimigos = t , jogador = Personagem {posicao = (x2,y2)}}) 
+validaPosicaoColisao j | x1 == x2 && y1 == y2 = False
+                       | otherwise = validaPosicaoColisao (Jogo {mapa = mapa j, inimigos = t , colecionaveis = colecionaveis j, jogador = jogador j}) 
+  where (x1,y1) = posicao (head(inimigos j))
+        (h:t) = inimigos j 
+        (x2,y2) = posicao (jogador j)
 
 {-|
 Recebe um jogo e verifica se o jogo tem pelo menos 2 inimigos
@@ -147,10 +152,14 @@ Recebe um jogo e verifica se todos os inimigos do tipo Fantasma têm 1 vida
 -}
 validaVidaFantasma :: Jogo -> Bool
 validaVidaFantasma (Jogo {inimigos = []}) = True
-validaVidaFantasma (Jogo {inimigos = ((Personagem {tipo = y, vida = x}): t )}) |y == Fantasma = if x == 1 
-                                                                                       then validaVidaFantasma (Jogo {inimigos = t })
-                                                                                       else False
-                                                                               |otherwise = validaVidaFantasma (Jogo {inimigos = t })
+validaVidaFantasma j | y == Fantasma = if x == 1
+                                         then validaVidaFantasma j{inimigos = t}
+                                         else False
+                     | otherwise = validaVidaFantasma j {inimigos = t}
+  where (h:t) = inimigos j
+        y = tipo (head(inimigos j))
+        x = vida (head(inimigos j))
+
 
 
 {-|
