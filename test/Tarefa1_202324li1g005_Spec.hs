@@ -1,4 +1,4 @@
-module Tarefa1_202324li1g005_Spec (testesTarefa1) where
+module Tarefa1_202324li1g005_Spec where
 
 import Tarefa1
 import LI12324
@@ -14,19 +14,19 @@ p6 = Personagem (0,0) Fantasma (3,3) Oeste (1,1) True False 2 0 (False, 0.0)
 
 -- | Exemplo de blocos para testes
 blocos1 :: [[Bloco]]
-blocos1 = [ [ Vazio, Vazio, Vazio, Vazio, Vazio, Vazio, Vazio, Vazio, Vazio, Vazio]
-          , [ Vazio, Vazio, Vazio, Vazio, Vazio, Vazio, Vazio, Vazio, Vazio, Vazio]
-          , [ Vazio, Vazio, Vazio, Plataforma, Plataforma, Plataforma, Plataforma, Vazio, Vazio, Vazio]
-          , [ Vazio, Vazio, Vazio, Escada, Vazio, Vazio, Escada, Vazio, Vazio, Vazio]
-          , [ Vazio, Vazio, Vazio, Escada, Vazio, Vazio, Escada, Vazio, Vazio, Vazio]
-          , [ Vazio, Vazio, Plataforma, Plataforma, Plataforma, Plataforma, Plataforma, Plataforma, Vazio, Vazio]
-          , [ Vazio, Vazio, Escada, Vazio, Vazio, Vazio, Vazio, Escada, Vazio, Vazio]
-          , [ Vazio, Vazio, Escada, Vazio, Vazio, Vazio, Vazio, Escada, Vazio, Vazio]
-          , [ Vazio, Plataforma, Plataforma, Plataforma, Alcapao, Plataforma, Plataforma, Plataforma, Plataforma, Vazio]
-          , [ Vazio, Escada, Vazio, Vazio, Vazio, Vazio, Vazio, Vazio, Escada, Vazio]
-          , [ Vazio, Escada, Vazio, Vazio, Vazio, Vazio, Vazio, Vazio, Escada, Vazio]
-          , [ Plataforma, Plataforma, Plataforma, Plataforma, Plataforma, Plataforma, Plataforma, Plataforma, Plataforma, Plataforma]]
-
+blocos1 = [ [Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio      ,Vazio     ,Vazio     ]
+          , [Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio      ,Vazio     ,Vazio     ]
+          , [Vazio     ,Vazio     ,Vazio     ,Plataforma,Plataforma,Plataforma,Plataforma,Vazio      ,Vazio     ,Vazio     ]
+          , [Vazio     ,Vazio     ,Vazio     ,Escada    ,Vazio     ,Vazio     ,Escada    ,Vazio      ,Vazio     ,Vazio     ]
+          , [Vazio     ,Vazio     ,Vazio     ,Escada    ,Vazio     ,Vazio     ,Escada    ,Vazio      ,Vazio     ,Vazio     ]
+          , [Vazio     ,Vazio     ,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma ,Vazio     ,Vazio     ]
+          , [Vazio     ,Vazio     ,Escada    ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Escada     ,Vazio     ,Vazio     ]
+          , [Vazio     ,Vazio     ,Escada    ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Escada     ,Vazio     ,Vazio     ]
+          , [Vazio     ,Plataforma,Plataforma,Plataforma,Alcapao   ,Plataforma,Plataforma,Plataforma ,Plataforma,Vazio     ]
+          , [Vazio     ,Escada    ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio      ,Escada    ,Vazio     ]
+          , [Vazio     ,Escada    ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio      ,Escada    ,Vazio     ]
+          , [Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma ,Plataforma,Plataforma]]
+ 
 -- | Exemplo de mapa para testes
 mapa1 :: Mapa
 mapa1 = Mapa ((8.5, 6.5), Este) (5, 1.5) blocos1

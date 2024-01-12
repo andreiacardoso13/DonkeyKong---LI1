@@ -306,10 +306,11 @@ efeitoColisoesPlataforma (Mapa a b blocos) pers | platColisoes (Mapa a b blocos)
                                                 | otherwise = pers
 
 efeitoColisoesMapaJog :: Mapa -> Personagem -> Personagem
-efeitoColisoesMapaJog m jog | mapaLimites m jog = if fst(posicao jog) > 14 
+efeitoColisoesMapaJog m jog | mapaLimites m jog = if fst(posicao jog) > ((fromIntegral (length (head blocos))) / 2)
                                                     then jog {posicao = (fst (posicao jog) -0.2, snd (posicao jog))}
                                                     else jog {posicao = (fst (posicao jog) +0.2, snd (posicao jog))}
                             | otherwise = jog
+  where Mapa a b blocos = m
 
 efeitoColisoesMapaInim :: Mapa -> Personagem -> Personagem
 efeitoColisoesMapaInim m inim | mapaLimites m inim = inim {velocidade = (-vx,vy)}
