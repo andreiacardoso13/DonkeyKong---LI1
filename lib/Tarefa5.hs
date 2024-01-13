@@ -79,30 +79,30 @@ keysInicio _ s = return s
 
 keysOpJogar :: Event -> Estado -> IO Estado
 keysOpJogar (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = ModoJogo, jogo = j1, tempo = 0, bonus = 15000}
-keysOpJogar (EventKey (SpecialKey KeyDown) Down _ _) s  = return s {menu = Opcoes HighScore}
+keysOpJogar (EventKey (SpecialKey KeyDown) Down _ _) s  = return s {menu = Opcoes OpCreditos}
 keysOpJogar (EventKey (SpecialKey KeyEsc) Down _ _) s   = do musicaParar
                                                              exitSuccess
 keysOpJogar _ s = return s
 
 keysOpHighScore :: Event -> Estado -> IO Estado
 keysOpHighScore (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = ModoHighScore}
-keysOpHighScore (EventKey (SpecialKey KeyUp) Down _ _) s    = return s {menu = Opcoes Jogar}
-keysOpHighScore (EventKey (SpecialKey KeyDown) Down _ _) s  = return s {menu = Opcoes OpCreditos}
+keysOpHighScore (EventKey (SpecialKey KeyUp) Down _ _) s    = return s {menu = Opcoes OpCreditos}
+keysOpHighScore (EventKey (SpecialKey KeyDown) Down _ _) s  = return s {menu = Opcoes EditorMapas}
 keysOpHighScore (EventKey (SpecialKey KeyEsc) Down _ _) s   = do musicaParar
                                                                  exitSuccess
 keysOpHighScore _ s = return s
 
 keysOpCreditos :: Event -> Estado -> IO Estado
 keysOpCreditos (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = ModoCreditos}
-keysOpCreditos (EventKey (SpecialKey KeyUp) Down _ _) s    = return s {menu = Opcoes HighScore}
-keysOpCreditos (EventKey (SpecialKey KeyDown) Down _ _) s  = return s {menu = Opcoes EditorMapas}
+keysOpCreditos (EventKey (SpecialKey KeyUp) Down _ _) s    = return s {menu = Opcoes Jogar}
+keysOpCreditos (EventKey (SpecialKey KeyDown) Down _ _) s  = return s {menu = Opcoes HighScore}
 keysOpCreditos (EventKey (SpecialKey KeyEsc) Down _ _) s   = do musicaParar
                                                                 exitSuccess
 keysOpCreditos _ s = return s
 
 keysOpEditorMapas :: Event -> Estado -> IO Estado
 keysOpEditorMapas (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = Editor1, jogo = jEditor, editor = True}
-keysOpEditorMapas (EventKey (SpecialKey KeyUp) Down _ _) s    = return s {menu = Opcoes OpCreditos}
+keysOpEditorMapas (EventKey (SpecialKey KeyUp) Down _ _) s    = return s {menu = Opcoes HighScore}
 keysOpEditorMapas (EventKey (SpecialKey KeyDown) Down _ _) s    = return s {menu = Opcoes UltJogo}
 keysOpEditorMapas (EventKey (SpecialKey KeyEsc) Down _ _) s   = do musicaParar
                                                                    exitSuccess
@@ -364,7 +364,7 @@ keysEditor2 (EventKey (SpecialKey KeyDown) Down _ _) s = if y <16.5 then return 
                                                                     else return s
     where (x,y) = posicao (jogador (jogo s))
 keysEditor2 (EventKey (SpecialKey KeyEnter) Down _ _) s = if valida (jogo s) 
-                                                              then return s {menu = ModoJogo, jogo = atualizaPosicaoInicial (jogo s), jogoEditor = jogo s}
+                                                              then return s {menu = ModoJogo, jogo = atualizaPosicaoInicial (jogo s), jogoEditor = jogo s, bonus = 15000}
                                                               else return s
 keysEditor2 (EventKey (SpecialKey KeyEsc) Down _ _) s = do musicaParar
                                                            exitSuccess
