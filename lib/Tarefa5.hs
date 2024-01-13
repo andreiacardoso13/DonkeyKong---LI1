@@ -47,6 +47,7 @@ data Opcao = Jogar
            | Controls
            | OpCreditos
            | EditorMapas
+           | UltJogo
           deriving Eq
 
 keys :: Event -> Estado -> IO Estado
@@ -55,6 +56,7 @@ keys evt s | menu s == Inicio              = keysInicio evt s
            | menu s == Opcoes HighScore    = keysOpHighScore evt s
            | menu s == Opcoes OpCreditos   = keysOpCreditos evt s
            | menu s == Opcoes EditorMapas  = keysOpEditorMapas evt s
+           | menu s == Opcoes UltJogo      = keysOpUltJogo evt s
            | menu s == ModoJogo            = keysModoJogo evt s
            | menu s == ModoPausa Continuar = keysModoPausa evt s
            | menu s == ModoPausa Reiniciar = keysModoPausa evt s
@@ -101,10 +103,17 @@ keysOpCreditos _ s = return s
 keysOpEditorMapas :: Event -> Estado -> IO Estado
 keysOpEditorMapas (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = Editor1, jogo = jEditor, editor = True}
 keysOpEditorMapas (EventKey (SpecialKey KeyUp) Down _ _) s    = return s {menu = Opcoes OpCreditos}
+keysOpEditorMapas (EventKey (SpecialKey KeyDown) Down _ _) s    = return s {menu = Opcoes UltJogo}
 keysOpEditorMapas (EventKey (SpecialKey KeyEsc) Down _ _) s   = do musicaParar
                                                                    exitSuccess
 keysOpEditorMapas _ s = return s
 
+keysOpUltJogo :: Event -> Estado -> IO Estado
+keysOpUltJogo (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = ModoJogo, jogo = jogoEditor s, editor = True}
+keysOpUltJogo (EventKey (SpecialKey KeyUp) Down _ _) s = return s {menu = Opcoes EditorMapas}
+keysOpUltJogo (EventKey (SpecialKey KeyEsc) Down _ _) s   = do musicaParar
+                                                               exitSuccess
+keysOpUltJogo _ s = return s
 
 keysModoJogo :: Event -> Estado -> IO Estado
 keysModoJogo (EventKey (SpecialKey KeyRight) Down _ _) e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos),
