@@ -121,11 +121,9 @@ Recebe um jogo e verifica se a posição do jogador colide com a posição de al
 
 validaPosicaoColisao :: Jogo -> Bool
 validaPosicaoColisao (Jogo {inimigos = [], jogador = Personagem {posicao = (x2,y2)}}) = True
-validaPosicaoColisao j | x1 == x2 && y1 == y2 = False
+validaPosicaoColisao j | colisaoHitbox (hitbox h) (hitbox (jogador j)) = False 
                        | otherwise = validaPosicaoColisao (Jogo {mapa = mapa j, inimigos = t , colecionaveis = colecionaveis j, jogador = jogador j}) 
-  where (x1,y1) = posicao (head(inimigos j))
-        (h:t) = inimigos j 
-        (x2,y2) = posicao (jogador j)
+  where (h:t) = inimigos j 
 
 {-|
 Recebe um jogo e verifica se o jogo tem pelo menos 2 inimigos
@@ -305,7 +303,7 @@ removeEscada (h:t) | h == Escada = removeEscada t
 
 {-|
 
-Recebe um jogo e verifica se o tamanho de alçapáo é igual ou superior ao do personagem
+Recebe um jogo e verifica se o tamanho de alçap~o é igual ou superior ao do personagem
 
 =Exemplos
 >>> validaLarguraAlcapao (Jogo {jogador = Personagem {tamanho = (1.1,2)}}) = False
@@ -341,9 +339,9 @@ Recebe um jogo e verifica se existem personagens ou colecionáveis "dentro" de p
 -}
 
 validaPosicaoMapa :: Jogo -> Bool
-validaPosicaoMapa jogo' = validaPosicaoMapaJogador jogo' 
-                          --validaPosicaoMapaInimigos jogo' &&
-                          --validaPosicaoMapaColecionaveis jogo'
+validaPosicaoMapa jogo' = validaPosicaoMapaJogador jogo' &&
+                          validaPosicaoMapaInimigos jogo' &&
+                          validaPosicaoMapaColecionaveis jogo'
 
 {-|
 Recebe um Jogo e verifica se a posição do jogador é válida

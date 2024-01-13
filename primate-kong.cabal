@@ -54,6 +54,7 @@ library
         Tarefa5
         Imagens
         Music
+        Desenha
 
 
     -- Modules included in this library but not exported.
@@ -84,7 +85,7 @@ executable primate-kong
     main-is:          Main.hs
 
     -- Modules included in this executable, other than Main.
-    other-modules:    LI12324  Imagens  Mapa  Tarefa1  Tarefa2  Tarefa3  Tarefa4 Tarefa5  Music
+    other-modules:    LI12324  Imagens  Mapa  Tarefa1  Tarefa2  Tarefa3  Tarefa4 Tarefa5  Music Desenha
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
@@ -130,3 +131,4 @@ test-suite primate-kong-test
 
     -- Test dependencies.
     build-depends:    base ^>=4.16.4.0, random ^>=1.2.1.1, HUnit, Gloss ^>=1.13.2.2
+

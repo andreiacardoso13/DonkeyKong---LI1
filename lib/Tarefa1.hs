@@ -102,7 +102,7 @@ limDireito (Mapa _ _ blocos) p = dLim >= fromIntegral mapaLargura
             mapaLargura = length (head blocos)
 
 limEsquerdo :: Mapa -> Personagem -> Bool
-limEsquerdo (Mapa _ _ blocos) p = eLim <= 0
+limEsquerdo (Mapa _ _ blocos) p = eLim <= 0.05
       where (eLim, bLim) = fst (hitbox p)
 
 
