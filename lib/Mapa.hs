@@ -2,23 +2,8 @@ module Mapa where
 import LI12324
 import Graphics.Gloss
 import Imagens
-import Data.Maybe
 
--- [("escada",escada), ("alcapao",alcapao), ("plataforma",plataforma), ("estrela",estrela),("moeda",moeda), ("martelo",martelo), ("ghostLeft1",ghostLeft1), ("ghostLeft2",ghostLeft2),("ghostRight1",ghostRight1), ("ghostRight2",ghostRight2), ("marioClimbing1",marioClimbing1),("marioClimbing2",marioClimbing2), ("marioHammerLeft1",marioHammerLeft1),("marioHammerLeft2",marioHammerLeft2), ("marioHammerLeft3",marioHammerLeft3),("marioHammerLeft4",marioHammerLeft4), ("marioHammerRight1",marioHammerRight1),("marioHammerRight2",marioHammerRight2), ("marioHammerRight3",marioHammerRight3),("marioHammerRight4",marioHammerRight4), ("marioJumpingLeft1",marioJumpingLeft1),("marioJumpingRight1",marioJumpingRight1), ("marioStandingBack",marioStandingBack),("marioStandingLeft",marioStandingLeft), ("marioStandingRight",marioStandingRight),("marioWalkingLeft1",marioWalkingLeft1), ("marioWalkingRight1",marioWalkingRight1),("monkeyDefeated",monkeyDefeated), ("monkeyFalling",monkeyFalling)]
-
-getImagem :: Imagem -> Imagens -> Picture
-getImagem im imgs = fromJust (lookup im imgs)
-
-desenhaBlocos :: Imagens -> Imagem -> Posicao -> Picture
-desenhaBlocos imgs b (x,y) = getImagem b imgs
-
-desenhaLinhas :: Imagens -> [Imagem] -> [Posicao] -> [Picture]
-desenhaLinhas imgs (h:t) (p:ps) = desenhaBlocos imgs h p : desenhaLinhas imgs t ps
-
-desenhaMapa :: Imagens -> [[Imagem]] -> [[Posicao]] -> [[Picture]]
-desenhaMapa imgs ((h:t):ls) ((p:ps):as) = desenhaLinhas imgs (h:t) (p:ps) : desenhaMapa imgs ls as
-
-
+-- | Mapa do jogo principal
 mapaInicial :: Mapa
 mapaInicial = Mapa ((14,16.5), Este) (14,1.5) [[Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ],
                                                [Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ],
@@ -39,6 +24,7 @@ mapaInicial = Mapa ((14,16.5), Este) (14,1.5) [[Vazio     ,Vazio     ,Vazio     
                                                [Vazio     ,Escada    ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Escada    ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Escada    ,Vazio     ],
                                                [Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma]]
 
+-- | Mapa utilizado no menu das opções
 mapaOpcoes :: Mapa
 mapaOpcoes = Mapa ((0,0), Este) (0,0) [[Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ],
                                        [Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ],
@@ -59,6 +45,7 @@ mapaOpcoes = Mapa ((0,0), Este) (0,0) [[Vazio     ,Vazio     ,Vazio     ,Vazio  
                                        [Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ],
                                        [Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma]] 
 
+-- | Mapa utilizado quando o jogador ganha o jogo principal
 mapaGanhou :: Mapa
 mapaGanhou = Mapa ((0,0), Este) (0,0) [[Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ],
                                        [Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ],
@@ -79,8 +66,9 @@ mapaGanhou = Mapa ((0,0), Este) (0,0) [[Vazio     ,Vazio     ,Vazio     ,Vazio  
                                        [Vazio     ,Escada    ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Escada    ,Vazio     ],
                                        [Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma]]
 
+-- | Mapa utilizado para o editor de mapas
 mapaEditor :: Mapa
-mapaEditor = Mapa ((0,0), Este) (50,50) [[Vazio    ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ],
+mapaEditor = Mapa ((0,0), Este) (50,50) [[Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ],
                                          [Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ],
                                          [Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ],
                                          [Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ],
@@ -98,7 +86,7 @@ mapaEditor = Mapa ((0,0), Este) (50,50) [[Vazio    ,Vazio     ,Vazio     ,Vazio 
                                          [Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ],
                                          [Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ],
                                          [Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma]]
-
+-- | Mapa utilizado para testar funções
 mapaPrincipal :: Mapa 
 mapaPrincipal = Mapa ((0.5,5.5), Oeste) (0.5,2.5)
                  [[Plataforma, Plataforma, Plataforma, Plataforma, Plataforma, Plataforma, Plataforma, Plataforma, Plataforma, Plataforma]
@@ -110,17 +98,20 @@ mapaPrincipal = Mapa ((0.5,5.5), Oeste) (0.5,2.5)
                  ,[Plataforma, Plataforma, Plataforma, Plataforma, Plataforma, Plataforma, Plataforma, Plataforma, Plataforma, Plataforma]
                  ]
 
+-- | Mapa utilizado para testes de funções
 m1 :: Mapa
 m1 = Mapa ((0,0), Este) (0,0) [[Vazio     , Plataforma, Vazio     ],
                                [Vazio     , Escada    , Vazio     ],
                                [Plataforma, Plataforma, Plataforma]]
 
+-- | Mapa utilizado para testes de funções
 m2 :: Mapa
 m2 = Mapa ((0,0), Este) (0,0) [[Vazio     ,Vazio     ,Vazio     ,Vazio     ],
                                [Plataforma,Vazio     ,Plataforma,Plataforma],
                                [Vazio     ,Vazio     ,Vazio     ,Vazio     ],
                                [Plataforma,Plataforma,Plataforma,Plataforma]]
 
+-- | Jogo inicial do editor de mapas
 jEditor :: Jogo
 jEditor = Jogo {mapa = mapaEditor
                ,inimigos = [] 
@@ -138,14 +129,7 @@ jEditor = Jogo {mapa = mapaEditor
                                       }
                }
 
-
-
-
-
-
-
-
-
+-- | Jogo utilizado no menu de opções
 jOpcoes :: Jogo
 jOpcoes = Jogo {mapa = mapaOpcoes
                ,inimigos = [Personagem {velocidade=(1,0)
@@ -185,6 +169,7 @@ jOpcoes = Jogo {mapa = mapaOpcoes
                                       }
                }
 
+-- | Jogo inicial do jogo principal
 j1 :: Jogo
 j1 = Jogo {mapa = mapaInicial
           ,inimigos = [Personagem {velocidade=(1.5,0)

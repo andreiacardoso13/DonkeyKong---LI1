@@ -12,9 +12,6 @@ import LI12324
 import Mapa
 import Data.Fixed
 
--- Personagem {velocidade = _, tipo = _, posicao = (x,y), direcao = _, tamanho = (l,a), emEscada = _, ressalta = _, vida = _, pontos = _, aplicaDano = _}
--- Personagem {velocidade = (2,2), tipo = Fantasma, posicao = (2.5,1), direcao = Este, tamanho = (1,1), emEscada = False, ressalta = True, vida = 1, pontos = 0, aplicaDano = (False,0)}
-
 {-| Define o menor retângulo que contém uma personagem.
 
 = Exemplos
@@ -96,11 +93,13 @@ mapaLimites m@(Mapa _ _ blocos) p = limDireito m p || limEsquerdo m p || bLim <=
         mapaAltura = length blocos
   -- "fromIntegral" faz os valores mapaLargura e mapaAltura serem doubles como os valores das coords
 
+-- | Testa de um personagem está para além do limite direito do mapa
 limDireito :: Mapa -> Personagem -> Bool
 limDireito (Mapa _ _ blocos) p = dLim >= fromIntegral mapaLargura
       where (dLim, tLim) = snd (hitbox p)
             mapaLargura = length (head blocos)
 
+-- | Testa de um personagem está para além do limite esquerdo do mapa
 limEsquerdo :: Mapa -> Personagem -> Bool
 limEsquerdo (Mapa _ _ blocos) p = eLim <= 0.05
       where (eLim, bLim) = fst (hitbox p)

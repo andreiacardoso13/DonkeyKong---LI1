@@ -1,12 +1,17 @@
 module Imagens where
 import Graphics.Gloss
 import Graphics.Gloss.Juicy
+import Data.Maybe
 
 -- | Conjunto das imagens que pertencem ao programa e utilizadas no jogo
 data Imagem = Ladder | Trapdoor | Platform | Estrela | Coin | Hammer | GhostLeft1 | GhostLeft2 | GhostRight1 | GhostRight2 | GhostDefeated1 | GhostDefeated2 | GhostDefeated3 | GhostDefeated4 | GhostBlueLeft1 | GhostBlueLeft2 | GhostBlueRight1 | GhostBlueRight2 | MarioClimbing1 | MarioClimbing2 | MarioHammerLeft1 | MarioHammerLeft2 | MarioHammerLeft4 | MarioHammerRight1 | MarioHammerRight2 | MarioHammerRight4 | MarioJumpingLeft1 | MarioJumpingRight1 | MarioStandingBack | MarioStandingLeft | MarioStandingRight | MarioWalkingLeft1 | MarioWalkingRight1 | MarioDefeated1 | MarioDefeated2 | MarioDefeated3 | MarioDefeated4 | MarioDefeatedFinal | MonkeyArmLeft | MonkeyArmRight | MonkeyDefeated | MonkeyFalling | MonkeyStanding | MonkeyWalkingLeft | MonkeyWalkingRight | ZeroVidas | UmaVida | DuasVidas | TresVidas | Num0 | Num1 | Num2 | Num3 | Num4 | Num5 | Num6 | Num7 | Num8 | Num9 | A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z |Firework1 | Firework2 | Firework3 | Firework4 | Firework5 | Firework6 | Firework7 | Firework8 | Firework9 | Firework10 | PlTeuScore | PlHighScoreAtual | PlDerrotasteOPrimateKong | Pausa1 | Pausa2 | Pausa3 | Pausa4 | PausaControlos | PlPressEnter2 | PlParabens | PlEscreveNome | PrimateKong | PalavraJogar | PalavraHighScore | PlPressEnter | Gameover | PlPressP | AmareloHighScore | Ouro | Prata | Bronze | Pontos | Creditos | DicasPausa | ImEditorMapas | PlCriaMapa | Quadrado | Score | Bonus deriving (Eq)
 
 -- | Tuplo utilizado para fazer a ligação entre uma imagem e a sua picture correspondente
 type Imagens = [(Imagem, Picture)]
+
+-- | Recebe uma imagem e devolve a picture correspondente
+getImagem :: Imagem -> Imagens -> Picture
+getImagem im imgs = fromJust (lookup im imgs)
 
 -- | Responsavel por carregar todas as imagens para o data type "Imagens"
 getImages :: IO Imagens
