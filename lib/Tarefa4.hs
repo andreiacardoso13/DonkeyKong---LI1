@@ -30,6 +30,7 @@ import LI12324
 -}
 
 atualiza :: [Maybe Acao] -> Maybe Acao -> Jogo -> Jogo
+atualiza [] _ j = j
 atualiza (ai:ais) aj j@(Jogo {inimigos = (i:is), jogador = jgd}) = (j {inimigos = atualizaInimigos (i:is) (ai:ais), jogador = atualizaPersonagem jgd aj})
 
 {-| Recebe a lista dos inimigos de um jogo e a lista das ações a aplicar-lhes, devolvendo a lista de inimigos com as respetivas direções e velocidades atualizadas.

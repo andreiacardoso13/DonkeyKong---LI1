@@ -125,7 +125,7 @@ keysModoJogo (EventKey (SpecialKey KeyUp)    Down _ _) e@(Estado {jogo = j@(Jogo
                                                                                                              emEscada = esc,
                                                                                                              aplicaDano = (b,_)})})}) | b = return e
                                                                                                                                       |     esc && procuraBloco blocos pos == Vazio && procuraBlocoInf blocos pos == Plataforma && colisoesParede m jgd = return e{jogo = atualiza (replicate (length inimigos) Nothing) (Just Parar) j {jogador = jgd {emEscada = False}}}
-                                                                                                                                      | not esc && procuraBloco blocos pos == Escada && mod' x 1 <= 0.6 && mod' x 1 >= 0.3                              = return e{jogo = atualiza (replicate (length inimigos) Nothing) (Just Subir) j}
+                                                                                                                                      | not esc && procuraBloco blocos pos == Escada && mod' x 1 <= 0.6 && mod' x 1 >= 0.3                              = return e{jogo = atualiza (replicate (length inimigos) Nothing) (Just Subir) j {jogador = jgd {posicao = (x, max (y-0.5) 0.5)}}}
                                                                                                                                       | esc                                                                                                             = return e{jogo = atualiza (replicate (length inimigos) Nothing) (Just Subir) j {jogador = jgd {posicao = (x, max (y-0.5) 0.5)}}}
                                                                                                                                       | otherwise = return e
 
@@ -138,6 +138,7 @@ keysModoJogo (EventKey (SpecialKey KeyDown)  Down _ _) e@(Estado {jogo = j@(Jogo
                                                                                                                                       |    esc  && procuraBlocoInf blocos pos == Plataforma && procuraBloco blocos pos     == Escada && colisoesParede m jgd               = return e{jogo = atualiza (replicate (length inimigos) Nothing) (Just Parar)  j {jogador = jgd {emEscada = False}}}
                                                                                                                                       |            procuraBlocoInf blocos pos == Plataforma && procuraBloco blocos (x,y+2) == Escada && mod' x 1 <= 0.6 && mod' x 1 >= 0.3 = return e{jogo = atualiza (replicate (length inimigos) Nothing) (Just Descer) j {jogador = jgd {posicao = (x, min (y+0.5) 16.5)}}}
                                                                                                                                       |            procuraBlocoInf blocos pos == Escada     && procuraBloco blocos pos     == Plataforma                                   = return e{jogo = atualiza (replicate (length inimigos) Nothing) (Just Descer) j}
+                                                                                                                                      | otherwise = return e
 
 keysModoJogo (EventKey (SpecialKey KeyUp) Up _ _) e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos),
                                                                              inimigos = inimigos,
@@ -145,11 +146,17 @@ keysModoJogo (EventKey (SpecialKey KeyUp) Up _ _) e@(Estado {jogo = j@(Jogo {map
                                                                                                    emEscada = esc})})}) | esc && procuraBloco blocos pos == Vazio && procuraBlocoInf blocos pos == Plataforma && colisoesParede m jgd = return e{jogo = atualiza (replicate (length inimigos) Nothing) (Just Parar) j {jogador = jgd {emEscada = False}}}
                                                                                                                         | otherwise = return e {jogo = atualiza (replicate (length inimigos) Nothing) (Just Parar) j}
 
+keysModoJogo (EventKey (SpecialKey KeyDown) Up _ _) e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos),
+                                                                             inimigos = inimigos,
+                                                                             jogador = jgd@(Personagem {posicao = pos@(x,y),
+                                                                                                   emEscada = esc})})}) | esc  && procuraBlocoInf blocos pos == Plataforma && procuraBloco blocos pos     == Escada && colisoesParede m jgd               = return e{jogo = atualiza (replicate (length inimigos) Nothing) (Just Parar)  j {jogador = jgd {emEscada = False}}}
+                                                                                                                        | otherwise = return e {jogo = atualiza (replicate (length inimigos) Nothing) (Just Parar) j}
+
 
 keysModoJogo (EventKey (SpecialKey k) Up _ _) e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos),
                                                                          inimigos = inimigos,
                                                                          jogador = jgd@(Personagem {posicao = pos@(x,y),
-                                                                                           emEscada = esc})})}) = if k == KeyRight || k == KeyLeft || k == KeyUp || k == KeyDown
+                                                                                           emEscada = esc})})}) = if k == KeyRight || k == KeyLeft
                                                                                                                      then return e{jogo = atualiza (replicate (length inimigos) Nothing) (Just Parar) j}
                                                                                                                      else return e
 

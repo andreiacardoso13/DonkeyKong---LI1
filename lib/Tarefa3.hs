@@ -13,12 +13,13 @@ import Graphics.Gloss
 import Graphics.Gloss.Interface.Pure.Game
 import Tarefa1
 import Tarefa2
+import Tarefa4
 import Mapa
 import Data.Fixed
 import Data.List
 
 movimenta :: Semente -> Tempo -> Jogo -> Jogo
-movimenta s t j = ressaltoFantasma $ movimentoMacaco t $ aleatoriedadeFantasmas s t $ movimentoPers $ alteraVidaFantasma $ tempoAplicaDano $ efeitoColisoes $ removeAlcapao $ recolheColecionavel $ ataqueDoInimigo $ efeitoGravidade $ ataqueDoJogador j
+movimenta s t j = ressaltoFantasma $ movimentoPers $ movimentoMacaco t $ aleatoriedadeFantasmas s t $ alteraVidaFantasma $ tempoAplicaDano $ efeitoColisoes $ removeAlcapao $ recolheColecionavel $ ataqueDoInimigo $ efeitoGravidade $ ataqueDoJogador j
       
 {-|
 Se o jogador tiver a componente aplicaDano activa e com tempo restante e a 
@@ -361,16 +362,45 @@ movimentoPersAux pers = pers {posicao = (x + vx*0.025,y + vy *0.025)}
 
 aleatoriedadeFantasmas :: Semente -> Tempo -> Jogo -> Jogo
 --aleatoriedadeFantasmas s t j = j{inimigos = aleatFantAndar s t (inimigos j)}
-aleatoriedadeFantasmas s t j = j{inimigos = aleatFantEscada s (aleatFantAndar s t (inimigos j))}
+aleatoriedadeFantasmas s t j = j{inimigos = fantEscada j {inimigos = (aleatFantEscada s t j {inimigos = aleatFantAndar s t j})}}
 
-aleatFantEscada :: Semente -> [Personagem] -> [Personagem]
-aleatFantEscada s p = p
+aleatFantEscada :: Semente -> Tempo -> Jogo -> [Personagem]
+aleatFantEscada _ _ j@(Jogo {inimigos = []}) = []
+aleatFantEscada s tp j@(Jogo {mapa = m@(Mapa _ _ blocos), inimigos = (h@(Personagem {posicao = pos@(x,y), velocidade = (vx,vy), emEscada = esc}):t)}) 
+
+      | alteraImagem3 (realToFrac tp) && (head(geraAleatorios s 1)) > 0 = fantEscadaSubir j
+      | alteraImagem3 (realToFrac tp) && (head(geraAleatorios s 1)) < 0 = fantEscadaDescer j
+      | otherwise = h : aleatFantEscada (s+5) tp j{inimigos = t}
+                           
+
+fantEscada :: Jogo -> [Personagem]
+fantEscada j@(Jogo {inimigos = []}) = []
+fantEscada j@(Jogo {mapa = m@(Mapa _ _ blocos), inimigos = (h@(Personagem {posicao = pos@(x,y), velocidade = (vx,vy), emEscada = esc}):t)})
+
+      | tipo h == Fantasma && esc && procuraBloco blocos pos == Escada && procuraBlocoInf blocos pos == Plataforma && colisoesParede m h && mod' x 1 <= 0.55 && mod' x 1 >= 0.45 && vy > 0 = (h{velocidade = (1.5,0),  emEscada = False, posicao = (x+0.15,y)}) : fantEscada j{inimigos = t}
+      | tipo h == Fantasma && esc && procuraBloco blocos pos == Vazio  && procuraBlocoInf blocos pos == Plataforma && colisoesParede m h && mod' x 1 <= 0.55 && mod' x 1 >= 0.45 && vy < 0 = (h{velocidade = (-1.5,0), emEscada = False, posicao = (x-0.15,y)}) : fantEscada j{inimigos = t}
+      | otherwise = h : fantEscada j{inimigos = t}
+
+fantEscadaSubir :: Jogo -> [Personagem]
+fantEscadaSubir j@(Jogo {inimigos = []}) = []
+fantEscadaSubir j@(Jogo {mapa = m@(Mapa _ _ blocos), inimigos = (h@(Personagem {posicao = pos@(x,y), velocidade = (vx,vy), emEscada = esc}):t)})
+
+      | tipo h == Fantasma && not esc && procuraBloco blocos pos == Escada && procuraBlocoInf blocos pos == Plataforma && colisoesParede m h && mod' x 1 <= 0.55 && mod' x 1 >= 0.45 = (h{velocidade = (0,-1.5), emEscada = True, posicao = (x,y-0.1)}) : fantEscadaSubir j{inimigos = t}
+      | otherwise = h : fantEscadaSubir j{inimigos = t}
+
+
+fantEscadaDescer :: Jogo -> [Personagem]
+fantEscadaDescer j@(Jogo {inimigos = []}) = []
+fantEscadaDescer j@(Jogo {mapa = m@(Mapa _ _ blocos), inimigos = (h@(Personagem {posicao = pos@(x,y), velocidade = (vx,vy), emEscada = esc}):t)})
+
+      | tipo h == Fantasma && not esc && procuraBlocoInf blocos pos == Plataforma && procuraBloco blocos (x,y+2) == Escada && mod' x 1 <= 0.55 && mod' x 1 >= 0.45 = (h{velocidade = (0,1.5), emEscada = True, posicao = (x,y+0.1)}) : fantEscadaDescer j{inimigos = t}
+      | otherwise = h : fantEscadaDescer j{inimigos = t}
 
 {-
 CONDIÇOES SUBIR
-|     esc && procuraBloco blocos pos == Vazio && procuraBlocoInf blocos pos == Plataforma && colisoesParede m jgd =  freefall (e{jogo = j {jogador = movePersonagem (jgd {emEscada = False}) (Just Parar)}})
-| not esc && procuraBloco blocos pos == Escada && mod' x 1 /= 0                                                   =  freefall (e{jogo = j {jogador = movePersonagem jgd (Just Subir)}})
-| esc                                                                                                             =  freefall (e{jogo = j {jogador = movePersonagem (jgd {posicao = (x, max (y-0.5) 0.5)}) (Just Subir)}})
+|     esc && procuraBloco blocos pos == Vazio && procuraBlocoInf blocos pos == Plataforma && colisoesParede m jgd = return e{jogo = atualiza (replicate (length inimigos) Nothing) (Just Parar) j {jogador = jgd {emEscada = False}}}
+| not esc && procuraBloco blocos pos == Escada && mod' x 1 <= 0.6 && mod' x 1 >= 0.3                              = return e{jogo = atualiza (replicate (length inimigos) Nothing) (Just Subir) j}
+| esc                                                                                                             = return e{jogo = atualiza (replicate (length inimigos) Nothing) (Just Subir) j {jogador = jgd {posicao = (x, max (y-0.5) 0.5)}}}
 
 CONDIÇOES DESCER
 |esc  && procuraBlocoInf blocos pos == Escada                                                                       =  freefall (e{jogo = j {jogador = movePersonagem (jgd {posicao = (x, min (y+0.5) 16.5)}) (Just Descer)}})
@@ -379,11 +409,13 @@ CONDIÇOES DESCER
 |        procuraBlocoInf blocos pos == Escada     && procuraBloco blocos pos     == Plataforma                      =  freefall (e{jogo = j {jogador = movePersonagem jgd (Just Descer)}})
 -}
 
-aleatFantAndar :: Semente -> Tempo -> [Personagem] -> [Personagem]
-aleatFantAndar _ _ [] = []
-aleatFantAndar s tp (h:t) | alteraImagem3 (realToFrac tp) && (head(geraAleatorios s 1)) > 0 && tipo h == Fantasma = (h{velocidade = (-1.5,vy)}) : aleatFantAndar (s+5) tp t
-                          | alteraImagem3 (realToFrac tp) && (head(geraAleatorios s 1)) < 0 && tipo h == Fantasma = (h{velocidade = (1.5,vy)}) : aleatFantAndar (s+5) tp t
-                          | otherwise = h : aleatFantAndar (s+1) tp t
+aleatFantAndar :: Semente -> Tempo -> Jogo -> [Personagem]
+aleatFantAndar _ _ j@(Jogo {inimigos = []}) = []
+aleatFantAndar s tp j@(Jogo {mapa = m@(Mapa _ _ blocos), inimigos = (h@(Personagem {posicao = pos@(x,y), velocidade = (vx,vy), emEscada = esc}):t)}) 
+
+      | alteraImagem3 (realToFrac tp) && (head(geraAleatorios s 1)) > 0 && tipo h == Fantasma && not esc && colisoesParede m h = (h{velocidade = (-1.5,vy)}) : aleatFantAndar (s+5) tp j{inimigos = t}
+      | alteraImagem3 (realToFrac tp) && (head(geraAleatorios s 1)) < 0 && tipo h == Fantasma && not esc && colisoesParede m h = (h{velocidade = (1.5,vy)}) : aleatFantAndar (s+5) tp j{inimigos = t}
+      | otherwise = h : aleatFantAndar (s+1) tp j{inimigos = t}
   where (vx,vy) = velocidade h
       
 alteraImagem3 :: Float -> Bool
