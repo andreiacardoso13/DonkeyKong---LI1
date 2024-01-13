@@ -118,7 +118,7 @@ jEditor = Jogo {mapa = mapaEditor
                ,colecionaveis = []
                ,jogador = Personagem {velocidade=(0,0)
                                      ,tipo=Jogador
-                                     ,posicao=(0.5,0.5)
+                                     ,posicao=(14.5,9.5)
                                      ,direcao = Este
                                      ,tamanho = (1,1)
                                      ,emEscada=False

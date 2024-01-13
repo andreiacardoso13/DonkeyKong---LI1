@@ -56,7 +56,7 @@ fr = 20
 
 -- | Recebe as imagens e devolve o estado inicial do jogo
 estadoInicial :: Imagens -> Estado
-estadoInicial images = Estado {menu = Inicio,jogo = jOpcoes, imagens = images, tempo = 0 ,bonus = 15000, highScore = [(0,"XXXXX"), (0,"XXXXX"),(0,"XXXXX")], saltar = 2, editor = False}
+estadoInicial images = Estado {menu = Inicio,jogo = jOpcoes, imagens = images, tempo = 0 ,bonus = 15000, highScore = [(0,"XXXXX"), (0,"XXXXX"),(0,"XXXXX")], saltar = 2, editor = False, jogoEditor = j1}
 
 -- | Desenha no ecrã o que está a acontecer no jogo em cada momento
 desenhaEstado :: Estado -> IO Picture
@@ -115,7 +115,7 @@ diminuiBonus n = n - 5
 
 -- | Verifica se o jogador está com 0 vidas, e se sim altera o menu para PerdeuJogo para aparecer a animação de derrota
 perdeJogo :: Estado -> Estado
-perdeJogo s | vida (jogador (jogo s)) == 0 = s {menu = PerdeuJogo, tempo = 0 ,jogo = Jogo {mapa = mapa (jogo s), inimigos = map ficaParado (inimigos (jogo s)), colecionaveis = colecionaveis (jogo s), jogador = ficaParado(jogador(jogo s)) }}
+perdeJogo s | vida (jogador (jogo s)) == 0 = s {menu = PerdeuJogo, tempo = 0 ,jogo = Jogo {mapa = mapa (jogo s), inimigos = map ficaParado (inimigos (jogo s)), colecionaveis = colecionaveis (jogo s), jogador = ficaParado(jogador(jogo s)) }, editor = False}
             | otherwise = s
 
 -- | Altera a velocidade de um personagem para (0,0), fazendo-o ficar parado
@@ -125,7 +125,7 @@ ficaParado p = p{velocidade = (0,0)}
 -- | Verifica se o jogador está em colisão com a estrela, se sim altera o menu para GanharJOgo para aparecer a animação de vitória
 ganhaJogo :: Estado -> Estado
 ganhaJogo s | colisaoHitbox (hitboxColecionavel star) (hitbox (jogador (jogo s))) = if editor s == False then s {menu = GanhouJogo, jogo = Jogo {mapa = mapaGanhou,inimigos = ganhouInimigos (inimigos (jogo s)),colecionaveis = [], jogador = jogGanhaJogo (jogador (jogo s)) (bonus s)},tempo=0,highScore = highScore s ++ [(pontos (jogador(jogo s)) + (bonus s),"")]}
-                                                                                                         else s {menu = GanhouJogoEditor, jogo = Jogo {mapa = mapa (jogo s),inimigos = ganhouInimigos (inimigos (jogo s)),colecionaveis = [], jogador = jogGanhaJogo (jogador (jogo s)) (bonus s)},tempo = 3,highScore = highScore s}
+                                                                                                         else s {menu = GanhouJogoEditor, jogo = Jogo {mapa = mapa (jogo s),inimigos = ganhouInimigos (inimigos (jogo s)),colecionaveis = [], jogador = jogGanhaJogo (jogador (jogo s)) (bonus s)},tempo = 3,highScore = highScore s, editor = False}
             | otherwise = s 
    where Mapa a star b = mapa (jogo s)
 

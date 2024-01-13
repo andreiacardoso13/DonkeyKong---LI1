@@ -23,7 +23,7 @@ import Graphics.Gloss
 import Graphics.Gloss.Interface.Pure.Game
 import Graphics.Gloss.Interface.IO.Game
 
-data Estado = Estado {menu :: Menu, jogo :: Jogo, imagens :: Imagens, tempo :: Tempo, bonus :: Int, highScore :: [(Int,String)], saltar :: Tempo, editor :: Bool}
+data Estado = Estado {menu :: Menu, jogo :: Jogo, imagens :: Imagens, tempo :: Tempo, bonus :: Int, highScore :: [(Int,String)], saltar :: Tempo, editor :: Bool, jogoEditor :: Jogo}
 
 data Menu = Inicio
           | Opcoes Opcao
@@ -182,7 +182,8 @@ keysModoJogo _ e = return e
 
 keysModoPausa :: Event -> Estado -> IO Estado
 keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Continuar}) = return e {menu = ModoJogo}
-keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Reiniciar}) = return e {menu = ModoJogo, jogo = j1, tempo = 0, bonus = 15000}
+keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Reiniciar, editor = False}) = return e {menu = ModoJogo, jogo = j1, tempo = 0, bonus = 15000}
+keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Reiniciar, editor = True}) = return e {menu = ModoJogo, jogo = jogoEditor e, tempo = 0, bonus = 15000}
 keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Home})      = do musicaParar
                                                                                                      musicaMenu
                                                                                                      return e {menu = Opcoes Jogar, jogo = jOpcoes}
@@ -354,7 +355,7 @@ keysEditor2 (EventKey (SpecialKey KeyDown) Down _ _) s = if y <16.5 then return 
                                                                     else return s
     where (x,y) = posicao (jogador (jogo s))
 keysEditor2 (EventKey (SpecialKey KeyEnter) Down _ _) s = if valida (jogo s) 
-                                                              then return s {menu = ModoJogo, jogo = atualizaPosicaoInicial (jogo s)}
+                                                              then return s {menu = ModoJogo, jogo = atualizaPosicaoInicial (jogo s), jogoEditor = jogo s}
                                                               else return s
 keysEditor2 (EventKey (SpecialKey KeyEsc) Down _ _) s = do musicaParar
                                                            exitSuccess
@@ -396,3 +397,7 @@ alteraBloco3 b | b == Plataforma = Alcapao
                | b == Alcapao = Escada
                | b == Escada = Vazio
                | otherwise = Plataforma
+
+corrigeVida :: [Personagem] -> [Personagem]
+corrigeVida [] = []
+corrigeVida (h:t) = h{vida=1} : corrigeVida t

@@ -429,11 +429,11 @@ desenhaModoHighScore s = map (Translate 230 (66)) (desenhaNome (snd (head (highS
 
 -- | Fornece uma lista de pictures utilizadas para desenhar a primeira fase do editor de mapas (edição da posição dos blocos, inimigos, colecionaveis e estrela)
 desenhaEditor1 :: Estado -> [Picture]
-desenhaEditor1 s = desenhaMapa1 (-715.5,450.5) s ++ desenhaQuadrado s ++ desenhaFantasmas s ++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s
+desenhaEditor1 s = desenhaMapa1 (-715.5,450.5) s ++ desenhaQuadrado s ++ desenhaFantasmas s ++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ [Translate (-475) 385 (getImagem InstrucoesEditor (imagens s)), Translate 550 375 (getImagem InstrucoesJogoValido (imagens s))]
 
 -- | Fornece uma lista de pictures utilizadas para desenhar a segunda fase do editor de mapas (edição da posição do jogador)
 desenhaEditor2 :: Estado -> [Picture]
-desenhaEditor2 s = desenhaMapa1 (-715.5,450.5) s ++ desenhaJogador s ++ desenhaFantasmas s ++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s
+desenhaEditor2 s = desenhaMapa1 (-715.5,450.5) s ++ desenhaJogador s ++ desenhaFantasmas s ++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ [Translate 0 450 (Scale 0.2 0.2(getImagem PlPressEnter (imagens s)))]
 
 -- | Fornece uma lista de pictures de um único elemento, sendo esse elemento o quadrado amarelo existente no editor de mapas
 desenhaQuadrado :: Estado -> [Picture]
