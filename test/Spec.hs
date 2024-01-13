@@ -1,4 +1,4 @@
-module Spec where
+module Main where
 
 import Tarefa2_202324li1g005_Spec
 import Tarefa1_202324li1g005_Spec

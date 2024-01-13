@@ -130,5 +130,5 @@ test-suite primate-kong-test
         Tarefa4_202324li1g005_Spec
 
     -- Test dependencies.
-    build-depends:    base ^>=4.16.4.0, random ^>=1.2.1.1, HUnit, Gloss ^>=1.13.2.2
+    build-depends:    base ^>=4.16.4.0, random ^>=1.2.1.1, HUnit, gloss ^>=1.13.2.2, gloss-juicy ^>=0.2.3
 
