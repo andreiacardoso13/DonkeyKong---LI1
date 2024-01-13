@@ -12,6 +12,7 @@ import LI12324
 import Graphics.Gloss
 import Graphics.Gloss.Interface.Pure.Game
 import Tarefa1
+import Tarefa2
 import Mapa
 import Data.Fixed
 import Data.List
@@ -291,19 +292,30 @@ efeitoColisoes jogo' = jogo' {inimigos = efeitoColisoesInimigos (mapa jogo') (in
 
 
 efeitoColisoesJogador :: Mapa -> Personagem -> Personagem
-efeitoColisoesJogador m jog = efeitoColisoesPlataforma m (efeitoColisoesMapaJog m jog)
+efeitoColisoesJogador m jog = efeitoColisoesPlataforma2 m $ efeitoColisoesPlataforma1 m $ efeitoColisoesMapaJog m jog
+--efeitoColisoesJogador m jog = efeitoColisoesMapaJog m (efeitoColisoesPlataforma m jog)
+
 
 efeitoColisoesInimigos :: Mapa -> [Personagem] -> [Personagem]
 efeitoColisoesInimigos _ [] = []
-efeitoColisoesInimigos m (h:t) = map (efeitoColisoesPlataforma m) (map (efeitoColisoesMapaInim m) (h:t))
+efeitoColisoesInimigos m (h:t) = map (efeitoColisoesPlataforma2 m) (map (efeitoColisoesPlataforma1 m) (map (efeitoColisoesMapaInim m) (h:t)))
 
-efeitoColisoesPlataforma :: Mapa -> Personagem -> Personagem
-efeitoColisoesPlataforma (Mapa a b blocos) pers | platColisoes (Mapa a b blocos) pers && procuraBlocoInf blocos (posicao pers) == Plataforma = pers {velocidade = (fst (velocidade pers),0)}
-                                                | platColisoes (Mapa a b blocos) pers && procuraBlocoSup blocos (posicao pers) == Plataforma = pers {velocidade = (fst (velocidade pers,-(snd(velocidade pers))))}
-                                                | platColisoes (Mapa a b blocos) pers && procuraBlocoDir blocos (posicao pers) == Plataforma = pers {velocidade = (0,snd(velocidade pers))}
-                                                | platColisoes (Mapa a b blocos) pers && procuraBlocoEsq blocos (posicao pers) == Plataforma = pers {velocidade = (0, snd (velocidade pers))}
-                                                | platColisoes (Mapa a b blocos) pers = pers {velocidade = (0,snd (velocidade pers))}
+
+efeitoColisoesPlataforma1 :: Mapa -> Personagem -> Personagem
+efeitoColisoesPlataforma1 (Mapa a b blocos) pers | platColisoes (Mapa a b blocos) pers && procuraBlocoInf blocos (posicao pers) == Plataforma = pers {velocidade = (vx,0)}
+                                                 | otherwise = pers
+  where (vx,vy) = velocidade pers
+
+efeitoColisoesPlataforma2 :: Mapa -> Personagem -> Personagem
+efeitoColisoesPlataforma2 (Mapa a b blocos) pers| platColisoes (Mapa a b blocos) pers && procuraBloco blocos (x+0.5,y) == Plataforma = if tipo pers == Jogador 
+                                                                                                                                                  then pers {posicao = (x-0.2,y)}
+                                                                                                                                                  else pers {velocidade = (-vx,vy)}
+                                                | platColisoes (Mapa a b blocos) pers && procuraBloco blocos (x-0.5,y) == Plataforma = if tipo pers == Jogador
+                                                                                                                                                 then pers {posicao = (x+0.2,y)}
+                                                                                                                                                 else pers {velocidade = (-vx,vy)}
                                                 | otherwise = pers
+  where (vx,vy) = velocidade pers
+        (x,y) = posicao pers
 
 efeitoColisoesMapaJog :: Mapa -> Personagem -> Personagem
 efeitoColisoesMapaJog m jog | mapaLimites m jog = if fst(posicao jog) > ((fromIntegral (length (head blocos))) / 2)
