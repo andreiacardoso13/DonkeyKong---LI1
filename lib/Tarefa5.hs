@@ -1,6 +1,6 @@
 {-|
 Module      : Tarefa5
-Description : 
+Description : EventKeys
 Copyright   : Andreia Alves Cardoso <a106915@alunos.uminho.pt>
               Cátia Alexandra Ribeiro da Eira <a107382@alunos.uminho.pt>
 
@@ -26,6 +26,7 @@ data Estado = Estado {menu :: Menu, jogo :: Jogo, imagens :: Imagens, tempo :: T
 -- | Diferentes menus presentes ao longo do jogo
 data Menu = Inicio
           | Opcoes Opcao
+          | Dificuldade Opcao
           | ModoJogo
           | ModoPausa Opcao
           | ModoHighScore
@@ -38,7 +39,7 @@ data Menu = Inicio
           | Editor2
           deriving Eq
 
--- | Opções disponíveis no menu de opções e no menu de pausa
+-- | Opções disponíveis no menu de opções,menu de pausa e nas dificuldades
 data Opcao = Jogar
            | HighScore
            | Continuar
@@ -48,6 +49,9 @@ data Opcao = Jogar
            | OpCreditos
            | EditorMapas
            | UltJogo
+           | Facil 
+           | Normal 
+           | Dificil
           deriving Eq
 
 -- | Função que recebe e devolve um Estado com as devidas alterações causadas por eventos
@@ -58,6 +62,9 @@ keys evt s | menu s == Inicio              = keysInicio evt s
            | menu s == Opcoes OpCreditos   = keysOpCreditos evt s
            | menu s == Opcoes EditorMapas  = keysOpEditorMapas evt s
            | menu s == Opcoes UltJogo      = keysOpUltJogo evt s
+           | menu s == Dificuldade Facil   = keysDificuldadeFacil evt s 
+           | menu s == Dificuldade Normal  = keysDificuldadeNormal evt s 
+           | menu s == Dificuldade Dificil = keysDificuldadeDificil evt s 
            | menu s == ModoJogo            = keysModoJogo evt s
            | menu s == ModoPausa Continuar = keysModoPausa evt s
            | menu s == ModoPausa Reiniciar = keysModoPausa evt s
@@ -81,7 +88,7 @@ keysInicio _ s = return s
 
 -- | Faz as alterações provocadas por eventos no estado quando o menu é Opcoes Jogar
 keysOpJogar :: Event -> Estado -> IO Estado
-keysOpJogar (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = ModoJogo, jogo = j1, tempo = 0, bonus = 15000}
+keysOpJogar (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = Dificuldade Facil}
 keysOpJogar (EventKey (SpecialKey KeyDown) Down _ _) s  = return s {menu = Opcoes OpCreditos}
 keysOpJogar (EventKey (SpecialKey KeyEsc) Down _ _) s   = do musicaParar
                                                              exitSuccess
@@ -116,11 +123,35 @@ keysOpEditorMapas _ s = return s
 
 -- | Faz as alterações provocadas por eventos no estado quando o menu é Opcoes UltJogo
 keysOpUltJogo :: Event -> Estado -> IO Estado
-keysOpUltJogo (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = ModoJogo, jogo = jogoEditor s, editor = True}
+keysOpUltJogo (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = ModoJogo, jogo = jogoEditor s,tempo = 0, bonus = 15000, editor = True}
 keysOpUltJogo (EventKey (SpecialKey KeyUp) Down _ _) s = return s {menu = Opcoes EditorMapas}
 keysOpUltJogo (EventKey (SpecialKey KeyEsc) Down _ _) s   = do musicaParar
                                                                exitSuccess
 keysOpUltJogo _ s = return s
+
+
+
+keysDificuldadeFacil :: Event -> Estado -> IO Estado
+keysDificuldadeFacil (EventKey (SpecialKey KeyDown) Down _ _) s = return s {menu = Dificuldade Normal}
+keysDificuldadeFacil (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = ModoJogo, jogo = j2, tempo = 0, jogoEditor = j2, bonus = 15000, editor = True}
+keysDificuldadeFacil (EventKey (SpecialKey KeyEsc) Down _ _) s = do musicaParar
+                                                                    exitSuccess
+keysDificuldadeFacil _ s = return s
+
+keysDificuldadeNormal :: Event -> Estado -> IO Estado
+keysDificuldadeNormal (EventKey (SpecialKey KeyDown) Down _ _) s = return s {menu = Dificuldade Dificil}
+keysDificuldadeNormal (EventKey (SpecialKey KeyUp) Down _ _) s = return s {menu = Dificuldade Facil}
+keysDificuldadeNormal (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = ModoJogo, jogo = j1, tempo = 0, jogoEditor = j1, bonus = 15000}
+keysDificuldadeNormal (EventKey (SpecialKey KeyEsc) Down _ _) s = do musicaParar
+                                                                     exitSuccess
+keysDificuldadeNormal _ s = return s
+
+keysDificuldadeDificil :: Event -> Estado -> IO Estado
+keysDificuldadeDificil (EventKey (SpecialKey KeyUp) Down _ _) s = return s {menu = Dificuldade Normal}
+keysDificuldadeDificil (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = ModoJogo, jogo = j3, tempo = 0, jogoEditor = j3,bonus = 15000, editor = True}
+keysDificuldadeDificil (EventKey (SpecialKey KeyEsc) Down _ _) s = do musicaParar
+                                                                      exitSuccess
+keysDificuldadeDificil _ s = return s
 
 -- | Faz as alterações provocadas por eventos no estado quando o menu é ModoJogo
 keysModoJogo :: Event -> Estado -> IO Estado
@@ -184,8 +215,7 @@ keysModoJogo _ e = return e
 -- | Faz as alterações provocadas por eventos no estado quando o menu é ModoPausa _
 keysModoPausa :: Event -> Estado -> IO Estado
 keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Continuar})                 = return e {menu = ModoJogo}
-keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Reiniciar, editor = False}) = return e {menu = ModoJogo, jogo = j1, tempo = 0, bonus = 15000}
-keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Reiniciar, editor = True})  = return e {menu = ModoJogo, jogo = jogoEditor e, tempo = 0, bonus = 15000}
+keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Reiniciar})                 = return e {menu = ModoJogo, jogo = jogoEditor e, tempo = 0, bonus = 15000}
 keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Home})                      = return e {menu = Opcoes Jogar, jogo = jOpcoes}
 keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Controls})                  = return e {menu = ModoControlos}
 

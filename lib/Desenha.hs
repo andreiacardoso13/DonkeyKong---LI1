@@ -20,6 +20,9 @@ import Data.List
 -- | Desenha no ecrã o que está a acontecer no jogo em cada momento
 desenhaEstadoAux :: Estado -> IO Picture
 desenhaEstadoAux s | menu s == Inicio              = return (Pictures(desenhaInicio s))
+                   | menu s == Dificuldade Facil   = return (getImagem DificuldadeFacil (imagens s))
+                   | menu s == Dificuldade Normal  = return (getImagem DificuldadeNormal (imagens s))
+                   | menu s == Dificuldade Dificil = return (getImagem DificuldadeDificil (imagens s))
                    | menu s == ModoJogo            = return (Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s++[Translate 0 460 (Scale 0.5 0.5 (getImagem PlPressP (imagens s)))]))
                    | menu s == ModoPausa Continuar = return (Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa4 (imagens s)), Translate 0 (-270) (getImagem DicasPausa (imagens s))]))
                    | menu s == ModoPausa Reiniciar = return (Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa1 (imagens s)), Translate 0 (-270) (getImagem DicasPausa (imagens s))]))

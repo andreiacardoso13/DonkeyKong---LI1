@@ -12,7 +12,7 @@ import Graphics.Gloss.Juicy
 import Data.Maybe
 
 -- | Conjunto das imagens que pertencem ao programa e utilizadas no jogo
-data Imagem = Ladder | Trapdoor | Platform | Estrela | Coin | Hammer | GhostLeft1 | GhostLeft2 | GhostRight1 | GhostRight2 | GhostDefeated1 | GhostDefeated2 | GhostDefeated3 | GhostDefeated4 | GhostBlueLeft1 | GhostBlueLeft2 | GhostBlueRight1 | GhostBlueRight2 | MarioClimbing1 | MarioClimbing2 | MarioHammerLeft1 | MarioHammerLeft2 | MarioHammerLeft4 | MarioHammerRight1 | MarioHammerRight2 | MarioHammerRight4 | MarioJumpingLeft1 | MarioJumpingRight1 | MarioStandingBack | MarioStandingLeft | MarioStandingRight | MarioWalkingLeft1 | MarioWalkingRight1 | MarioDefeated1 | MarioDefeated2 | MarioDefeated3 | MarioDefeated4 | MarioDefeatedFinal | MonkeyArmLeft | MonkeyArmRight | MonkeyDefeated | MonkeyFalling | MonkeyStanding | MonkeyWalkingLeft | MonkeyWalkingRight | ZeroVidas | UmaVida | DuasVidas | TresVidas | Num0 | Num1 | Num2 | Num3 | Num4 | Num5 | Num6 | Num7 | Num8 | Num9 | A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z |Firework1 | Firework2 | Firework3 | Firework4 | Firework5 | Firework6 | Firework7 | Firework8 | Firework9 | Firework10 | PlTeuScore | PlHighScoreAtual | PlDerrotasteOPrimateKong | Pausa1 | Pausa2 | Pausa3 | Pausa4 | PausaControlos | PlPressEnter2 | PlParabens | PlEscreveNome | PrimateKong | PalavraJogar | PalavraHighScore | PlPressEnter | Gameover | PlPressP | AmareloHighScore | Ouro | Prata | Bronze | Pontos | Creditos | DicasPausa | ImEditorMapas | PlCriaMapa | InstrucoesEditor | InstrucoesJogoValido | PlJogarUltJogo | PlPressR | Quadrado | Score | Bonus | ImCreditos deriving (Eq)
+data Imagem = Ladder | Trapdoor | Platform | Estrela | Coin | Hammer | GhostLeft1 | GhostLeft2 | GhostRight1 | GhostRight2 | GhostDefeated1 | GhostDefeated2 | GhostDefeated3 | GhostDefeated4 | GhostBlueLeft1 | GhostBlueLeft2 | GhostBlueRight1 | GhostBlueRight2 | MarioClimbing1 | MarioClimbing2 | MarioHammerLeft1 | MarioHammerLeft2 | MarioHammerLeft4 | MarioHammerRight1 | MarioHammerRight2 | MarioHammerRight4 | MarioJumpingLeft1 | MarioJumpingRight1 | MarioStandingBack | MarioStandingLeft | MarioStandingRight | MarioWalkingLeft1 | MarioWalkingRight1 | MarioDefeated1 | MarioDefeated2 | MarioDefeated3 | MarioDefeated4 | MarioDefeatedFinal | MonkeyArmLeft | MonkeyArmRight | MonkeyDefeated | MonkeyFalling | MonkeyStanding | MonkeyWalkingLeft | MonkeyWalkingRight | ZeroVidas | UmaVida | DuasVidas | TresVidas | Num0 | Num1 | Num2 | Num3 | Num4 | Num5 | Num6 | Num7 | Num8 | Num9 | A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z |Firework1 | Firework2 | Firework3 | Firework4 | Firework5 | Firework6 | Firework7 | Firework8 | Firework9 | Firework10 | PlTeuScore | PlHighScoreAtual | PlDerrotasteOPrimateKong | Pausa1 | Pausa2 | Pausa3 | Pausa4 | PausaControlos | PlPressEnter2 | PlParabens | PlEscreveNome | PrimateKong | PalavraJogar | PalavraHighScore | PlPressEnter | Gameover | PlPressP | AmareloHighScore | Ouro | Prata | Bronze | Pontos | Creditos | DicasPausa | ImEditorMapas | PlCriaMapa | InstrucoesEditor | InstrucoesJogoValido | PlJogarUltJogo | PlPressR | Quadrado | Score | Bonus | ImCreditos | DificuldadeFacil | DificuldadeNormal | DificuldadeDificil deriving (Eq)
 
 -- | Tuplo utilizado para fazer a ligação entre uma imagem e a sua picture correspondente
 type Imagens = [(Imagem, Picture)]
@@ -164,28 +164,27 @@ getImages = do
                Just score                     <- loadJuicyPNG "lib/imagens/score.png"
                Just bonus                     <- loadJuicyPNG "lib/imagens/bonus.png"
                Just imCreditos                <- loadJuicyPNG "lib/imagens/ImCreditos.png"
+               Just dificuldadeFacil          <- loadJuicyPNG "lib/imagens/dificuldadeFacil.png"
+               Just dificuldadeNormal         <- loadJuicyPNG "lib/imagens/dificuldadeNormal.png"
+               Just dificuldadeDificil        <- loadJuicyPNG "lib/imagens/dificuldadeDificil.png"
 
                -- | Devolve uma lista de 'Imagens' 
                let images = [(Ladder,escada), (Trapdoor,alcapao), (Platform,plataforma), (Estrela,estrela),
                              (Coin,moeda), (Hammer,martelo), (GhostLeft1,ghostLeft1), (GhostLeft2,ghostLeft2),
                              (GhostRight1,ghostRight1), (GhostRight2,ghostRight2),  (GhostDefeated1,ghostDefeated1),
                              (GhostDefeated2,ghostDefeated2), (GhostDefeated3,ghostDefeated3), (GhostDefeated4,ghostDefeated4),
-                             (GhostBlueLeft1,ghostBlueLeft1), (GhostBlueLeft2,ghostBlueLeft2),
-                             (GhostBlueRight1,ghostBlueRight1), (GhostBlueRight2,ghostBlueRight2),(MarioClimbing1,marioClimbing1),
-                             (MarioClimbing2,marioClimbing2), (MarioHammerLeft1,marioHammerLeft1),
-                             (MarioHammerLeft2,marioHammerLeft2),
+                             (GhostBlueLeft1,ghostBlueLeft1), (GhostBlueLeft2,ghostBlueLeft2), (GhostBlueRight1,ghostBlueRight1), 
+                             (GhostBlueRight2,ghostBlueRight2),(MarioClimbing1,marioClimbing1), (MarioClimbing2,marioClimbing2), 
+                             (MarioHammerLeft1,marioHammerLeft1), (MarioHammerLeft2,marioHammerLeft2),
                              (MarioHammerLeft4,marioHammerLeft4), (MarioHammerRight1,marioHammerRight1),
-                             (MarioHammerRight2,marioHammerRight2),
-                             (MarioHammerRight4,marioHammerRight4), (MarioJumpingLeft1,marioJumpingLeft1),
-                             (MarioJumpingRight1,marioJumpingRight1), (MarioStandingBack,marioStandingBack),
-                             (MarioStandingLeft,marioStandingLeft), (MarioStandingRight,marioStandingRight),
-                             (MarioWalkingLeft1,marioWalkingLeft1), (MarioWalkingRight1,marioWalkingRight1),
-                             (MarioDefeated3,marioDefeated3),
-                             (MarioDefeated4,marioDefeated4), (MarioDefeatedFinal,marioDefeatedFinal),
-                             (MonkeyArmLeft,monkeyArmLeft), (MonkeyArmRight,monkeyArmRight),
-                             (MonkeyDefeated,monkeyDefeated), (MonkeyFalling,monkeyFalling),
-                             (MonkeyStanding,monkeyStanding), (MonkeyWalkingLeft,monkeyWalkingLeft), 
-                             (MonkeyWalkingRight,monkeyWalkingRight), 
+                             (MarioHammerRight2,marioHammerRight2), (MarioHammerRight4,marioHammerRight4), 
+                             (MarioJumpingLeft1,marioJumpingLeft1), (MarioJumpingRight1,marioJumpingRight1), 
+                             (MarioStandingBack,marioStandingBack), (MarioStandingLeft,marioStandingLeft), 
+                             (MarioStandingRight,marioStandingRight), (MarioWalkingLeft1,marioWalkingLeft1), 
+                             (MarioWalkingRight1,marioWalkingRight1), (MarioDefeated3,marioDefeated3),
+                             (MarioDefeated4,marioDefeated4), (MarioDefeatedFinal,marioDefeatedFinal), (MonkeyArmLeft,monkeyArmLeft), 
+                             (MonkeyArmRight,monkeyArmRight), (MonkeyDefeated,monkeyDefeated), (MonkeyFalling,monkeyFalling), 
+                             (MonkeyStanding,monkeyStanding), (MonkeyWalkingLeft,monkeyWalkingLeft), (MonkeyWalkingRight,monkeyWalkingRight), 
                              (ZeroVidas,zeroVidas), (UmaVida,umaVida), (DuasVidas,duasVidas), (TresVidas,tresVidas), 
                              (Num0,num0), (Num1,num1), (Num2,num2), (Num3,num3), (Num4,num4), (Num5,num5), (Num6,num6), 
                              (Num7,num7), (Num8,num8), (Num9,num9), (A,a), (B,b), (C,c), (D,d), (E,e), (F,f), (G,g), 
@@ -199,7 +198,8 @@ getImages = do
                              (PrimateKong,primateKong), (PlParabens,plParabens), (PalavraJogar,palavraJogar), (PalavraHighScore,palavraHighScore),
                              (MarioDefeated1,marioDefeated1), (MarioDefeated2,marioDefeated2),  (Gameover, gameover), (PlPressP,plPressP), 
                              (AmareloHighScore,amareloHighScore), (Ouro,ouro), (Prata,prata), (Bronze,bronze), (Pontos,pontos),
-                             (Creditos,creditos), (DicasPausa,dicasPausa), (ImEditorMapas,editorMapas),
-                             (PlCriaMapa,plCriaMapa), (InstrucoesEditor,instrucoesEditor), (InstrucoesJogoValido,instrucoesJogoValido),
-                             (PlJogarUltJogo,plJogarUltJogo), (PlPressR,plPressR), (Quadrado,quadrado), (Score,score), (Bonus,bonus), (ImCreditos,imCreditos)]
+                             (Creditos,creditos), (DicasPausa,dicasPausa), (ImEditorMapas,editorMapas), (PlCriaMapa,plCriaMapa), 
+                             (InstrucoesEditor,instrucoesEditor), (InstrucoesJogoValido,instrucoesJogoValido), (PlJogarUltJogo,plJogarUltJogo), 
+                             (PlPressR,plPressR), (Quadrado,quadrado), (Score,score), (Bonus,bonus), (ImCreditos,imCreditos),
+                             (DificuldadeFacil, dificuldadeFacil), (DificuldadeNormal,dificuldadeNormal), (DificuldadeDificil,dificuldadeDificil)]
                return images
