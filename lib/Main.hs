@@ -1,3 +1,11 @@
+{-|
+Module      : Main
+Description : Função principal do programa
+Copyright   : Andreia Alves Cardoso <a106915@alunos.uminho.pt>
+              Cátia Alexandra Ribeiro da Eira <a107382@alunos.uminho.pt>
+
+Módulo onde se localiza a função Main do projeto de LI1 em 2023/24.
+-}
 module Main where
 import Graphics.Gloss
 import Graphics.Gloss.Interface.Pure.Game
