@@ -10,7 +10,7 @@ mapaInicial = Mapa ((14,16.5), Este) (14,1.5) [[Vazio     ,Vazio     ,Vazio     
                                                [Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ],
                                                [Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Escada    ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Escada    ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ],
                                                [Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Escada    ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Escada    ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ],
-                                               [Vazio     ,Vazio     ,Vazio     ,Vazio     ,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Alcapao   ,Plataforma,Plataforma,Plataforma,Vazio     ,Vazio     ,Vazio     ,Vazio     ],
+                                               [Vazio     ,Vazio     ,Vazio     ,Vazio     ,Plataforma,Plataforma,Plataforma,Alcapao   ,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Alcapao   ,Plataforma,Plataforma,Plataforma,Vazio     ,Vazio     ,Vazio     ,Vazio     ],
                                                [Vazio     ,Vazio     ,Vazio     ,Vazio     ,Escada    ,Vazio     ,Vazio     ,Vazio     ,Escada    ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Escada    ,Vazio     ,Vazio     ,Vazio     ,Escada    ,Vazio     ,Vazio     ,Vazio     ,Vazio     ],
                                                [Vazio     ,Vazio     ,Vazio     ,Vazio     ,Escada    ,Vazio     ,Vazio     ,Vazio     ,Escada    ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Vazio     ,Escada    ,Vazio     ,Vazio     ,Vazio     ,Escada    ,Vazio     ,Vazio     ,Vazio     ,Vazio     ],
                                                [Vazio     ,Vazio     ,Vazio     ,Plataforma,Plataforma,Plataforma,Plataforma,Alcapao   ,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Plataforma,Alcapao   ,Plataforma,Plataforma,Plataforma,Plataforma,Vazio     ,Vazio     ,Vazio     ],
@@ -172,9 +172,20 @@ jOpcoes = Jogo {mapa = mapaOpcoes
 -- | Jogo inicial do jogo principal
 j1 :: Jogo
 j1 = Jogo {mapa = mapaInicial
-          ,inimigos = [Personagem {velocidade=(1.5,0)
+          ,inimigos = [Personagem {velocidade = (0,0)
+                                   ,tipo =MacacoMalvado
+                                   ,posicao=(14,4)
+                                   ,direcao = Este
+                                   ,tamanho = (2.4,2)
+                                   ,emEscada = False
+                                   ,ressalta = True
+                                   ,vida = 1
+                                   ,pontos = 0
+                                   ,aplicaDano = (False,0)
+                                   },
+                        Personagem {velocidade=(1.5,0)
                                   ,tipo=Fantasma
-                                  ,posicao=(10.5,4.5)
+                                  ,posicao=(5.5,4.5)
                                   ,direcao = Este
                                   ,tamanho = (1,1)
                                   ,emEscada=False
@@ -185,7 +196,7 @@ j1 = Jogo {mapa = mapaInicial
                                    },
                         Personagem {velocidade=(1.5,0)
                                   ,tipo=Fantasma
-                                  ,posicao=(10.5,16.5)
+                                  ,posicao=(14.5,1.5)
                                   ,direcao = Este
                                   ,tamanho = (1,1)
                                   ,emEscada=False
@@ -194,19 +205,74 @@ j1 = Jogo {mapa = mapaInicial
                                   ,pontos=0
                                   ,aplicaDano=(False,0)
                                    },
-                        Personagem {velocidade = (0,0)
-                                   ,tipo =MacacoMalvado
-                                   ,posicao=(14,4)
-                                   ,direcao = Este
-                                   ,tamanho = (2.4,2)
-                                   ,emEscada = False
-                                   ,ressalta = True
-                                   ,vida = 1
-                                   ,pontos = 0
-                                   ,aplicaDano = (False,0)
+                        Personagem {velocidade=(1.5,0)
+                                  ,tipo=Fantasma
+                                  ,posicao=(22.5,7.5)
+                                  ,direcao = Este
+                                  ,tamanho = (1,1)
+                                  ,emEscada=False
+                                  ,ressalta=True
+                                  ,vida=1
+                                  ,pontos=0
+                                  ,aplicaDano=(False,0)
+                                   },
+                        Personagem {velocidade=(1.5,0)
+                                  ,tipo=Fantasma
+                                  ,posicao=(14.5,7.5)
+                                  ,direcao = Este
+                                  ,tamanho = (1,1)
+                                  ,emEscada=False
+                                  ,ressalta=True
+                                  ,vida=1
+                                  ,pontos=0
+                                  ,aplicaDano=(False,0)
+                                   },
+                        Personagem {velocidade=(1.5,0)
+                                  ,tipo=Fantasma
+                                  ,posicao=(19.5,10.5)
+                                  ,direcao = Este
+                                  ,tamanho = (1,1)
+                                  ,emEscada=False
+                                  ,ressalta=True
+                                  ,vida=1
+                                  ,pontos=0
+                                  ,aplicaDano=(False,0)
+                                   },
+                        Personagem {velocidade=(1.5,0)
+                                  ,tipo=Fantasma
+                                  ,posicao=(24.5,13.5)
+                                  ,direcao = Este
+                                  ,tamanho = (1,1)
+                                  ,emEscada=False
+                                  ,ressalta=True
+                                  ,vida=1
+                                  ,pontos=0
+                                  ,aplicaDano=(False,0)
+                                   },
+                        Personagem {velocidade=(1.5,0)
+                                  ,tipo=Fantasma
+                                  ,posicao=(4.5,10.5)
+                                  ,direcao = Este
+                                  ,tamanho = (1,1)
+                                  ,emEscada=False
+                                  ,ressalta=True
+                                  ,vida=1
+                                  ,pontos=0
+                                  ,aplicaDano=(False,0)
+                                   },
+                        Personagem {velocidade=(1.5,0)
+                                  ,tipo=Fantasma
+                                  ,posicao=(4.5,13.5)
+                                  ,direcao = Este
+                                  ,tamanho = (1,1)
+                                  ,emEscada=False
+                                  ,ressalta=True
+                                  ,vida=1
+                                  ,pontos=0
+                                  ,aplicaDano=(False,0)
                                    }
                       ]
-          ,colecionaveis = [(Moeda,(17.5,7.5)),(Martelo, (8.5,16.5))]
+          ,colecionaveis = [(Moeda,(4.5,10.5)),(Moeda,(21.5,7.5)),(Martelo, (5.5,7.5)),(Moeda,(24.5,10.5)),(Moeda,(13.5,10.5))]
           ,jogador = Personagem {velocidade=(0,0)
                                 ,tipo=Jogador
                                 ,posicao=(14,16.5)

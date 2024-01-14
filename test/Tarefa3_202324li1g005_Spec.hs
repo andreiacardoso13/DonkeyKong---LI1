@@ -112,9 +112,11 @@ teste12 = "T12: O jogador colide lateralmente com uma plataforma" ~: j1{jogador 
 teste13 = "T13: Um inimigo colide lateralmente com uma plataforma" ~: j1{inimigos = [en2,en5{velocidade = (5,0), posicao = (4.625,1.5)}]} ~=? movimenta 5 5.25 j1 {inimigos = [en2,en5]}
 
 -- Movimento dos fantasmas 
-teste14 = "T14: O fantasma altera a sua direção de maneira aleatoria" ~: j1{inimigos = [en2{velocidade = (1.5,0), posicao = (2.9625,10.5)},en2{velocidade = (1.5,0.0), tipo = Fantasma, posicao = (3.0375,10.5)}]} ~=? movimenta 1 1.15 j1 {inimigos = [en2{velocidade = (-1.5,0)}, en2{velocidade = (1.5,0)}]}
+teste14 = "T14: O fantasma altera a sua direção de maneira aleatoria" ~: j1{inimigos = [en2{velocidade = (1.5,0), posicao = (3.0375,10.5)},en2{velocidade = (1.5,0.0), tipo = Fantasma, posicao = (3.0375,10.5)}]} ~=? movimenta 1 1.15 j1 {inimigos = [en2{velocidade = (-1.5,0)}, en2{velocidade = (1.5,0)}]}
 
 teste15 = "T15: O fantasma ressalta" ~: j1 {inimigos = [en2,en6{velocidade = (-5.0,0.0), posicao = (6.625,3.5)}]} ~=? movimenta 5 5.25 j1 {inimigos = [en2,en6]}
 
 
 testesTarefa3 = test [teste1,teste2,teste3,teste4,teste5,teste6,teste7,teste8,teste9,teste10,teste11,teste12,teste13,teste14,teste15]
+
+

@@ -445,16 +445,36 @@ movimentoPersAux pers = pers {posicao = (x + vx*0.025,y + vy *0.025)}
          y = snd(posicao pers) 
 
 -- | Responsavel pela aleatoriedade no movimento dos Fantasmas
-aleatoriedadeFantasmas :: Semente -> Tempo -> Jogo -> Jogo
-aleatoriedadeFantasmas s t j = j{inimigos = fantEscada j {inimigos = (aleatFantEscada s t j {inimigos = aleatFantAndar s t j})}}
 
+{-| 
+Responsavel pela aleatoriedade o movimento dos fantasmas, devolve o jogo com as velocidades dos fantasmas atualizadas
+
+=Exemplos
+>>> aleatoriedadeFantasmas 1 1.15 (Jogo {mapa = Mapa ((0,0),Este) (1,1) [[Vazio,Vazio],[Plataforma,Plataforma]], inimigos = [(Personagem {velocidade = (-1.5,0), tipo = Fantasma, posicao = (1,1.5),direcao = Oeste,tamanho=(1,1),emEscada=False,ressalta=True,vida=11,pontos=0,aplicaDano=(False,0)})], colecionaveis = [], jogador = (Personagem {velocidade = (10,0), tipo = Jogador, posicao = (1,1.5),direcao = Este,tamanho=(1,1),emEscada=False,ressalta=False,vida=3,pontos=0,aplicaDano=(False,0)})})
+   = Jogo {mapa = Mapa ((0.0,0.0),Este) (1.0,1.0) [[Vazio,Vazio],[Plataforma,Plataforma]], inimigos = [Personagem {velocidade = (1.5,0.0), tipo = Fantasma, posicao = (1.0,1.5), direcao = Oeste, tamanho = (1.0,1.0), emEscada = False, ressalta = True, vida = 11, pontos = 0, aplicaDano = (False,0.0)}], colecionaveis = [], jogador = Personagem {velocidade = (10.0,0.0), tipo = Jogador, posicao = (1.0,1.5), direcao = Este, tamanho = (1.0,1.0), emEscada = False, ressalta = False, vida = 3, pontos = 0, aplicaDano = (False,0.0)}}
+>>> aleatoriedadeFantasmas 1 3.15 (Jogo {mapa = Mapa ((0,0),Este) (1,1) [[Vazio,Vazio],[Plataforma,Plataforma]], inimigos = [(Personagem {velocidade = (-1.5,0), tipo = Fantasma, posicao = (1,1.5),direcao = Oeste,tamanho=(1,1),emEscada=False,ressalta=True,vida=11,pontos=0,aplicaDano=(False,0)})], colecionaveis = [], jogador = (Personagem {velocidade = (10,0), tipo = Jogador, posicao = (1,1.5),direcao = Este,tamanho=(1,1),emEscada=False,ressalta=False,vida=3,pontos=0,aplicaDano=(False,0)})})
+   = Jogo {mapa = Mapa ((0.0,0.0),Este) (1.0,1.0) [[Vazio,Vazio],[Plataforma,Plataforma]], inimigos = [Personagem {velocidade = (-1.5,0.0), tipo = Fantasma, posicao = (1.0,1.5), direcao = Oeste, tamanho = (1.0,1.0), emEscada = False, ressalta = True, vida = 11, pontos = 0, aplicaDano = (False,0.0)}], colecionaveis = [], jogador = Personagem {velocidade = (10.0,0.0), tipo = Jogador, posicao = (1.0,1.5), direcao = Este, tamanho = (1.0,1.0), emEscada = False, ressalta = False, vida = 3, pontos = 0, aplicaDano = (False,0.0)}}
+-}
+aleatoriedadeFantasmas :: Semente -> Tempo -> Jogo -> Jogo
+aleatoriedadeFantasmas s t j = j {inimigos =aleatFantAndar s t j}
+
+
+
+
+{-
+Esta parte do código é a responsável pela aleatoriedade de subir e descer escadas por parte dos fantasmas, 
+no entanto esta parte ainda não está totalmente funcional e causa problemas maiores no jogo, 
+logo encontra-se neste momento como um comentário.
+
+
+aleatoriedadeFantasmas s t j = j{inimigos = fantEscada j {inimigos = (aleatFantEscada s t j {inimigos = aleatFantAndar s t j})}}
 
 aleatFantEscada :: Semente -> Tempo -> Jogo -> [Personagem]
 aleatFantEscada _ _ j@(Jogo {inimigos = []}) = []
 aleatFantEscada s tp j@(Jogo {mapa = m@(Mapa _ _ blocos), inimigos = (h@(Personagem {posicao = pos@(x,y), velocidade = (vx,vy), emEscada = esc}):t)}) 
 
-      | alteraImagem3 (realToFrac tp) && (head(geraAleatorios s 1)) > 0 = fantEscadaSubir j
-      | alteraImagem3 (realToFrac tp) && (head(geraAleatorios s 1)) < 0 = fantEscadaDescer j
+      | entreZeroEDois (realToFrac tp) && (head(geraAleatorios s 1)) > 0 = fantEscadaSubir j
+      | entreZeroEDois (realToFrac tp) && (head(geraAleatorios s 1)) < 0 = fantEscadaDescer j
       | otherwise = h : aleatFantEscada (s+5) tp j{inimigos = t}
                            
 
@@ -480,40 +500,77 @@ fantEscadaDescer j@(Jogo {mapa = m@(Mapa _ _ blocos), inimigos = (h@(Personagem 
 
       | tipo h == Fantasma && not esc && procuraBlocoInf blocos pos == Plataforma && procuraBloco blocos (x,y+2) == Escada && mod' x 1 <= 0.55 && mod' x 1 >= 0.45 = (h{velocidade = (0,1.5), emEscada = True, posicao = (x,y+0.1)}) : fantEscadaDescer j{inimigos = t}
       | otherwise = h : fantEscadaDescer j{inimigos = t}
-
-{-
-CONDIÇOES SUBIR
-|     esc && procuraBloco blocos pos == Vazio && procuraBlocoInf blocos pos == Plataforma && colisoesParede m jgd = return e{jogo = atualiza (replicate (length inimigos) Nothing) (Just Parar) j {jogador = jgd {emEscada = False}}}
-| not esc && procuraBloco blocos pos == Escada && mod' x 1 <= 0.6 && mod' x 1 >= 0.3                              = return e{jogo = atualiza (replicate (length inimigos) Nothing) (Just Subir) j}
-| esc                                                                                                             = return e{jogo = atualiza (replicate (length inimigos) Nothing) (Just Subir) j {jogador = jgd {posicao = (x, max (y-0.5) 0.5)}}}
-
-CONDIÇOES DESCER
-|esc  && procuraBlocoInf blocos pos == Escada                                                                       =  freefall (e{jogo = j {jogador = movePersonagem (jgd {posicao = (x, min (y+0.5) 16.5)}) (Just Descer)}})
-|esc  && procuraBlocoInf blocos pos == Plataforma && procuraBloco blocos pos     == Escada && colisoesParede m jgd  =  freefall (e{jogo = j {jogador = movePersonagem (jgd {emEscada = False}) (Just Parar)}})
-|        procuraBlocoInf blocos pos == Plataforma && procuraBloco blocos (x,y+2) == Escada && mod' x 1 /= 0         =  freefall (e{jogo = j {jogador = movePersonagem (jgd {posicao = (x, min (y+0.5) 16.5)}) (Just Descer)}})
-|        procuraBlocoInf blocos pos == Escada     && procuraBloco blocos pos     == Plataforma                      =  freefall (e{jogo = j {jogador = movePersonagem jgd (Just Descer)}})
 -}
 
+
+
+{-| 
+Responsavel pela aleatoriedade o movimento dos fantasmas, devolve a lista de inimigos com as atualizações nas velocidades dos fantasmas
+
+=Exemplos
+>>> aleatFantAndar 1 1.15 (Jogo {mapa = Mapa ((0,0),Este) (1,1) [[Vazio,Vazio],[Plataforma,Plataforma]], inimigos = [(Personagem {velocidade = (-1.5,0), tipo = Fantasma, posicao = (1,1.5),direcao = Oeste,tamanho=(1,1),emEscada=False,ressalta=True,vida=11,pontos=0,aplicaDano=(False,0)})], colecionaveis = [], jogador = (Personagem {velocidade = (10,0), tipo = Jogador, posicao = (1,1.5),direcao = Este,tamanho=(1,1),emEscada=False,ressalta=False,vida=3,pontos=0,aplicaDano=(False,0)})})
+    = [Personagem {velocidade = (1.5,0.0), tipo = Fantasma, posicao = (1.0,1.5), direcao = Oeste, tamanho = (1.0,1.0), emEscada = False, ressalta = True, vida = 11, pontos = 0, aplicaDano = (False,0.0)}]
+>>> aleatFantAndar 1 3.15 (Jogo {mapa = Mapa ((0,0),Este) (1,1) [[Vazio,Vazio],[Plataforma,Plataforma]], inimigos = [(Personagem {velocidade = (-1.5,0), tipo = Fantasma, posicao = (1,1.5),direcao = Oeste,tamanho=(1,1),emEscada=False,ressalta=True,vida=11,pontos=0,aplicaDano=(False,0)})], colecionaveis = [], jogador = (Personagem {velocidade = (10,0), tipo = Jogador, posicao = (1,1.5),direcao = Este,tamanho=(1,1),emEscada=False,ressalta=False,vida=3,pontos=0,aplicaDano=(False,0)})})
+    = [Personagem {velocidade = (-1.5,0.0), tipo = Fantasma, posicao = (1.0,1.5), direcao = Oeste, tamanho = (1.0,1.0), emEscada = False, ressalta = True, vida = 11, pontos = 0, aplicaDano = (False,0.0)}]
+-}
 aleatFantAndar :: Semente -> Tempo -> Jogo -> [Personagem]
 aleatFantAndar _ _ j@(Jogo {inimigos = []}) = []
 aleatFantAndar s tp j@(Jogo {mapa = m@(Mapa _ _ blocos), inimigos = (h@(Personagem {posicao = pos@(x,y), velocidade = (vx,vy), emEscada = esc}):t)}) 
 
-      | alteraImagem3 (realToFrac tp) && (head(geraAleatorios s 1)) > 0 && tipo h == Fantasma && not esc && colisoesParede m h = (h{velocidade = (-1.5,vy)}) : aleatFantAndar (s+5) tp j{inimigos = t}
-      | alteraImagem3 (realToFrac tp) && (head(geraAleatorios s 1)) < 0 && tipo h == Fantasma && not esc && colisoesParede m h = (h{velocidade = (1.5,vy)}) : aleatFantAndar (s+5) tp j{inimigos = t}
+      | entreZeroEDois (realToFrac tp) && (head(geraAleatorios s 1)) > 0 && tipo h == Fantasma && not esc && colisoesParede m h = (h{velocidade = (-1.5,vy)}) : aleatFantAndar (s+17) tp j{inimigos = t}
+      | entreZeroEDois (realToFrac tp) && (head(geraAleatorios s 1)) < 0 && tipo h == Fantasma && not esc && colisoesParede m h = (h{velocidade = (1.5,vy)}) : aleatFantAndar (s+17) tp j{inimigos = t}
       | otherwise = h : aleatFantAndar (s+1) tp j{inimigos = t}
   where (vx,vy) = velocidade h
       
-alteraImagem3 :: Float -> Bool
-alteraImagem3 n = alteraImagem3Aux (mod' n 10)
+{-|
+Verifica se o algarismo das unidades de um número está entre 0 e 2
 
-alteraImagem3Aux :: Float -> Bool
-alteraImagem3Aux n = (n >= 0 && n<2)
+=Exemplos
+>>> entreZeroEDois 1.9 = True
+>>> entreZeroEDois 0.1 = True
+>>> entreZeroEDois 2.3 = False
+-}
+entreZeroEDois :: Float -> Bool
+entreZeroEDois n = entreZeroEDoisAux (mod' n 10)
 
+{-|
+Verifica se o algarismo das unidades de um número está entre 0 e 2
+
+=Exemplos
+>>> entreZeroEDoisAux 1.9 = True
+>>> entreZeroEDoisAux 0.1 = True
+>>> entreZeroEDoisAux 2.3 = False
+-}
+entreZeroEDoisAux :: Float -> Bool
+entreZeroEDoisAux n = (n >= 0 && n<2)
+
+{-|
+Responsavel pelo movimento do Macaco Malvado no jogo principal
+
+=Exemplos
+>>> movimentoMacaco 7 (Jogo {mapa = Mapa ((14,16.5),Este) (14,1.5) [[Vazio,Vazio],[Plataforma,Plataforma]], inimigos = [(Personagem {velocidade = (-1.5,0), tipo = MacacoMalvado, posicao = (5,1.5),direcao = Oeste,tamanho=(1,1),emEscada=False,ressalta=True,vida=11,pontos=0,aplicaDano=(False,0)})], colecionaveis = [], jogador = (Personagem {velocidade = (10,0), tipo = Jogador, posicao = (1,1.5),direcao = Este,tamanho=(1,1),emEscada=False,ressalta=False,vida=3,pontos=0,aplicaDano=(False,0)})})
+   = Jogo {mapa = Mapa ((14.0,16.5),Este) (14.0,1.5) [[Vazio,Vazio],[Plataforma,Plataforma]], inimigos = [Personagem {velocidade = (1.5,0.0), tipo = MacacoMalvado, posicao = (5.0,1.5), direcao = Oeste, tamanho = (1.0,1.0), emEscada = False, ressalta = True, vida = 11, pontos = 0, aplicaDano = (False,0.0)}], colecionaveis = [], jogador = Personagem {velocidade = (10.0,0.0), tipo = Jogador, posicao = (1.0,1.5), direcao = Este, tamanho = (1.0,1.0), emEscada = False, ressalta = False, vida = 3, pontos = 0, aplicaDano = (False,0.0)}}
+>>> movimentoMacaco 7 (Jogo {mapa = Mapa ((13,16.5),Este) (14,1.5) [[Vazio,Vazio],[Plataforma,Plataforma]], inimigos = [(Personagem {velocidade = (-1.5,0), tipo = MacacoMalvado, posicao = (5,1.5),direcao = Oeste,tamanho=(1,1),emEscada=False,ressalta=True,vida=11,pontos=0,aplicaDano=(False,0)})], colecionaveis = [], jogador = (Personagem {velocidade = (10,0), tipo = Jogador, posicao = (1,1.5),direcao = Este,tamanho=(1,1),emEscada=False,ressalta=False,vida=3,pontos=0,aplicaDano=(False,0)})})
+   = Jogo {mapa = Mapa ((13.0,16.5),Este) (14.0,1.5) [[Vazio,Vazio],[Plataforma,Plataforma]], inimigos = [Personagem {velocidade = (-1.5,0.0), tipo = MacacoMalvado, posicao = (5.0,1.5), direcao = Oeste, tamanho = (1.0,1.0), emEscada = False, ressalta = True, vida = 11, pontos = 0, aplicaDano = (False,0.0)}], colecionaveis = [], jogador = Personagem {velocidade = (10.0,0.0), tipo = Jogador, posicao = (1.0,1.5), direcao = Este, tamanho = (1.0,1.0), emEscada = False, ressalta = False, vida = 3, pontos = 0, aplicaDano = (False,0.0)}}
+>>> movimentoMacaco 7 (Jogo {mapa = Mapa ((14,16.5),Este) (14,1.5) [[Vazio,Vazio],[Plataforma,Plataforma]], inimigos = [(Personagem {velocidade = (-1.5,0), tipo = MacacoMalvado, posicao = (12,1.5),direcao = Oeste,tamanho=(1,1),emEscada=False,ressalta=True,vida=11,pontos=0,aplicaDano=(False,0)})], colecionaveis = [], jogador = (Personagem {velocidade = (10,0), tipo = Jogador, posicao = (1,1.5),direcao = Este,tamanho=(1,1),emEscada=False,ressalta=False,vida=3,pontos=0,aplicaDano=(False,0)})})
+   = Jogo {mapa = Mapa ((14.0,16.5),Este) (14.0,1.5) [[Vazio,Vazio],[Plataforma,Plataforma]], inimigos = [Personagem {velocidade = (-1.5,0.0), tipo = MacacoMalvado, posicao = (12.0,1.5), direcao = Oeste, tamanho = (1.0,1.0), emEscada = False, ressalta = True, vida = 11, pontos = 0, aplicaDano = (False,0.0)}], colecionaveis = [], jogador = Personagem {velocidade = (10.0,0.0), tipo = Jogador, posicao = (1.0,1.5), direcao = Este, tamanho = (1.0,1.0), emEscada = False, ressalta = False, vida = 3, pontos = 0, aplicaDano = (False,0.0)}}
+-}
 movimentoMacaco :: Tempo -> Jogo -> Jogo
 movimentoMacaco t j = if posI == ((14,16.5),Este) && posF == (14,1.5) then j {inimigos = movimentoMacacoAux t (inimigos j)}
                         else j
   where Mapa posI posF blocos = mapa j
 
+{-|
+Auxiliar da função responsavel pelo movimento do Macaco Malvado no jogo principal
+
+=Exemplos
+>>> movimentoMacacoAux 7 [(Personagem {velocidade = (-1.5,0), tipo = MacacoMalvado, posicao = (5,1.5),direcao = Oeste,tamanho=(1,1),emEscada=False,ressalta=True,vida=11,pontos=0,aplicaDano=(False,0)})]
+   = [Personagem {velocidade = (1.5,0.0), tipo = MacacoMalvado, posicao = (5.0,1.5), direcao = Oeste, tamanho = (1.0,1.0), emEscada = False, ressalta = True, vida = 11, pontos = 0, aplicaDano = (False,0.0)}]
+>>> movimentoMacacoAux 7 [(Personagem {velocidade = (-1.5,0), tipo = MacacoMalvado, posicao = (5,1.5),direcao = Oeste,tamanho=(1,1),emEscada=False,ressalta=True,vida=11,pontos=0,aplicaDano=(False,0)})]
+   = [Personagem {velocidade = (-1.5,0.0), tipo = MacacoMalvado, posicao = (5.0,1.5), direcao = Oeste, tamanho = (1.0,1.0), emEscada = False, ressalta = True, vida = 11, pontos = 0, aplicaDano = (False,0.0)}]
+>>> movimentoMacacoAux 7 [(Personagem {velocidade = (-1.5,0), tipo = MacacoMalvado, posicao = (12,1.5),direcao = Oeste,tamanho=(1,1),emEscada=False,ressalta=True,vida=11,pontos=0,aplicaDano=(False,0)})]
+   = [Personagem {velocidade = (-1.5,0.0), tipo = MacacoMalvado, posicao = (12.0,1.5), direcao = Oeste, tamanho = (1.0,1.0), emEscada = False, ressalta = True, vida = 11, pontos = 0, aplicaDano = (False,0.0)}]
+-}
 movimentoMacacoAux :: Tempo -> [Personagem] -> [Personagem]
 movimentoMacacoAux _ [] = []
 movimentoMacacoAux tmp (h:t) | tipo h == MacacoMalvado && tmp > 3 && vx == 0 = h{velocidade = (3,0)} : t
@@ -523,13 +580,15 @@ movimentoMacacoAux tmp (h:t) | tipo h == MacacoMalvado && tmp > 3 && vx == 0 = h
   where (vx,vy) = velocidade h
         (x,y) = posicao h
 
+-- | Responsavel pelo ressalto do Fantasma, faz o mesmo alterar a sua velociade quando chega à ponta de uma plataforma ou ao limite do mapa
 ressaltoFantasma :: Jogo -> Jogo 
 ressaltoFantasma j = j {inimigos = map (ressaltaFantAux blocos) (inimigos j)}
   where Mapa a b blocos = mapa j
 
+-- | Auxiliar da função ressaltoFantasma, responsavel por devolver o Fantasma com as devidas alterações na velocidade em caso de ressalto
 ressaltaFantAux :: [[Bloco]] -> Personagem -> Personagem
-ressaltaFantAux blocos inim | procuraBlocoInf blocos (x+0.55,y) == Vazio && tipo inim == Fantasma= inim {velocidade = (-vx,vy)}
-                            | procuraBlocoInf blocos (x-0.55,y) == Vazio && tipo inim == Fantasma = inim {velocidade = (-vx,vy)}
+ressaltaFantAux blocos inim | procuraBlocoInf blocos (x+0.8,y) == Vazio && tipo inim == Fantasma= inim {velocidade = (-vx,vy)}
+                            | procuraBlocoInf blocos (x-0.8,y) == Vazio && tipo inim == Fantasma = inim {velocidade = (-vx,vy)}
                             | (x >= 27.5 || x <= 0.5) && tipo inim == Fantasma = inim {velocidade = (-vx,vy)}
                             | otherwise = inim
   where (vx,vy) = velocidade inim
