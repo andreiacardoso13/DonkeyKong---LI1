@@ -1,3 +1,11 @@
+{-|
+Module      : Desenha
+Description : Desenha o jogo
+Copyright   : Andreia Alves Cardoso <a106915@alunos.uminho.pt>
+              Cátia Alexandra Ribeiro da Eira <a107382@alunos.uminho.pt>
+
+Módulo para desenhar o jogo do projeto de LI1 em 2023/24.
+-}
 module Desenha where 
 
 import Graphics.Gloss.Interface.IO.Game
