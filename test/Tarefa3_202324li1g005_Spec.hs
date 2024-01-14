@@ -1,3 +1,12 @@
+{-|
+Module      : Tarefa3_202324li1g005_Spec
+Description : Testes da Tarefa 3
+Copyright   : Andreia Alves Cardoso <a106915@alunos.uminho.pt>
+              Cátia Alexandra Ribeiro da Eira <a107382@alunos.uminho.pt>
+
+Módulo para a realização dos testes da Tarefa 3 de LI1 em 2023/24.
+-}
+
 module Tarefa3_202324li1g005_Spec where
 
 import Tarefa3

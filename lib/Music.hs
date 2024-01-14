@@ -1,3 +1,12 @@
+{-|
+Module      : Music
+Description : Comandos de controlo do ficheiro mp3
+Copyright   : Andreia Alves Cardoso <a106915@alunos.uminho.pt>
+              Cátia Alexandra Ribeiro da Eira <a107382@alunos.uminho.pt>
+
+Módulo para a inclusão de música no projeto de LI1 em 2023/24.
+-}
+
 module Music where
 
 import System.Process
