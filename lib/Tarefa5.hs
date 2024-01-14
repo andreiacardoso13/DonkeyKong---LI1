@@ -23,8 +23,10 @@ import Graphics.Gloss
 import Graphics.Gloss.Interface.Pure.Game
 import Graphics.Gloss.Interface.IO.Game
 
+-- | Estado do programa 
 data Estado = Estado {menu :: Menu, jogo :: Jogo, imagens :: Imagens, tempo :: Tempo, bonus :: Int, highScore :: [(Int,String)], saltar :: Tempo, editor :: Bool, jogoEditor :: Jogo}
 
+-- | Diferentes menus presentes ao longo do jogo
 data Menu = Inicio
           | Opcoes Opcao
           | ModoJogo
@@ -39,6 +41,7 @@ data Menu = Inicio
           | Editor2
           deriving Eq
 
+-- | Opções disponiveis no menu de opções e no menu de pausa
 data Opcao = Jogar
            | HighScore
            | Continuar
@@ -50,6 +53,7 @@ data Opcao = Jogar
            | UltJogo
           deriving Eq
 
+-- | Função que recebe e devolve um Estado com as devidas alterações causadas por eventos
 keys :: Event -> Estado -> IO Estado
 keys evt s | menu s == Inicio              = keysInicio evt s
            | menu s == Opcoes Jogar        = keysOpJogar evt s
@@ -71,12 +75,14 @@ keys evt s | menu s == Inicio              = keysInicio evt s
            | menu s == Editor1             = keysEditor1 evt s
            | menu s == Editor2             = keysEditor2 evt s
 
+-- | Faz as alterações provocadas por eventos no estado quando o menu é Inicio
 keysInicio :: Event -> Estado -> IO Estado
 keysInicio (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = Opcoes Jogar}
 keysInicio (EventKey (SpecialKey KeyEsc) Down _ _) s   = do musicaParar
                                                             exitSuccess
 keysInicio _ s = return s
 
+-- | Faz as alterações provocadas por eventos no estado quando o menu é Opcoes Jogar
 keysOpJogar :: Event -> Estado -> IO Estado
 keysOpJogar (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = ModoJogo, jogo = j1, tempo = 0, bonus = 15000}
 keysOpJogar (EventKey (SpecialKey KeyDown) Down _ _) s  = return s {menu = Opcoes OpCreditos}
@@ -84,6 +90,7 @@ keysOpJogar (EventKey (SpecialKey KeyEsc) Down _ _) s   = do musicaParar
                                                              exitSuccess
 keysOpJogar _ s = return s
 
+-- | Faz as alterações provocadas por eventos no estado quando o menu é Opcoes HighScore
 keysOpHighScore :: Event -> Estado -> IO Estado
 keysOpHighScore (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = ModoHighScore}
 keysOpHighScore (EventKey (SpecialKey KeyUp) Down _ _) s    = return s {menu = Opcoes OpCreditos}
@@ -92,6 +99,7 @@ keysOpHighScore (EventKey (SpecialKey KeyEsc) Down _ _) s   = do musicaParar
                                                                  exitSuccess
 keysOpHighScore _ s = return s
 
+-- | Faz as alterações provocadas por eventos no estado quando o menu é Opcoes OpCreditos
 keysOpCreditos :: Event -> Estado -> IO Estado
 keysOpCreditos (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = ModoCreditos}
 keysOpCreditos (EventKey (SpecialKey KeyUp) Down _ _) s    = return s {menu = Opcoes Jogar}
@@ -100,6 +108,7 @@ keysOpCreditos (EventKey (SpecialKey KeyEsc) Down _ _) s   = do musicaParar
                                                                 exitSuccess
 keysOpCreditos _ s = return s
 
+-- | Faz as alterações provocadas por eventos no estado quando o menu é Opcoes EditorMapas
 keysOpEditorMapas :: Event -> Estado -> IO Estado
 keysOpEditorMapas (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = Editor1, jogo = jEditor, editor = True}
 keysOpEditorMapas (EventKey (SpecialKey KeyUp) Down _ _) s    = return s {menu = Opcoes HighScore}
@@ -108,6 +117,7 @@ keysOpEditorMapas (EventKey (SpecialKey KeyEsc) Down _ _) s   = do musicaParar
                                                                    exitSuccess
 keysOpEditorMapas _ s = return s
 
+-- | Faz as alterações provocadas por eventos no estado quando o menu é Opcoes UltJogo
 keysOpUltJogo :: Event -> Estado -> IO Estado
 keysOpUltJogo (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = ModoJogo, jogo = jogoEditor s, editor = True}
 keysOpUltJogo (EventKey (SpecialKey KeyUp) Down _ _) s = return s {menu = Opcoes EditorMapas}
@@ -115,6 +125,7 @@ keysOpUltJogo (EventKey (SpecialKey KeyEsc) Down _ _) s   = do musicaParar
                                                                exitSuccess
 keysOpUltJogo _ s = return s
 
+-- | Faz as alterações provocadas por eventos no estado quando o menu é ModoJogo
 keysModoJogo :: Event -> Estado -> IO Estado
 keysModoJogo (EventKey (SpecialKey KeyRight) Down _ _) e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos),
                                                                                   inimigos = inimigos,
@@ -188,7 +199,7 @@ keysModoJogo (EventKey (SpecialKey KeyEsc) Down _ _) s = do musicaParar
                                                             exitSuccess
 keysModoJogo _ e = return e
 
-
+-- | Faz as alterações provocadas por eventos no estado quando o menu é ModoPausa _
 keysModoPausa :: Event -> Estado -> IO Estado
 keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Continuar})                 = return e {menu = ModoJogo}
 keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Reiniciar, editor = False}) = return e {menu = ModoJogo, jogo = j1, tempo = 0, bonus = 15000}
@@ -211,14 +222,14 @@ keysModoPausa (EventKey (SpecialKey KeyEsc) Down _ _) s = do musicaParar
 
 keysModoPausa _ s = return s
 
-
+-- | Faz as alterações provocadas por eventos no estado quando o menu é ModoHighScore
 keysModoHighScore :: Event -> Estado -> IO Estado
 keysModoHighScore (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = Opcoes Jogar}
 keysModoHighScore (EventKey (SpecialKey KeyEsc) Down _ _) s   = do musicaParar
                                                                    exitSuccess
 keysModoHighScore _ s = return s
 
-
+-- | Faz as alterações provocadas por eventos no estado quando o menu é GanhouJogo
 keysGanhouJogo :: Event -> Estado -> IO Estado
 keysGanhouJogo (EventKey (Char 'a') Down _ _) s | length (snd (last (highScore s)))<= 8 = return s {highScore = escreve (highScore s) "A"}
                                                 | otherwise = return s
@@ -279,22 +290,23 @@ keysGanhouJogo (EventKey (SpecialKey KeyEsc) Down _ _) s = do musicaParar
                                                               exitSuccess
 keysGanhouJogo _ s = return s
 
-
+-- | Faz as alterações provocadas por eventos no estado quando o menu é GanhouJogoEditor
 keysGanhouJogoEditor :: Event -> Estado -> IO Estado
 keysGanhouJogoEditor (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = Opcoes Jogar, jogo = jOpcoes}
 keysGanhouJogoEditor (EventKey (SpecialKey KeyEsc) Down _ _) s = do musicaParar
                                                                     exitSuccess
 keysGanhouJogoEditor _ s =  return s
 
+-- | Remove o último elemento da String pertencente ao último elemento da lista (remove a última letra escrita)
 remove :: [(Int,String)] -> [(Int,String)]
 remove [] = []
 remove l = init l ++ [(fst (last l), init (snd (last l)))]
 
---função que adiciona uma letra ao highScore
+-- | Recebe uma lista de tuplos e faz a compactação da String do último tuplo com a String recebida (adiciona a letra selecionada)
 escreve :: [(Int,String)] -> String -> [(Int,String)]
 escreve l a = init l ++ [(fst (last l), snd (last l) ++ a)]
 
-
+-- | Faz as alterações provocadas por eventos no estado quando o menu é PerdeuJogo
 keysPerdeuJogo :: Event -> Estado -> IO Estado
 keysPerdeuJogo (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = Opcoes Jogar, jogo = jOpcoes, editor = False}
 keysPerdeuJogo (EventKey (Char 'r') Down _ _) e@(Estado {menu = PerdeuJogo, editor = False}) = return e {menu = ModoJogo, jogo = j1, tempo = 0, bonus = 15000}
@@ -303,21 +315,21 @@ keysPerdeuJogo (EventKey (SpecialKey KeyEsc) Down _ _) s = do musicaParar
                                                               exitSuccess
 keysPerdeuJogo _ s = return s
 
-
+-- | Faz as alterações provocadas por eventos no estado quando o menu é ModoControlos
 keysControlos :: Event -> Estado -> IO Estado
 keysControlos (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoControlos}) = return e {menu = ModoPausa Controls}
 keysControlos (EventKey (SpecialKey KeyEsc) Down _ _) s = do musicaParar
                                                              exitSuccess
 keysControlos _ s = return s
 
-
+-- | Faz as alterações provocadas por eventos no estado quando o menu é ModoCreditos
 keysCreditos :: Event -> Estado -> IO Estado
 keysCreditos (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = Opcoes Jogar}
 keysCreditos (EventKey (SpecialKey KeyEsc) Down _ _) s = do musicaParar
                                                             exitSuccess
 keysCreditos _ s = return s 
 
-
+-- | Faz as alterações provocadas por eventos no estado quando o menu é Editor1
 keysEditor1 :: Event -> Estado -> IO Estado 
 keysEditor1 (EventKey (SpecialKey KeyRight) Down _ _) s = if x <27.5 then return s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = Personagem {velocidade = (0,0), tipo = Jogador, posicao =(x+1,y), direcao = Este, tamanho = (1,1), emEscada = False, ressalta = False, vida = 3, pontos = 0, aplicaDano = (False,0)}}}
                                                                     else return s
@@ -349,6 +361,7 @@ keysEditor1 (EventKey (SpecialKey KeyEnter) Down _ _) s = if valida (jogo s)
 keysEditor1 (EventKey (SpecialKey KeyEsc) Down _ _) s = return s {menu = Opcoes EditorMapas}
 keysEditor1 _ s = return s
 
+-- | Faz as alterações provocadas por eventos no estado quando o menu é Editor2
 keysEditor2 :: Event -> Estado -> IO Estado
 keysEditor2 (EventKey (SpecialKey KeyRight) Down _ _) s = if x <27.5 then return s {jogo = Jogo {mapa= (mapa (jogo s)), inimigos = (inimigos (jogo s)), colecionaveis = (colecionaveis (jogo s)), jogador = Personagem {velocidade = (0,0), tipo = Jogador, posicao =(x+1,y), direcao = Este, tamanho = (1,1), emEscada = False, ressalta = False, vida = 3, pontos = 0, aplicaDano = (False,0)}}}
                                                                     else return s
@@ -368,10 +381,12 @@ keysEditor2 (EventKey (SpecialKey KeyEnter) Down _ _) s = if valida (jogo s)
 keysEditor2 (EventKey (SpecialKey KeyEsc) Down _ _) s = return s {menu = Editor1}
 keysEditor2 _ s = return s
 
+-- | Atualiza a posição inicial no mapa tendo em conta a posição atual do jogador (utilizada quando o jogo começa no editor de mapas)
 atualizaPosicaoInicial :: Jogo -> Jogo
 atualizaPosicaoInicial j = j {mapa = Mapa (posicao (jogador j), direcao (jogador j)) b c}
    where Mapa a b c = mapa j
 
+-- | Adiciona o Macaco Malvado à lista de inimigos (caso este não pertença) ou altera a sua posição para a fornecida (caso este já pertença), mas apenas no caso deste se localizar em blocos do tipo Vazio
 adicionaMacaco :: [[Bloco]] -> [Personagem] -> Posicao -> [Personagem]
 adicionaMacaco blocos [] (x,y) = [Personagem {velocidade = (0,0), tipo = MacacoMalvado, posicao = (x,y-0.5), direcao = Este, tamanho = (2.49,2), emEscada = False, ressalta = True, vida = 1, pontos = 0, aplicaDano = (False,0)}]
 adicionaMacaco blocos (h:t) (x,y) | verificaMacaco (h:t) == False = (h:t) ++ [Personagem {velocidade = (0,0), tipo = MacacoMalvado, posicao = (x,y-0.5), direcao = Este, tamanho = (2.49,2), emEscada = False, ressalta = True, vida = 1, pontos = 0, aplicaDano = (False,0)}]
@@ -379,32 +394,34 @@ adicionaMacaco blocos (h:t) (x,y) | verificaMacaco (h:t) == False = (h:t) ++ [Pe
                                                   then h {posicao = (x,y-0.5)} :t 
                                                   else h : adicionaMacaco blocos t (x,y)
 
+-- | Verifica se o Macaco Malvado consta da lista de inimigos
 verificaMacaco :: [Personagem] -> Bool
 verificaMacaco [] = False
 verificaMacaco (h:t) | tipo h == MacacoMalvado = True
                      | otherwise = verificaMacaco t
 
+-- | Adiciona um Fantasma à lista de inimigos, mas apenas no caso deste se localizar em blocos do tipo Vazio
 adicionaFantasma :: [[Bloco]] -> [Personagem] -> Posicao -> [Personagem]
 adicionaFantasma blocos l (x,y) | procuraBloco blocos (x,y) == Vazio && procuraBloco blocos (x,y-1) == Vazio = l ++ [Personagem {velocidade = (0,0), tipo = Fantasma, posicao = (x,y), direcao = Este, tamanho=(1,1),emEscada = False, ressalta = True,vida = 1,pontos = 0, aplicaDano = (False,0)}]
                                 | otherwise = l
 
+-- | Devolve um mapa atualizado pela mudança do bloco onde se localiza a posição fornecida
 atualizaMapa :: Mapa -> Posicao -> Mapa
 atualizaMapa (Mapa a b blocos) pos = Mapa a b (alteraBloco blocos pos)
 
+-- | Devolve uma matriz de blocos atualizada pela mudança do bloco onde se localiza a posição fornecida
 alteraBloco :: [[Bloco]] -> Posicao -> [[Bloco]]
 alteraBloco (h:t) (x,y) | y == 0.5 = alteraBloco2 h (x,y) : t
                         | otherwise = h : alteraBloco t (x,y-1)
 
+-- | Devolve uma lista de blocos atualizada pela mudança do bloco onde se localiza a posição fornecida
 alteraBloco2 :: [Bloco] -> Posicao -> [Bloco]
 alteraBloco2 (h:t) (x,y) | x == 0.5 = alteraBloco3 h : t 
                          | otherwise = h : alteraBloco2 t (x-1,y)
 
+-- | Altera um bloco
 alteraBloco3 :: Bloco -> Bloco
 alteraBloco3 b | b == Plataforma = Alcapao
                | b == Alcapao = Escada
                | b == Escada = Vazio
                | otherwise = Plataforma
-
-corrigeVida :: [Personagem] -> [Personagem]
-corrigeVida [] = []
-corrigeVida (h:t) = h{vida=1} : corrigeVida t
