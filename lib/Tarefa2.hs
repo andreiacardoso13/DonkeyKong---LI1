@@ -300,3 +300,4 @@ procuraBloco [] _ = Vazio
 procuraBloco ((h:t):ls) (x,y) | y > 1 = procuraBloco ls (x,y-1)
                               | x > 1 = procuraBloco [t] (x-1,y)
                               | otherwise = h
+procuraBloco _ _ = Vazio
