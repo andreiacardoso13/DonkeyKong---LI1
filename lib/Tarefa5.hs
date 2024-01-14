@@ -298,7 +298,9 @@ escreve l a = init l ++ [(fst (last l), snd (last l) ++ a)]
 
 
 keysPerdeuJogo :: Event -> Estado -> IO Estado
-keysPerdeuJogo (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = Opcoes Jogar, jogo = jOpcoes}
+keysPerdeuJogo (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = Opcoes Jogar, jogo = jOpcoes, editor = False}
+keysPerdeuJogo (EventKey (Char 'r') Down _ _) e@(Estado {menu = PerdeuJogo, editor = False}) = return e {menu = ModoJogo, jogo = j1, tempo = 0, bonus = 15000}
+keysPerdeuJogo (EventKey (Char 'r') Down _ _) e@(Estado {menu = PerdeuJogo, editor = True}) = return e {menu = ModoJogo, jogo = jogoEditor e, tempo = 0, bonus = 15000}
 keysPerdeuJogo (EventKey (SpecialKey KeyEsc) Down _ _) s = do musicaParar
                                                               exitSuccess
 keysPerdeuJogo _ s = return s

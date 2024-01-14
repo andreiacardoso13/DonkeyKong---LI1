@@ -14,6 +14,25 @@ import Mapa
 import Data.Fixed
 import Data.List
 
+
+-- | Desenha no ecrã o que está a acontecer no jogo em cada momento
+desenhaEstadoAux :: Estado -> IO Picture
+desenhaEstadoAux s | menu s == Inicio              = return (Pictures(desenhaInicio s))
+                   | menu s == ModoJogo            = return (Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s++[Translate 0 460 (Scale 0.5 0.5 (getImagem PlPressP (imagens s)))]))
+                   | menu s == ModoPausa Continuar = return (Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa4 (imagens s)), Translate 0 (-270) (getImagem DicasPausa (imagens s))]))
+                   | menu s == ModoPausa Reiniciar = return (Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa1 (imagens s)), Translate 0 (-270) (getImagem DicasPausa (imagens s))]))
+                   | menu s == ModoPausa Home      = return (Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa2 (imagens s)), Translate 0 (-270) (getImagem DicasPausa (imagens s))]))
+                   | menu s == ModoPausa Controls  = return (Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa3 (imagens s)), Translate 0 (-270) (getImagem DicasPausa (imagens s))]))
+                   | menu s == ModoHighScore       = return (Pictures(desenhaModoHighScore s))
+                   | menu s == GanhouJogo          = return (Pictures(desenhaGanhouJogo s))
+                   | menu s == GanhouJogoEditor    = return (Pictures([Translate 0 (-30) (Scale 2.5 2.5 (getImagem MonkeyDefeated (imagens s))), Translate 0 300 (getImagem PlParabens (imagens s)),  Translate 0 180 (getImagem PlDerrotasteOPrimateKong (imagens s))] ++ map (Translate 0 (-150)) (map (Scale 2 2) (desenhaFogo s)) ++ map (Translate 80 (-260)) (desenhaScoreFinal s) ++ [Translate 70 (-275) (rectangleSolid 700 150)]))
+                   | menu s == PerdeuJogo          = return (Pictures(desenhaPerdeuJogo s (tempo s)))
+                   | menu s == ModoControlos       = return (Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem PausaControlos (imagens s)),Scale 0.15 0.15 (Translate 0 (-1670) (getImagem PlPressEnter (imagens s)))]))
+                   | menu s == Editor1             = return (Pictures(desenhaEditor1 s))
+                   | menu s == ModoCreditos        = return (Pictures([getImagem ImCreditos (imagens s), Translate 0 (-400) (getImagem PlPressEnter2 (imagens s))]))
+                   | menu s == Editor2             = return (Pictures(desenhaEditor2 s))
+                   | otherwise                     = return (Pictures(desenhaOpcoes s))
+
 -- | Fornece uma lista de pictures utilizadas para desenhar o ecrã inicial do jogo
 desenhaInicio :: Estado -> [Picture]
 desenhaInicio s | alteraImagem2 (realToFrac (tempo s)) = [Translate 0 (-200) (Scale 0.3 0.3 (getImagem PlPressEnter (imagens s))),getImagem PrimateKong (imagens s)]
@@ -406,7 +425,7 @@ desenhaNome _ _ _ = []
 
 -- | Fornece uma lista de pictures utilizadas para desenhar a animação do jogador com 0 vidas e o ecrã final de game over
 desenhaPerdeuJogo :: Estado -> Double -> [Picture]
-desenhaPerdeuJogo s n | n >= 2.4 = [Translate 0 (-70) (Scale 2 2 (getImagem MarioDefeatedFinal (imagens s))), Translate 0 270 (getImagem Gameover (imagens s)), Translate 0 (-300) (getImagem PlPressEnter2 (imagens s))]
+desenhaPerdeuJogo s n | n >= 2.4 = [Translate 0 (-70) (Scale 2 2 (getImagem MarioDefeatedFinal (imagens s))), Translate 0 270 (getImagem Gameover (imagens s)), Translate 0 (-300) (getImagem PlPressEnter2 (imagens s)), Translate 0 (-350) (Scale 0.45 0.45 (getImagem PlPressR (imagens s)))]
                       | n >= 2.1 = ((desenhaMapa1 (-715.5,450.5) s) ++ [desenhaJogadorAux s MarioDefeated4] ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s)
                       | n >= 1.8 = ((desenhaMapa1 (-715.5,450.5) s) ++ [desenhaJogadorAux s MarioDefeated3] ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s)
                       | n >= 1.5 = ((desenhaMapa1 (-715.5,450.5) s) ++ [desenhaJogadorAux s MarioDefeated2] ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s)
