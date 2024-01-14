@@ -98,7 +98,7 @@ Recebe um jogo e verifica se o jogo tem pelo menos 2 inimigos
 >>> validaNumInimigos (Jogo {inimigos = []}) = False
 -}
 
-validaNumInimigos :: Jogo -> Bool -- ainda não testada // verifica se o jogo tem pelo menos 2 inimigos
+validaNumInimigos :: Jogo -> Bool 
 validaNumInimigos (Jogo {inimigos = l }) = length l >= 2 
 
 {-|
@@ -123,7 +123,7 @@ validaVidaFantasma j | y == Fantasma = if x == 1
 
 {-|
 
-Recebe um jogo e verifica se as escadas são validas
+Recebe um jogo e verifica se as escadas são válidas
 (uma escada não pode começar/terminar em alçapões e pelo menos
 uma das suas extremidades tem que ser do tipo Plataforma)
 
@@ -187,7 +187,7 @@ validaPlataforma [] = True
 validaPlataforma (h:t) | validaLinhaPlat h == True = validaPlataforma t
                        | otherwise = False    
 
-{-!
+{-|
 Recebe uma lista de blocos (coluna da matriz original) e verifica se todas as escadas começam ou acabam numa Plataforma
 
 =Exemplos
@@ -206,7 +206,7 @@ validaLinhaPlat (h1:h2:t) | h1 == Plataforma && h2 == Escada = validaLinhaPlat (
                           | otherwise = validaLinhaPlat (h2:t)
 
 {-|
-Recebe uma lista de blocos e devolve a lista sem os primeiros elesmentos caso estes sejam do tipo "Escada"
+Recebe uma lista de blocos e devolve a lista sem os primeiros elementos caso estes sejam do tipo "Escada"
 
 =Exemplos
 >>>removeEscada [Escada,Escada,Plataforma,Escada,Vazio] = [Plataforma,Escada,Vazio]
@@ -218,7 +218,7 @@ removeEscada (h:t) | h == Escada = removeEscada t
                    | otherwise = (h:t)
 
 {-|
-Recebe um jogo e verifica se o tamanho de alçap~o é igual ou superior ao do personagem
+Recebe um jogo e verifica se o tamanho de alçapão é igual ou superior ao do personagem
 
 =Exemplos
 >>> validaLarguraAlcapao (Jogo {jogador = Personagem {tamanho = (1.1,2)}}) = False

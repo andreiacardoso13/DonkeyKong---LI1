@@ -14,13 +14,6 @@ import Data.Fixed
 import Data.List
 import Desenha
 
-
-{- main :: IO ()
-main = do
-  putStrLn "Hello, PrimateKong!"
--}
-
-
 -- | Função principal, responsável por carregar os elementos visuais presentes no ambiente gŕafico do jogo
 main :: IO ()
 main = do
@@ -34,7 +27,7 @@ main = do
          keys
          reageTempo
 
--- | Define as propriedades de tamanho o localização da janela do jogo
+-- | Define as propriedades de tamanho e localização da janela do jogo
 janela :: Display
 janela = InWindow
   "Mapa"     -- título de janela    
@@ -71,7 +64,7 @@ reageTempo t s | menu s == GanhouJogo                                           
 verificaInimigo :: [Personagem] -> [[Bloco]] -> [Personagem]
 verificaInimigo l blocos = verificaInimigoFant (verificaInimigoMac l blocos) blocos
 
--- | Auxiliar de verificaInimigo, remove um inimigo se este estiver sobreposto com uma plataforma, alçapão ou escada e for um fantasma
+-- | Auxiliar de verificaInimigo, remove um inimigo se este for um fantasma e estiver sobreposto com uma plataforma, alçapão ou escada
 verificaInimigoFant :: [Personagem] -> [[Bloco]] -> [Personagem]
 verificaInimigoFant [] _ = []
 verificaInimigoFant (h:t) blocos | tipo h == Fantasma = if procuraBloco blocos (posicao h) == Vazio 
@@ -79,7 +72,7 @@ verificaInimigoFant (h:t) blocos | tipo h == Fantasma = if procuraBloco blocos (
                                                           else verificaInimigoFant t blocos
                                  | otherwise = h : verificaInimigoFant t blocos
 
--- | Auxiliar de verificaInimigo, remove um inimigo se este estiver sobreposto com uma plataforma, alçapão ou escada e for o MacacoMalvado
+-- | Auxiliar de verificaInimigo, remove um inimigo se este for o MacacoMalvado e estiver sobreposto com uma plataforma, alçapão ou escada
 verificaInimigoMac :: [Personagem] -> [[Bloco]] -> [Personagem]
 verificaInimigoMac [] _ = []
 verificaInimigoMac (h:t) blocos | tipo h == MacacoMalvado = if procuraBloco blocos (x,y) == Vazio && procuraBloco blocos (x,y+1) == Vazio && procuraBloco blocos (x+1,y) == Vazio && procuraBloco blocos (x+1,y+1) == Vazio && procuraBloco blocos (x-1,y) == Vazio && procuraBloco blocos (x-1,y+1) == Vazio
@@ -102,26 +95,25 @@ perdeJogo s | vida (jogador (jogo s)) == 0 = s {menu = PerdeuJogo, tempo = 0 ,jo
 ficaParado :: Personagem -> Personagem
 ficaParado p = p{velocidade = (0,0)}
 
--- | Verifica se o jogador está em colisão com a estrela, se sim altera o menu para GanharJOgo para aparecer a animação de vitória
+-- | Verifica se o jogador está em colisão com a estrela, se sim altera o menu para GanharJogo para aparecer a animação de vitória
 ganhaJogo :: Estado -> Estado
 ganhaJogo s | colisaoHitbox (hitboxColecionavel star) (hitbox (jogador (jogo s))) = if editor s == False then s {menu = GanhouJogo, jogo = Jogo {mapa = mapaGanhou,inimigos = ganhouInimigos (inimigos (jogo s)),colecionaveis = [], jogador = jogGanhaJogo (jogador (jogo s)) (bonus s)},tempo=0,highScore = highScore s ++ [(pontos (jogador(jogo s)) + (bonus s),"")]}
                                                                                                          else s {menu = GanhouJogoEditor, jogo = Jogo {mapa = mapa (jogo s),inimigos = ganhouInimigos (inimigos (jogo s)),colecionaveis = [], jogador = jogGanhaJogo (jogador (jogo s)) (bonus s)},tempo = 3,highScore = highScore s, editor = False}
             | otherwise = s 
    where Mapa a star b = mapa (jogo s)
 
--- | Reflete os efeitos do jogador ter ganhado o jogo nos inimigos
+-- | Reflete nos inimigis os efeitos do jogador ter ganhado o jogo 
 ganhouInimigos :: [Personagem] -> [Personagem]
 ganhouInimigos [] = []
 ganhouInimigos (h:t) = h {vida=11} : ganhouInimigos t
 
--- | Responsavel por atribuir o bonus restante ao jogador quando este ganha o jogo
+-- | Responsável por atribuir o bonus restante ao jogador quando este ganha o jogo
 jogGanhaJogo :: Personagem -> Int -> Personagem
 jogGanhaJogo jog b = jog {pontos = (pontos jog) + ((div b 100)*100), velocidade = (0,0)}
 
 -- | Analisa a lista do HighScore e se existirem mais de uma pontuação de mesma pessoa apaga a pontuação menor
 analisaHighScore :: Estado -> Estado
 analisaHighScore s = s {highScore = analisaHighScoreAux (highScore s)}
-  -- where hs = highScore s
 
 -- | Auxiliar de analisaHighScore
 analisaHighScoreAux :: [(Int,String)] -> [(Int,String)]
