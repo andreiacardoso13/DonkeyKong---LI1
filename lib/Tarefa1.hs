@@ -114,7 +114,7 @@ limEsquerdo (Mapa _ _ blocos) p = eLim <= 0.05
 -}
 
 platColisoes :: Mapa -> Personagem -> Bool
-platColisoes (Mapa _ _ blocos) p@(Personagem {posicao = (x,y),tamanho = (l,a)}) = blcI == Plataforma && mod' a 1 == 0 || blcS == Plataforma && mod' b 1 == 0 || blcD == Plataforma && mod' c 1 == 0 || blcE == Plataforma && mod' d 1 == 0
+platColisoes (Mapa _ _ blocos) p@(Personagem {posicao = (x,y),tamanho = (l,h)}) = blcI == Plataforma && mod' a 1 == 0 || blcS == Plataforma && mod' b 1 == 0 || blcD == Plataforma && mod' c 1 == 0 || blcE == Plataforma && mod' d 1 == 0
       where blcI = procuraBlocoInf blocos (x,y)
             blcS = procuraBlocoSup blocos (x,y)
             blcD = procuraBlocoDir blocos (x,y)
