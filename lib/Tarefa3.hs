@@ -517,8 +517,8 @@ aleatFantAndar :: Semente -> Tempo -> Jogo -> [Personagem]
 aleatFantAndar _ _ j@(Jogo {inimigos = []}) = []
 aleatFantAndar s tp j@(Jogo {mapa = m@(Mapa _ _ blocos), inimigos = (h@(Personagem {posicao = pos@(x,y), velocidade = (vx,vy), emEscada = esc}):t)}) 
 
-      | entreZeroEDois (realToFrac tp) && (head(geraAleatorios s 1)) > 0 && tipo h == Fantasma && not esc && colisoesParede m h = (h{velocidade = (-1.5,vy)}) : aleatFantAndar (s+17) tp j{inimigos = t}
-      | entreZeroEDois (realToFrac tp) && (head(geraAleatorios s 1)) < 0 && tipo h == Fantasma && not esc && colisoesParede m h = (h{velocidade = (1.5,vy)}) : aleatFantAndar (s+17) tp j{inimigos = t}
+      | entreZeroEDois (realToFrac tp) && (head(geraAleatorios s 1)) > 0 && tipo h == Fantasma && not esc && colisoesParede m h && (procuraBlocoInf blocos (x+0.8,y) /= Vazio || procuraBlocoInf blocos (x+0.8,y) /= Vazio)= (h{velocidade = (-1.5,vy), direcao = Oeste}) : aleatFantAndar (s+17) tp j{inimigos = t}
+      | entreZeroEDois (realToFrac tp) && (head(geraAleatorios s 1)) < 0 && tipo h == Fantasma && not esc && colisoesParede m h && (procuraBlocoInf blocos (x+0.8,y) /= Vazio || procuraBlocoInf blocos (x+0.8,y) /= Vazio)= (h{velocidade = (1.5,vy), direcao = Este}) : aleatFantAndar (s+17) tp j{inimigos = t}
       | otherwise = h : aleatFantAndar (s+1) tp j{inimigos = t}
   where (vx,vy) = velocidade h
       
@@ -587,9 +587,10 @@ ressaltoFantasma j = j {inimigos = map (ressaltaFantAux blocos) (inimigos j)}
 
 -- | Auxiliar da função ressaltoFantasma, responsavel por devolver o Fantasma com as devidas alterações na velocidade em caso de ressalto
 ressaltaFantAux :: [[Bloco]] -> Personagem -> Personagem
-ressaltaFantAux blocos inim | procuraBlocoInf blocos (x+0.8,y) == Vazio && tipo inim == Fantasma= inim {velocidade = (-vx,vy)}
-                            | procuraBlocoInf blocos (x-0.8,y) == Vazio && tipo inim == Fantasma = inim {velocidade = (-vx,vy)}
-                            | (x >= 27.5 || x <= 0.5) && tipo inim == Fantasma = inim {velocidade = (-vx,vy)}
+ressaltaFantAux blocos inim | procuraBlocoInf blocos (x+0.8,y) == Vazio && tipo inim == Fantasma= inim {velocidade = (-1.5,vy), direcao = Oeste}
+                            | procuraBlocoInf blocos (x-0.8,y) == Vazio && tipo inim == Fantasma = inim {velocidade = (1.5,vy), direcao = Este}
+                            | x >= 27.5 && tipo inim == Fantasma = inim {velocidade = (-1.5,vy), direcao = Oeste}
+                            | x <= 0.5 && tipo inim == Fantasma = inim {velocidade = (1.5,vy), direcao = Este}
                             | otherwise = inim
   where (vx,vy) = velocidade inim
         (x,y) = posicao inim
