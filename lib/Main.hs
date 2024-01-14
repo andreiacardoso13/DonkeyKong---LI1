@@ -21,9 +21,6 @@ main = do
 -}
 
 
-
-
-
 -- | Função principal, responsável por carregar os elementos visuais presentes no ambiente gŕafico do jogo
 main :: IO ()
 main = do
@@ -48,8 +45,6 @@ janela = InWindow
 bg :: Color
 bg = black
 
-
-
 -- | Define o número de frames por segundo, ou seja o número de vezes que o programa é atualizado por segundo
 fr :: Int
 fr = 20
@@ -60,22 +55,7 @@ estadoInicial images = Estado {menu = Inicio,jogo = jOpcoes, imagens = images, t
 
 -- | Desenha no ecrã o que está a acontecer no jogo em cada momento
 desenhaEstado :: Estado -> IO Picture
-desenhaEstado s | menu s == Inicio              = return (Pictures(desenhaInicio s))
-                | menu s == ModoJogo            = return (Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s++[Translate 0 460 (Scale 0.5 0.5 (getImagem PlPressP (imagens s)))]))
-                | menu s == ModoPausa Continuar = return (Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa4 (imagens s)), Translate 0 (-270) (getImagem DicasPausa (imagens s))]))
-                | menu s == ModoPausa Reiniciar = return (Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa1 (imagens s)), Translate 0 (-270) (getImagem DicasPausa (imagens s))]))
-                | menu s == ModoPausa Home      = return (Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa2 (imagens s)), Translate 0 (-270) (getImagem DicasPausa (imagens s))]))
-                | menu s == ModoPausa Controls  = return (Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem Pausa3 (imagens s)), Translate 0 (-270) (getImagem DicasPausa (imagens s))]))
-                | menu s == ModoHighScore       = return (Pictures(desenhaModoHighScore s))
-                | menu s == GanhouJogo          = return (Pictures(desenhaGanhouJogo s))
-                | menu s == GanhouJogoEditor    = return (Pictures([Translate 0 (-30) (Scale 2.5 2.5 (getImagem MonkeyDefeated (imagens s))), Translate 0 300 (getImagem PlParabens (imagens s)),  Translate 0 180 (getImagem PlDerrotasteOPrimateKong (imagens s))] ++ map (Translate 0 (-150)) (map (Scale 2 2) (desenhaFogo s)) ++ map (Translate 80 (-260)) (desenhaScoreFinal s) ++ [Translate 70 (-275) (rectangleSolid 700 150)]))
-                | menu s == PerdeuJogo          = return (Pictures(desenhaPerdeuJogo s (tempo s)))
-                | menu s == ModoControlos       = return (Pictures((desenhaMapa1 (-715.5,450.5) s) ++ desenhaJogador s ++ desenhaFantasmas s++ desenhaMacacoMalvado s ++ desenhaColecionaveis s ++ desenhaEstrela s ++ desenhaVida s ++ desenhaPontos s ++ desenhaBonus s ++ [Scale 0.7 0.7 (getImagem PausaControlos (imagens s)),Scale 0.15 0.15 (Translate 0 (-1670) (getImagem PlPressEnter (imagens s)))]))
-                | menu s == Editor1             = return (Pictures(desenhaEditor1 s))
-                | menu s == Editor2             = return (Pictures(desenhaEditor2 s))
-                | otherwise                     = return (Pictures(desenhaOpcoes s))
-
-
+desenhaEstado s = desenhaEstadoAux s
 
 -- | É chamada automaticamente em intervalos definidos no frame rate, o float recebido representa o tempo decorrido desde a última chamada. Tem diferentes definições para diferentes tipos de menu e é responsável por as consequências das ações dos jogadores
 reageTempo :: Float -> Estado -> IO Estado
@@ -115,7 +95,7 @@ diminuiBonus n = n - 5
 
 -- | Verifica se o jogador está com 0 vidas, e se sim altera o menu para PerdeuJogo para aparecer a animação de derrota
 perdeJogo :: Estado -> Estado
-perdeJogo s | vida (jogador (jogo s)) == 0 = s {menu = PerdeuJogo, tempo = 0 ,jogo = Jogo {mapa = mapa (jogo s), inimigos = map ficaParado (inimigos (jogo s)), colecionaveis = colecionaveis (jogo s), jogador = ficaParado(jogador(jogo s)) }, editor = False}
+perdeJogo s | vida (jogador (jogo s)) == 0 = s {menu = PerdeuJogo, tempo = 0 ,jogo = Jogo {mapa = mapa (jogo s), inimigos = map ficaParado (inimigos (jogo s)), colecionaveis = colecionaveis (jogo s), jogador = ficaParado(jogador(jogo s)) }}
             | otherwise = s
 
 -- | Altera a velocidade de um personagem para (0,0), fazendo-o ficar parado
