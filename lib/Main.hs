@@ -51,7 +51,7 @@ fr = 20
 
 -- | Recebe as imagens e devolve o estado inicial do jogo
 estadoInicial :: Imagens -> Estado
-estadoInicial images = Estado {menu = Inicio,jogo = jOpcoes, imagens = images, tempo = 0 ,bonus = 15000, highScore = [(0,"XXXXX"), (0,"XXXXX"),(0,"XXXXX")], saltar = 2, editor = False, jogoEditor = j1}
+estadoInicial images = Estado {menu = Inicio,jogo = jOpcoes, imagens = images, tempo = 0 ,bonus = 15000, highScore = [(0,"XXXXX"), (0,"XXXXX"),(0,"XXXXX")], editor = False, jogoEditor = j1}
 
 -- | Desenha no ecrã o que está a acontecer no jogo em cada momento
 desenhaEstado :: Estado -> IO Picture
@@ -61,7 +61,7 @@ desenhaEstado s = desenhaEstadoAux s
 reageTempo :: Float -> Estado -> IO Estado
 reageTempo t s | menu s == GanhouJogo                                                                                                                                  = return (s {jogo = Jogo {mapa = mapa (jogo s),inimigos = gravidadeMacaco (realToFrac t) (inimigos (jogo s)), colecionaveis = [], jogador = jogador (jogo s)}, tempo = tempo s + (realToFrac t)})
                | menu s == ModoPausa Continuar || menu s == ModoPausa Reiniciar || menu s == ModoPausa Home || menu s == ModoPausa Controls || menu s == ModoControlos = return (s{jogo = jogo s, tempo = tempo s + (realToFrac t), bonus = bonus s})
-               | menu s == ModoJogo                                                                                                                                    = return (ganhaJogo $ perdeJogo $ s {jogo = movimenta (truncate (tempo s)) (tempo s) (jogo s),tempo = tempo s + (realToFrac t), bonus = diminuiBonus (bonus s), saltar = saltar s + (realToFrac t)})
+               | menu s == ModoJogo                                                                                                                                    = return (ganhaJogo $ perdeJogo $ s {jogo = movimenta (truncate (tempo s)) (tempo s) (jogo s),tempo = tempo s + (realToFrac t), bonus = diminuiBonus (bonus s)})
                | menu s == PerdeuJogo                                                                                                                                  = return (s {tempo = tempo s + (realToFrac t), jogo = Jogo{mapa = mapa (jogo s),inimigos = inimigos (jogo s), colecionaveis = colecionaveis (jogo s), jogador = jogador (jogo s)}})
                | menu s == Editor1 || menu s == Editor2                                                                                                                = return (s {jogo = Jogo {mapa = mapa (jogo s), inimigos = verificaInimigo (inimigos (jogo s)) blocos, colecionaveis = colecionaveis (jogo s), jogador = jogador (jogo s)}})
                | otherwise                                                                                                                                             = return (analisaHighScore $ s {jogo = movimenta (truncate (tempo s)) (tempo s) (jogo s),tempo = tempo s + (realToFrac t)})
