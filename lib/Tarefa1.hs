@@ -23,7 +23,7 @@ import Data.Fixed
 hitbox :: Personagem -> Hitbox
 hitbox (Personagem {posicao = (x,y), tamanho = (l,a)}) = ((x-(l/2),y-(a/2)),(x+(l/2), y+(a/2)))
 
-{-| Define o menor retânculo que contém um colecionável
+{-| Define o menor retângulo que contém um colecionável
 
 = Exemplos
 >>> hitboxColecionavel (0.5,0.5) = ((0.0,0.0),(1.0,1.0))

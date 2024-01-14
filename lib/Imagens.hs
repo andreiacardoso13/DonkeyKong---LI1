@@ -13,7 +13,7 @@ type Imagens = [(Imagem, Picture)]
 getImagem :: Imagem -> Imagens -> Picture
 getImagem im imgs = fromJust (lookup im imgs)
 
--- | Responsavel por carregar todas as imagens para o data type "Imagens"
+-- | Responsável por carregar todas as imagens para o data type "Imagens"
 getImages :: IO Imagens
 getImages = do
                -- Blocos e colecionaveis    

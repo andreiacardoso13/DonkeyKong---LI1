@@ -1,16 +1,10 @@
 module Desenha where 
 
---import Graphics.Gloss
---import Graphics.Gloss.Interface.Pure.Game
 import Graphics.Gloss.Interface.IO.Game
 import LI12324
---import Tarefa1
---import Tarefa2
---import Tarefa3
 import Tarefa5
 import Imagens
 import Mapa
---import Music
 import Data.Fixed
 import Data.List
 
@@ -38,7 +32,7 @@ desenhaInicio :: Estado -> [Picture]
 desenhaInicio s | alteraImagem2 (realToFrac (tempo s)) = [Translate 0 (-200) (Scale 0.3 0.3 (getImagem PlPressEnter (imagens s))),getImagem PrimateKong (imagens s)]
                 | otherwise = [getImagem PrimateKong (imagens s)]
 
--- | Fornece uma lista de pictures utilizadas para desenhar o ecrã das opções disponiveis ao jogador
+-- | Fornece uma lista de pictures utilizadas para desenhar o ecrã das opções disponíveis ao jogador
 desenhaOpcoes :: Estado -> [Picture]
 desenhaOpcoes s = desenhaOpcoesFundo s ++ desenhaOpcoesOpcao s
 
@@ -55,7 +49,7 @@ desenhaOpcoesOpcao s | menu s == Opcoes Jogar = [Scale 1.4 1.4 (getImagem Palavr
                      | menu s == Opcoes UltJogo = [getImagem PalavraJogar (imagens s)] ++ [Translate 0 (-140) (getImagem PalavraHighScore (imagens s))] ++ [Translate (-420) (-260) (getImagem MarioStandingRight (imagens s))] ++ [Translate 420 (-260) (getImagem MarioStandingLeft (imagens s))] ++ [Scale 0.7 0.7 (Translate 0 (-100) (getImagem Creditos (imagens s)))] ++ [Translate 0 (-200) (getImagem PlCriaMapa (imagens s))] ++ [Translate 0 (-265) (Scale 1 1 (getImagem PlJogarUltJogo (imagens s)))] 
                      | otherwise = [rectangleSolid 50 50]
 
--- | Fornece uma lista de pictures de um único elemento que consiste numa imagem do MacacoMalvado situado no ecrã de opções (utilizando o tempo do estado para criar movimento no mesmo)
+-- | Fornece uma lista de pictures de um único elemento que consiste numa imagem do MacacoMalvado situado no ecrã de opções (utiliza o tempo do estado para criar movimento no mesmo)
 desenhaMacacoOpcoes :: Estado -> [Picture]
 desenhaMacacoOpcoes s | (t >= 0 && t<=3) || (t>=5 && t<=8) = [Translate 0 320 (Scale 2 2 (getImagem MonkeyStanding (imagens s)))]
                       | alteraImagem (realToFrac (tempo s)) = [Translate 0 320 (Scale 2 2 (getImagem MonkeyArmLeft (imagens s)))]
@@ -130,7 +124,7 @@ desenhaJogadorAux est img = Translate (x - 742) (477 - y) (getImagem img (imagen
     where x = realToFrac $ (fst (posicao (jogador(jogo est)))) * 53
           y = realToFrac $ (snd (posicao (jogador(jogo est)))) * 53
 
--- | Fornece uma lista de pictures (com as devidas translações) utilizadas para desenhar os inimigos nas suas posições atuais tendo em conta a sua direção (só desenha o inimigo se este ainda tiver vidas restantes)
+-- | Fornece uma lista de pictures (com as devidas translações) utilizadas para desenhar os inimigos nas suas posições atuais tendo em conta a sua direção (para de desenhar o inimigo depois deste ter sido atingido pelo jogador armado e explodido)
 desenhaFantasmas :: Estado -> [Picture]
 desenhaFantasmas (Estado {jogo = Jogo {inimigos = []}, imagens = imgs, tempo = tp}) = []
 desenhaFantasmas (Estado {jogo = jog, imagens = imgs, tempo = tp}) = map (desenhaFantasmasAux imgs tp (jogador jog)) (inimigos jog)
@@ -165,7 +159,7 @@ desenhaFantAux inim imags img = Translate (x - 742) (480 - y) (getImagem img ima
     where x = realToFrac $ (fst (posicao inim)) * 53
           y = realToFrac $ (snd (posicao inim)) * 53
 
--- | Fornece uma lista de pictures de um único elemento sendo este uma picture do MacacoMalvado (tendo em conta a ação que este está a realizar no momento)
+-- | Fornece uma lista de pictures de um único elemento sendo este uma picture do MacacoMalvado (tendo em conta a ação que este está a realizar no momento e a sua posição)
 desenhaMacacoMalvado :: Estado -> [Picture]
 desenhaMacacoMalvado est | inimigos (jogo est) == [] = []
                          | entd == MacacoMalvado && y > 16.2 = [Translate 0 (-3) (desenhaMacacoAux est MonkeyDefeated)]
@@ -181,14 +175,14 @@ desenhaMacacoMalvado est | inimigos (jogo est) == [] = []
         vid = vida (head (inimigos (jogo est)))
         y = snd (posicao(head(inimigos(jogo est))))
 
--- | Fornece uma Picture com as devidas translações utilizada para desenhar o MacacoMalvado no local da sua posição
+-- | Fornece uma Picture com as devidas translações utilizada para desenhar o MacacoMalvado no local da sua posição atual
 desenhaMacacoAux :: Estado -> Imagem -> Picture
 desenhaMacacoAux est img = Translate (x - 742) (477 - y) (getImagem img (imagens est))
     where x = realToFrac $ (fst (posicao (head (inimigos(jogo est))))) * 53
           y = realToFrac $ (snd (posicao (head (inimigos(jogo est))))) * 53
 
 
--- | Fornece uma lista de pictures (com as devidas translações) utilizadas para desenhar o colecionáveis 
+-- | Fornece uma lista de pictures (com as devidas translações) utilizadas para desenhar os colecionáveis 
 desenhaColecionaveis :: Estado -> [Picture]
 desenhaColecionaveis (Estado {jogo = Jogo {colecionaveis= []}}) = []
 desenhaColecionaveis s = desenhaColecionaveisAux (s {jogo = jog {mapa = mapa (jogo s), inimigos = inimigos (jogo s), colecionaveis = take 1 (colecionaveis jog), jogador = jogador (jogo s)}}) : (desenhaColecionaveis (s {jogo = jog {mapa = mapa (jogo s), inimigos = inimigos (jogo s), colecionaveis = drop 1 (colecionaveis jog), jogador = jogador (jogo s)}}))
@@ -269,7 +263,7 @@ verificaNumero int est | int == 0 = desenhaPontosAux est Num0
                        | int == 8 = desenhaPontosAux est Num8
                        | otherwise = desenhaPontosAux est Num9
 
--- | Pega na imagem recebida e transforma-a numa picture com escala e translação adequadas ao pretendido
+-- | Pega na imagem recebida e transforma-a numa picture com escala e translação adequadas
 desenhaPontosAux :: Estado -> Imagem -> [Picture]
 desenhaPontosAux est img = [Translate (-690) (400) (Scale 0.05 0.05 ((getImagem img (imagens est))))]
 
@@ -469,7 +463,7 @@ ordenaHighScore s = s{highScore = reverse $ sort $ highScore s}
 retiraHighScore :: Estado -> Estado 
 retiraHighScore s = s {highScore = drop 1 (highScore s)}
 
--- | Verifica se a parte decimal de um número está entre 0 e 25 ou 50 e 75, utilizada para alterar uma imagem de 0,25 em 0,24 segundos
+-- | Verifica se a parte decimal de um número está entre 0 e 25 ou 50 e 75, utilizada para alterar uma imagem de 0,25 em 0,25 segundos
 alteraImagem :: Float -> Bool
 alteraImagem n = alteraImagemAux (mod' (n * 10) 10)
 
