@@ -190,13 +190,11 @@ keysModoJogo _ e = return e
 
 
 keysModoPausa :: Event -> Estado -> IO Estado
-keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Continuar}) = return e {menu = ModoJogo}
+keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Continuar})                 = return e {menu = ModoJogo}
 keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Reiniciar, editor = False}) = return e {menu = ModoJogo, jogo = j1, tempo = 0, bonus = 15000}
-keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Reiniciar, editor = True}) = return e {menu = ModoJogo, jogo = jogoEditor e, tempo = 0, bonus = 15000}
-keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Home})      = do musicaParar
-                                                                                                     musicaMenu
-                                                                                                     return e {menu = Opcoes Jogar, jogo = jOpcoes}
-keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Controls})  = return e {menu = ModoControlos}
+keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Reiniciar, editor = True})  = return e {menu = ModoJogo, jogo = jogoEditor e, tempo = 0, bonus = 15000}
+keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Home})                      = return e {menu = Opcoes Jogar, jogo = jOpcoes}
+keysModoPausa (EventKey (SpecialKey KeyEnter) Down _ _) e@(Estado {menu = ModoPausa Controls})                  = return e {menu = ModoControlos}
 
 keysModoPausa (EventKey (SpecialKey KeyUp) Down _ _)   e@(Estado {menu = ModoPausa Continuar}) = return e {menu = ModoPausa Reiniciar}
 keysModoPausa (EventKey (SpecialKey KeyDown) Down _ _) e@(Estado {menu = ModoPausa Home})      = return e {menu = ModoPausa Continuar}
@@ -276,9 +274,7 @@ keysGanhouJogo (EventKey (Char 'z') Down _ _) s | length (snd (last (highScore s
                                                 | otherwise = return s
 keysGanhouJogo (EventKey (SpecialKey KeyDelete) Down _ _) s | null (snd (last (highScore s))) = return s
                                                             | otherwise = return s {highScore = remove (highScore s)}
-keysGanhouJogo (EventKey (SpecialKey KeyEnter) Down _ _) s = do musicaParar
-                                                                musicaMenu
-                                                                return s {menu = Opcoes Jogar, jogo = jOpcoes}
+keysGanhouJogo (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = Opcoes Jogar, jogo = jOpcoes}
 keysGanhouJogo (EventKey (SpecialKey KeyEsc) Down _ _) s = do musicaParar
                                                               exitSuccess
 keysGanhouJogo _ s = return s
@@ -286,6 +282,8 @@ keysGanhouJogo _ s = return s
 
 keysGanhouJogoEditor :: Event -> Estado -> IO Estado
 keysGanhouJogoEditor (EventKey (SpecialKey KeyEnter) Down _ _) s = return s {menu = Opcoes Jogar, jogo = jOpcoes}
+keysGanhouJogoEditor (EventKey (SpecialKey KeyEsc) Down _ _) s = do musicaParar
+                                                                    exitSuccess
 keysGanhouJogoEditor _ s =  return s
 
 remove :: [(Int,String)] -> [(Int,String)]
@@ -348,8 +346,7 @@ keysEditor1 (EventKey (SpecialKey KeyDelete) Down _ _) s = return s {jogo = Jogo
 keysEditor1 (EventKey (SpecialKey KeyEnter) Down _ _) s = if valida (jogo s) 
                                                              then return s {menu=Editor2}
                                                              else return s
-keysEditor1 (EventKey (SpecialKey KeyEsc) Down _ _) s = do musicaParar
-                                                           exitSuccess
+keysEditor1 (EventKey (SpecialKey KeyEsc) Down _ _) s = return s {menu = Opcoes EditorMapas}
 keysEditor1 _ s = return s
 
 keysEditor2 :: Event -> Estado -> IO Estado
@@ -368,8 +365,7 @@ keysEditor2 (EventKey (SpecialKey KeyDown) Down _ _) s = if y <16.5 then return 
 keysEditor2 (EventKey (SpecialKey KeyEnter) Down _ _) s = if valida (jogo s) 
                                                               then return s {menu = ModoJogo, jogo = atualizaPosicaoInicial (jogo s), jogoEditor = jogo s, bonus = 15000}
                                                               else return s
-keysEditor2 (EventKey (SpecialKey KeyEsc) Down _ _) s = do musicaParar
-                                                           exitSuccess
+keysEditor2 (EventKey (SpecialKey KeyEsc) Down _ _) s = return s {menu = Editor1}
 keysEditor2 _ s = return s
 
 atualizaPosicaoInicial :: Jogo -> Jogo
