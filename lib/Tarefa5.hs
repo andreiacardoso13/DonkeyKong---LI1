@@ -11,20 +11,17 @@ module Tarefa5 where
 import LI12324
 import Imagens
 import Mapa
+import Music
 import Tarefa1
 import Tarefa2
+import Tarefa3
 import Tarefa4
-import Music
-
-import Data.Fixed
 import System.Exit
-
 import Graphics.Gloss
-import Graphics.Gloss.Interface.Pure.Game
 import Graphics.Gloss.Interface.IO.Game
 
 -- | Estado do programa 
-data Estado = Estado {menu :: Menu, jogo :: Jogo, imagens :: Imagens, tempo :: Tempo, bonus :: Int, highScore :: [(Int,String)], saltar :: Tempo, editor :: Bool, jogoEditor :: Jogo}
+data Estado = Estado {menu :: Menu, jogo :: Jogo, imagens :: Imagens, tempo :: Tempo, bonus :: Int, highScore :: [(Int,String)], editor :: Bool, jogoEditor :: Jogo}
 
 -- | Diferentes menus presentes ao longo do jogo
 data Menu = Inicio
@@ -41,7 +38,7 @@ data Menu = Inicio
           | Editor2
           deriving Eq
 
--- | Opções disponiveis no menu de opções e no menu de pausa
+-- | Opções disponíveis no menu de opções e no menu de pausa
 data Opcao = Jogar
            | HighScore
            | Continuar
@@ -130,35 +127,25 @@ keysModoJogo :: Event -> Estado -> IO Estado
 keysModoJogo (EventKey (SpecialKey KeyRight) Down _ _) e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos),
                                                                                   inimigos = inimigos,
                                                                                   jogador = jgd@(Personagem {posicao = pos@(x,y),
-                                                                                                             emEscada = esc})})}) | not esc   = return e{jogo = atualiza (replicate (length inimigos) Nothing) (Just AndarDireita) j {jogador = jgd {posicao = (min x 27.5, y)}}}
-                                                                                                                                  | otherwise = return e
+                                                                                                             emEscada = esc})})}) = return e{jogo = movimentoPers (atualiza (replicate (length inimigos) Nothing) (Just AndarDireita) j {jogador = jgd {posicao = (min x 27.5, y)}})}
 
 keysModoJogo (EventKey (SpecialKey KeyLeft)  Down _ _) e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos),
                                                                                   inimigos = inimigos,
                                                                                   jogador = jgd@(Personagem {posicao = pos@(x,y),
-                                                                                                             emEscada = esc})})}) | not esc   = return e{jogo = atualiza (replicate (length inimigos) Nothing) (Just AndarEsquerda) j {jogador = jgd {posicao = (max x 0.5, y)}}}
-                                                                                                                                  | otherwise = return e
+                                                                                                             emEscada = esc})})}) = return e{jogo = movimentoPers (atualiza (replicate (length inimigos) Nothing) (Just AndarEsquerda) j {jogador = jgd {posicao = (max x 0.5, y)}})}
 
 keysModoJogo (EventKey (SpecialKey KeyUp)    Down _ _) e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos),
                                                                                   inimigos = inimigos,
                                                                                   jogador = jgd@(Personagem {posicao = pos@(x,y),
                                                                                                              emEscada = esc,
-                                                                                                             aplicaDano = (b,_)})})}) | b = return e
-                                                                                                                                      |     esc && procuraBloco blocos pos == Vazio && procuraBlocoInf blocos pos == Plataforma && colisoesParede m jgd = return e{jogo = atualiza (replicate (length inimigos) Nothing) (Just Parar) j {jogador = jgd {emEscada = False}}}
-                                                                                                                                      | not esc && procuraBloco blocos pos == Escada && mod' x 1 <= 0.6 && mod' x 1 >= 0.3                              = return e{jogo = atualiza (replicate (length inimigos) Nothing) (Just Subir) j {jogador = jgd {posicao = (x, max (y-0.5) 0.5)}}}
-                                                                                                                                      | esc                                                                                                             = return e{jogo = atualiza (replicate (length inimigos) Nothing) (Just Subir) j {jogador = jgd {posicao = (x, max (y-0.5) 0.5)}}}
-                                                                                                                                      | otherwise = return e
+                                                                                                             aplicaDano = (b,_)})})}) = return e{jogo = movimentoPers (atualiza (replicate (length inimigos) Nothing) (Just Subir) j)}
+
 
 keysModoJogo (EventKey (SpecialKey KeyDown)  Down _ _) e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos),
                                                                                   inimigos = inimigos,
                                                                                   jogador = jgd@(Personagem {posicao = pos@(x,y),
                                                                                                              emEscada = esc,
-                                                                                                             aplicaDano = (b,_)})})}) | b = return e
-                                                                                                                                      |    esc  && procuraBlocoInf blocos pos == Escada                                                                                    = return e{jogo = atualiza (replicate (length inimigos) Nothing) (Just Descer) j {jogador = jgd {posicao = (x, min (y+0.5) 16.5)}}}
-                                                                                                                                      |    esc  && procuraBlocoInf blocos pos == Plataforma && procuraBloco blocos pos     == Escada && colisoesParede m jgd               = return e{jogo = atualiza (replicate (length inimigos) Nothing) (Just Parar)  j {jogador = jgd {emEscada = False}}}
-                                                                                                                                      |            procuraBlocoInf blocos pos == Plataforma && procuraBloco blocos (x,y+2) == Escada && mod' x 1 <= 0.6 && mod' x 1 >= 0.3 = return e{jogo = atualiza (replicate (length inimigos) Nothing) (Just Descer) j {jogador = jgd {posicao = (x, min (y+0.5) 16.5)}}}
-                                                                                                                                      |            procuraBlocoInf blocos pos == Escada     && procuraBloco blocos pos     == Plataforma                                   = return e{jogo = atualiza (replicate (length inimigos) Nothing) (Just Descer) j}
-                                                                                                                                      | otherwise = return e
+                                                                                                             aplicaDano = (b,_)})})}) = return e{jogo = movimentoPers (atualiza (replicate (length inimigos) Nothing) (Just Descer) j)}
 
 keysModoJogo (EventKey (SpecialKey KeyUp) Up _ _) e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos),
                                                                              inimigos = inimigos,
@@ -169,7 +156,7 @@ keysModoJogo (EventKey (SpecialKey KeyUp) Up _ _) e@(Estado {jogo = j@(Jogo {map
 keysModoJogo (EventKey (SpecialKey KeyDown) Up _ _) e@(Estado {jogo = j@(Jogo {mapa = m@(Mapa _ _ blocos),
                                                                              inimigos = inimigos,
                                                                              jogador = jgd@(Personagem {posicao = pos@(x,y),
-                                                                                                   emEscada = esc})})}) | esc  && procuraBlocoInf blocos pos == Plataforma && procuraBloco blocos pos     == Escada && colisoesParede m jgd               = return e{jogo = atualiza (replicate (length inimigos) Nothing) (Just Parar)  j {jogador = jgd {emEscada = False}}}
+                                                                                                   emEscada = esc})})}) | esc  && procuraBlocoInf blocos pos == Plataforma && procuraBloco blocos pos == Escada && colisoesParede m jgd = return e{jogo = atualiza (replicate (length inimigos) Nothing) (Just Parar)  j {jogador = jgd {emEscada = False}}}
                                                                                                                         | otherwise = return e {jogo = atualiza (replicate (length inimigos) Nothing) (Just Parar) j}
 
 
@@ -186,12 +173,7 @@ keysModoJogo (EventKey (SpecialKey KeySpace) Down _ _) e@(Estado {jogo = j@(Jogo
                                                                                   jogador = jgd@(Personagem {posicao = pos@(x,y),
                                                                                                              emEscada = esc,
                                                                                                              aplicaDano = (b,_)})}),
-                                                                                                             tempo = t})             | b = return e
-                                                                                                                                     | not (colisoesParede m jgd)            = return e{jogo = atualiza (replicate (length inimigos) Nothing) Nothing j}
-                                                                                                                                     | not esc  && fst (velocidade jgd) == 0 = return e{jogo = atualiza (replicate (length inimigos) Nothing) (Just Saltar) j {jogador = jgd {posicao = (x, y-1)}}}
-                                                                                                                                     | not esc  && direcao jgd == Oeste      = return e{jogo = atualiza (replicate (length inimigos) Nothing) (Just Saltar) j {jogador = jgd {posicao = (x-1, y-1)} }}
-                                                                                                                                     | not esc  && direcao jgd == Este       = return e{jogo = atualiza (replicate (length inimigos) Nothing) (Just Saltar) j {jogador = jgd {posicao = (x+1, y-1)} }}
-                                                                                                                                     | otherwise = return e
+                                                                                                             tempo = t})             = return e{jogo = atualiza (replicate (length inimigos) Nothing) (Just Saltar) j}
 
 
 keysModoJogo (EventKey (Char 'p') Down _ _) e@(Estado {menu = ModoJogo}) = return e {menu = ModoPausa Continuar}
